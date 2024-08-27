@@ -3,8 +3,8 @@ import React from 'react';
 import { Colors } from '@/constants/Colors';
 
 const MealCard = ( ) => {
-    const colorScheme = useColorScheme() ?? 'light';
-
+  const colorScheme = useColorScheme() ?? 'dark';
+  
   return (
     <View>
       <Text style={[{ color: Colors[colorScheme].text }]}>MealCard</Text>

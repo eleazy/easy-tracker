@@ -4,8 +4,10 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { useNavigation } from '@react-navigation/native';
+import { auth } from '../firebase/firebaseConfig';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -16,11 +18,23 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
+  const navigation = useNavigation();
+
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        (navigation as any).navigate('login');
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigation]);
 
   if (!loaded) {
     return null;

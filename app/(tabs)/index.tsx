@@ -29,14 +29,12 @@ interface mealProps {
   };
 }
 
-
 export default function HomeScreen() {
 
   const [meals, setMeals] = useState<mealProps[]>([]);
 
   useEffect(() => {
-    const today = Timestamp.now();
-    mealsOfTheDay(today)
+    mealsOfTheDay(new Date())
       .then((meals) => {
         console.log(meals);
         setMeals(meals);

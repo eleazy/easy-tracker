@@ -9,7 +9,10 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-.env
+
+# Ignore Firebase configuration file
+firebase/firebaseConfig.js
+
 
 
 # macOS

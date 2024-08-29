@@ -3,42 +3,32 @@ import { Image, StyleSheet, View, ScrollView } from "react-native";
 import { useColorScheme } from "react-native";
 import MealCard from "@/components/MealCard";
 import { Colors } from "@/constants/Colors";
-import { mealsOfTheDay } from "@/firebase/dataHandling";
-import { Timestamp } from "firebase/firestore";
-
-interface foodProp {  
-    caloreis: number;
-    macroNutrients: {
-      protein: number;
-      carbs: number;
-      fat: number;
-    };
-    quantity: number;
-    title: string;
-};
-
-interface mealProps {
-  foods: foodProp;
-  mealPosition: number;
-  title: string;
-  totals: {
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-  };
-}
+import { DocumentReference, DocumentData,  } from 'firebase/firestore';
+import { getMealsOfDay } from "@/firebase/dataHandling";
+import { getTodayString } from "@/utils/helperFunctions";
+import { Meal } from "@/types/general";
 
 export default function HomeScreen() {
 
-  const [meals, setMeals] = useState<mealProps[]>([]);
+  const [meals, setMeals] = useState<Meal[]>([]);
 
-  useEffect(() => {
-    mealsOfTheDay(new Date())
-      .then((meals) => {
-        console.log(meals);
-        setMeals(meals);
-      })
+  useEffect(() => {   
+    getMealsOfDay(getTodayString())
+    .then((mealsData: DocumentData[]) => {      
+      const mappedMeals: Meal[] = mealsData.map((meal: DocumentData) => ({
+        foods: meal.foods || [], 
+        mealPosition: meal.mealPosition || 0,
+        title: meal.title || '',
+        totals: meal.totals || {
+          calories: 0,
+          carbs: 0,
+          fats: 0,
+          protein: 0,
+        },
+      }));
+      //console.log(mappedMeals);
+      setMeals(mappedMeals);
+    })
       .catch((error) => {
         console.error(error);
       });
@@ -53,7 +43,7 @@ export default function HomeScreen() {
       showsVerticalScrollIndicator={false}
     >
       {meals.map((meal) => (
-        <MealCard />
+        <MealCard meal={meal} key={meal.title} />
       ))}
     </ScrollView>
   );

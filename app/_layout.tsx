@@ -2,12 +2,13 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../firebase/firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
+import { setLoggedUser } from '@/utils/helperFunctions';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -19,6 +20,7 @@ export default function RootLayout() {
   });
 
   const navigation = useNavigation();
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
 
   useEffect(() => {
     if (loaded) {
@@ -30,13 +32,16 @@ export default function RootLayout() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
         (navigation as any).navigate('login');
+      } else {
+        setLoggedUser(user.email);
       }
+      setIsAuthChecked(true);
     });
 
     return () => unsubscribe();
   }, [navigation]);
 
-  if (!loaded) {
+  if (!loaded || !isAuthChecked) {
     return null;
   }
 

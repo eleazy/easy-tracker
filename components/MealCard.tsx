@@ -14,7 +14,7 @@ const MealCard = ( {meal}: { meal: Meal } ) => {
     const fetchFoods = async () => {
       const foodsData = await getMealFoods(meal.foods);
       setFoods(foodsData);
-      console.log(foodsData);
+      //console.log(foodsData);
     };
     fetchFoods();
   }, [meal.foods]);

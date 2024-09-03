@@ -1,4 +1,4 @@
-import { DocumentReference } from 'firebase/firestore';
+import { DocumentReference, DocumentData } from 'firebase/firestore';
 
 export interface Meal {
   foods: DocumentReference[];
@@ -21,4 +21,9 @@ export interface Food {
   };
   quantity: number;
   title: string;
+};
+
+export type MealsOfDayResult = {
+  mealsData: DocumentData[];
+  foodDiaryDoc: string;
 };

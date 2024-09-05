@@ -13,7 +13,6 @@ export default function HomeScreen() {
 
   const [meals, setMeals] = useState<Meal[]>([]);
   const [foodDiaryDay, setFoodDiaryDay] = useState<string>(getTodayString());
-  const [foodDiaryDoc, setFoodDiaryDoc] = useState<string>('');
   const [macroTotals, setMacroTotals] = useState<number[]>([0, 0, 0, 0]);
 
   useEffect(() => {   
@@ -28,26 +27,18 @@ export default function HomeScreen() {
         // console.log(mappedMeals);
         setMeals(mappedMeals);        
 
-        const foodDiaryDoc = data.foodDiaryDoc as string;
-        setFoodDiaryDoc(foodDiaryDoc);
+        onSnapshot(doc(db, "users", "eleazysoares.08", "foodDiary", data.foodDiaryDoc as string), (doc) => {
+          // update totals values here
+          // meals will change in MealCard, which will update the totals of this doc and therefore trigger this onSnapshot
+          const totals = doc.data()?.totals;
+          setMacroTotals([totals?.calories || 0, totals?.carbs || 0, totals?.fats || 0, totals?.protein || 0]);
+        });
+
       })
       .catch((error) => {
         console.error(error);
       });      
   }, []);
-
-  if (!foodDiaryDoc) {
-    return (
-      <View><Text>Loading...</Text></View>
-    );
-  }
-
-  onSnapshot(doc(db, "users", "eleazysoares.08", "foodDiary", foodDiaryDoc), (doc) => {
-      // update totals values here
-      // meals will be changed in MealCard, which will update the totals of this doc and trigger onSnapshot
-      const totals = doc.data()?.totals;
-      setMacroTotals([totals?.calories || 0, totals?.carbs || 0, totals?.fats || 0, totals?.protein || 0]);
-  });
 
   return (
     // Página inicial do aplicativo

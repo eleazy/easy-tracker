@@ -2,7 +2,7 @@ import { db, auth } from "./firebaseConfig";
 import { collection, getDocs, query, where, setDoc, doc, deleteDoc, updateDoc, DocumentReference, getDoc } from "firebase/firestore";
 import tabelaTaco from './tabelaTaco.json';
 import { Food, MealsOfDayResult } from "@/types/general";
-import { getLoggedUser } from "@/utils/helperFunctions";
+import { getLoggedUser, fixN } from "@/utils/helperFunctions";
 
 // PRIVATE FUNCTIONS
 
@@ -28,6 +28,7 @@ const fetchFoodData = async (docRef: DocumentReference): Promise<Food | null> =>
 export const getTacoTableFoods = (): Food[] => {
     return Object.values(tabelaTaco).map((food) => {
         return {
+            id: String(food.id) ?? '',
             calories: food.energia ?? 0,
             macroNutrients: {
               carbs: food.carboidratos ?? 0,
@@ -71,7 +72,7 @@ export const getMealsOfDay = async (date: String): Promise<MealsOfDayResult> => 
 export const getMealFoods = async (docRefs: DocumentReference[]): Promise<Food[]> => {
   try {
     const dataPromises = docRefs.map(docRef => fetchFoodData(docRef));
-    const documentsData = await Promise.all(dataPromises);
+    const documentsData = await Promise.all(dataPromises);    
     return documentsData.filter((data): data is Food => data !== null);
   } catch (error) {
     console.error('Error fetching documents:', error);
@@ -119,7 +120,7 @@ export const addNewBlankMeal = async (date: string) => {
 };
 
 // Edit a meal in the food diary
-export const editMeal = async (date: string, meal: any) => {
+export const editMealFood = async (date: string, idMealsFoods: string, quantity: number) => {
     const user = getLoggedUser().split('@')[0];
     try {
         const foodDiaryQuery = query(
@@ -135,9 +136,31 @@ export const editMeal = async (date: string, meal: any) => {
 
         const foodDiaryDoc = foodDiarySnapshot.docs[0];
         const docId = foodDiaryDoc.id;
-        const mealsCollectionRef = collection(db, "users", user, "foodDiary", docId, "meals");
-        const mealRef = doc(mealsCollectionRef, meal.id);
-        await updateDoc(mealRef, meal);
+        const mealsFoodsCollectionRef = collection(db, "users", user, "foodDiary", docId, "mealsFoods");
+        const mealFoodRef = doc(mealsFoodsCollectionRef, idMealsFoods);
+
+        // Calculate new macros with the new quantity
+        const foodData = await fetchFoodData(mealFoodRef);
+        if (!foodData) return;
+        const fM = foodData.macroNutrients;
+        const newCarbs = fM.carbs * quantity / foodData.quantity;
+        const newFats = fM.fats * quantity / foodData.quantity;
+        const newProtein = fM.protein * quantity / foodData.quantity;
+        const newCalories = (newCarbs + newProtein) * 4 + newFats * 9;
+
+        const newFoodData = {
+            ...foodData,
+            quantity: quantity,
+            macroNutrients: {
+                ...fM,
+                carbs: fixN(newCarbs),
+                fats: fixN(newFats),
+                protein: fixN(newProtein),
+            },
+            calories: fixN(newCalories),
+        };
+
+        await setDoc(mealFoodRef, newFoodData);
 
     } catch (error) {
         console.error("Error editing meal:", error);

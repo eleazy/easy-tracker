@@ -1,5 +1,6 @@
 import { DocumentReference, DocumentData } from 'firebase/firestore';
 
+// INTERFACES
 export interface Meal {
   foods: DocumentReference[];
   mealPosition: number;
@@ -13,6 +14,7 @@ export interface Meal {
 }
 
 export interface Food {
+  id: string;
   calories: number;
   macroNutrients: {
     carbs: number;
@@ -22,6 +24,15 @@ export interface Food {
   quantity: number;
   title: string;
 };
+
+export interface mealMacroTotals {  
+  calories: number;  
+  carbs: number;
+  fats: number;
+  protein: number;
+};
+
+// TYPES
 
 export type MealsOfDayResult = {
   mealsData: DocumentData[];

@@ -109,7 +109,7 @@ const updateMealTotals = async (date: string, idMeal: string, previousFoodData: 
             fats: fixN(mealData?.totals.fats + differences.fats),
             protein: fixN(mealData?.totals.protein + differences.protein),
         };
-
+        console.log(newTotals);
         updateFoodDiaryTotals(date, mealData?.totals, newTotals);
         await updateDoc(mealRef, {totals: newTotals});
 
@@ -164,8 +164,7 @@ const editMealFood = async (date: string, idMealsFoods: string, quantity: number
 
         await setDoc(mealFoodRef, newFoodData);
 
-        updateMealTotals(date, foodData.idMeal, previousFoodData, newValues);
-
+        //updateMealTotals(date, foodData.idMeal, previousFoodData, newValues);
     } catch (error) {
         console.error("Error editing meal:", error);
     }
@@ -174,11 +173,51 @@ const editMealFood = async (date: string, idMealsFoods: string, quantity: number
 // PUBLIC FUNCTIONS
 
 // Edit a meal in the food diary
-export const editMeal = async (date: string, foods: Food[], meal: Meal) => {
-    foods.forEach((food, i) => {
-        editMealFood(date, food.id, food.quantity);
-        console.log(food)
-    });
+export const saveFoodDiary = async (date: string, meals: Meal[]) => {    
+    const user = getLoggedUser().split('@')[0];
+    try {
+        const foodDiaryQuery = query(
+            collection(db, "users", user, "foodDiary"),
+            where("date", "==", date)
+        );
+        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
+        
+        if (foodDiarySnapshot.empty) {
+            console.log("No matching documents.");
+            return;
+        }
+
+        const foodDiaryDoc = foodDiarySnapshot.docs[0];
+        const docId = foodDiaryDoc.id;
+        const mealsCollectionRef = collection(db, "users", user, "foodDiary", docId, "meals");
+        const mealsFoodsCollectionRef = collection(db, "users", user, "foodDiary", docId, "mealsFoods");
+        
+        // Update each meal in the food diary
+        // In firebase the atribute foods of meal is a reference to a document of mealsFoods collection
+        // The mealsFoods collection has the food data
+        // in Meal type, foods is an array of Food type, not DocumentReference
+        // So we need to update the mealsFoods collection with the new values of the foods
+        // And then update the meals collection with the new values of the meals, keeping the references to the foods documents
+
+        const updatePromises = meals.map(async (meal) => {
+            const mealRef = doc(mealsCollectionRef, meal.id);
+            const mealDoc = await getDoc(mealRef);
+            const mealData = mealDoc.data();
+            const foodsRefs = mealData?.foods as DocumentReference[];
+            
+            const updateFoodsPromises = meal.foods.map(async (food, i) => {                
+                const foodRef = doc(mealsFoodsCollectionRef, foodsRefs[i].id);
+                await editMealFood(date, foodRef.id, food.quantity);
+            });
+
+            await Promise.all(updateFoodsPromises);
+        });
+
+        await Promise.all(updatePromises);
+
+    } catch (error) {
+        console.error("Error saving food diary:", error);
+    }
 };
 
 // Get and shape local json data for the taco foods table
@@ -199,35 +238,35 @@ export const getTacoTableFoods = (): Food[] => {
     });
 }
 
-export const getFoodDiaryTotals = async (date: string): Promise<mealMacroTotals> => {
-    const user = getLoggedUser().split('@')[0];
-    try {
-        const foodDiaryQuery = query(
-            collection(db, "users", user, "foodDiary"),
-            where("date", "==", date)
-        );
-        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
+// export const getFoodDiaryTotals = async (date: string): Promise<mealMacroTotals> => {
+//     const user = getLoggedUser().split('@')[0];
+//     try {
+//         const foodDiaryQuery = query(
+//             collection(db, "users", user, "foodDiary"),
+//             where("date", "==", date)
+//         );
+//         const foodDiarySnapshot = await getDocs(foodDiaryQuery);
         
-        if (foodDiarySnapshot.empty) {
-            console.log("No matching documents.");
-            return { calories: 0, carbs: 0, fats: 0, protein: 0 };
-        }
+//         if (foodDiarySnapshot.empty) {
+//             console.log("No matching documents.");
+//             return { calories: 0, carbs: 0, fats: 0, protein: 0 };
+//         }
 
-        const foodDiaryDoc = foodDiarySnapshot.docs[0];
-        const foodDiaryData = foodDiaryDoc.data();
+//         const foodDiaryDoc = foodDiarySnapshot.docs[0];
+//         const foodDiaryData = foodDiaryDoc.data();
         
-        return {
-            calories: foodDiaryData?.totals.calories ?? 0,
-            carbs: foodDiaryData?.totals.carbs ?? 0,
-            fats: foodDiaryData?.totals.fats ?? 0,
-            protein: foodDiaryData?.totals.protein ?? 0,
-        };
+//         return {
+//             calories: foodDiaryData?.totals.calories ?? 0,
+//             carbs: foodDiaryData?.totals.carbs ?? 0,
+//             fats: foodDiaryData?.totals.fats ?? 0,
+//             protein: foodDiaryData?.totals.protein ?? 0,
+//         };
 
-    } catch (error) {
-        console.error("Error fetching meals:", error);
-        return { calories: 0, carbs: 0, fats: 0, protein: 0};
-    }
-};
+//     } catch (error) {
+//         console.error("Error fetching meals:", error);
+//         return { calories: 0, carbs: 0, fats: 0, protein: 0};
+//     }
+// };
 
 export const getMealsOfDay = async (date: string): Promise<MealsOfDayResult> => {
     const user = getLoggedUser().split('@')[0];

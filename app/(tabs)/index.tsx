@@ -4,13 +4,12 @@ import { useColorScheme } from "react-native";
 import MealCard from "@/components/MealCard";
 import { Colors } from "@/constants/Colors";
 import { DocumentReference, DocumentData, doc, onSnapshot } from 'firebase/firestore';
-import { getMealsOfDay, addNewBlankMeal, deleteAllMealsButOne, getFoodDiaryTotals, getMealFoods } from "@/firebase/dataHandling";
-import { db } from "@/firebase/firebaseConfig";
-import { getTodayString, getLoggedUser } from "@/utils/helperFunctions";
+import { getMealsOfDay, addNewBlankMeal, deleteAllMealsButOne, getMealFoods } from "@/firebase/dataHandling";
 import { Food, Meal, mealMacroTotals } from "@/types/general";
+import { saveFoodDiary } from "@/firebase/dataHandling";
 
 export default function HomeScreen() {
-  const hasMounted = useRef(false);
+  
   const colorScheme = useColorScheme() ?? 'dark';
   const [ meals, setMeals ] = useState<Meal[]>([]);
   // const [ foodDiaryDay, setFoodDiaryDay ] = useState<string>(getTodayString());
@@ -29,61 +28,48 @@ export default function HomeScreen() {
           mealsData.map(async (fbMeal: DocumentData) => {
             try {
               const foodsData = await getMealFoods(fbMeal.foods);
+              let totalsOfMeal = {calories: 0, carbs: 0, fats: 0, protein: 0};
+              foodsData.forEach((food) => {
+                totalsOfMeal.calories += food.calories;
+                totalsOfMeal.carbs += food.macroNutrients.carbs;
+                totalsOfMeal.fats += food.macroNutrients.fats;
+                totalsOfMeal.protein += food.macroNutrients.protein;
+              });
               
               const meal: Meal = {
                 foods: foodsData as Food[],
+                id: fbMeal.id,
                 mealPosition: fbMeal.mealPosition,
                 title: fbMeal.title,
-                totals: fbMeal.totals,
+                //totals: fbMeal.totals,
+                totals: totalsOfMeal,
               };
               return meal;
             } catch (error) {
               console.error(error);
-              return {foods: [], mealPosition: 0, title: '', totals: {calories: 0, carbs: 0, fats: 0, protein: 0}};
+              return {foods: [], id: '', mealPosition: 0, title: '', totals: {calories: 0, carbs: 0, fats: 0, protein: 0}};
             }
           })
         );
-      
+      console.log('mappedMeals', mappedMeals);
         setMeals(mappedMeals.filter(meal => meal !== null));      
-
-        // This works better I think, and its cleaner, but not economic in terms of reads, and I am using free tier firebase
-        // const user = getLoggedUser().split('@')[0];
-        // onSnapshot(doc(db, "users", user, "foodDiary", data.foodDiaryDoc as string), (doc) => {
-        //   // update totals values here
-        //   // meals will change in MealCard, which will update the totals of this doc and therefore trigger this onSnapshot
-        //   const totals = doc.data()?.totals;
-        //   setMacroTotals([totals?.calories || 0, totals?.carbs || 0, totals?.fats || 0, totals?.protein || 0]);
-        // });
-
       })
       .catch((error) => { console.error(error); }); 
       
-    getFoodDiaryTotals('2024-08-28').then((totals) => { setMacroTotals(totals); }).catch((error) => { console.error(error); });      
+    //getFoodDiaryTotals('2024-08-28').then((totals) => { setMacroTotals(totals); }).catch((error) => { console.error(error); });      
   }, []);
 
-  const saveFoodDiary = (date: string, meals: Meal[]) => {
-    // update the food diary with the new state of meals
-    // meals is an array of Meal objects
-    
-    
-  }
-
   useEffect(() => {
-    // It cannot run on first render, because meals is empty
-    if (hasMounted.current) {
-      // Update totals in state when a MealCard sets meals
-      let newTotals = {calories: 0, carbs: 0, fats: 0, protein: 0};
-      meals.forEach((meal) => {        
-        newTotals.calories += meal.totals.calories;
-        newTotals.carbs += meal.totals.carbs;
-        newTotals.fats += meal.totals.fats;
-        newTotals.protein += meal.totals.protein;
-      });
-      
-      setMacroTotals(newTotals);
-    } else {
-      hasMounted.current = true;
-    }
+    // Update totals in state when a MealCard sets meals
+    let newTotals = {calories: 0, carbs: 0, fats: 0, protein: 0};
+    meals.forEach((meal) => {        
+      newTotals.calories += meal.totals.calories;
+      newTotals.carbs += meal.totals.carbs;
+      newTotals.fats += meal.totals.fats;
+      newTotals.protein += meal.totals.protein;
+    });
+    console.log('newTotals', newTotals);
+    setMacroTotals(newTotals);
   }, [meals]);
   
   return (

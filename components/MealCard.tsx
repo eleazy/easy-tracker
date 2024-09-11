@@ -9,7 +9,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotal
   const colorScheme = useColorScheme() ?? 'dark';
 
   const [foods, setFoods] = useState<Food[]>(meal.foods);
-  const [mealTotals, setMealTotals] = useState<mealMacroTotals>(meal.totals);
+  //const [mealTotals, setMealTotals] = useState<mealMacroTotals>(meal.totals);
 
   const changeQuantity = (i:number, value: string) => {
     // change quantity of a food in a meal    
@@ -44,7 +44,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotal
         newTotals.fats += food.macroNutrients.fats;
         newTotals.protein += food.macroNutrients.protein;
       });
-      setMealTotals(newTotals);
+      //setMealTotals(newTotals);
       
       // Update meals state in parent component
       const newMeals = [...meals];
@@ -59,7 +59,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotal
   return (
     <View style={styles.container}>
       <Text style={[{ color: Colors[colorScheme].text }, styles.text, styles.mealHeader]}>
-        {meal.title} - {mealTotals.calories} kcal - {mealTotals.carbs}g C - {mealTotals.fats}g F - {mealTotals.protein}g P
+        {meal.title} - {meal.totals.calories} kcal - {meal.totals.carbs}g C - {meal.totals.fats}g F - {meal.totals.protein}g P
       </Text>      
       
       {/* ontouch will be input for quantity */}

@@ -17,6 +17,7 @@ export interface Food {
 
 export interface Meal {
   foods: Food[];
+  id: string;
   mealPosition: number;
   title: string;
   totals: {

@@ -1,7 +1,7 @@
 import { db, auth } from "./firebaseConfig";
 import { collection, getDocs, query, where, setDoc, doc, deleteDoc, updateDoc, DocumentReference, getDoc } from "firebase/firestore";
 import tabelaTaco from './tabelaTaco.json';
-import { Food, MealsOfDayResult } from "@/types/general";
+import { Food, Meal, MealsOfDayResult, mealMacroTotals } from "@/types/general";
 import { getLoggedUser, fixN } from "@/utils/helperFunctions";
 
 // PRIVATE FUNCTIONS
@@ -22,13 +22,171 @@ const fetchFoodData = async (docRef: DocumentReference): Promise<Food | null> =>
   }
 };
 
+// Update the totals of the food diary. Called upon meal's totals being updated
+const updateFoodDiaryTotals = async (date: string, previousTotals: mealMacroTotals, newTotals: mealMacroTotals ) => {
+    const user = getLoggedUser().split('@')[0];
+    try {
+        const foodDiaryQuery = query(
+            collection(db, "users", user, "foodDiary"),
+            where("date", "==", date)
+        );
+        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
+        
+        if (foodDiarySnapshot.empty) {
+            console.log("No matching documents.");
+            return;
+        }
+
+        const foodDiaryDoc = foodDiarySnapshot.docs[0];
+        const foodDiaryData = foodDiaryDoc.data();
+        
+        const differences = {
+            calories: newTotals.calories - previousTotals.calories,
+            carbs: newTotals.carbs - previousTotals.carbs,
+            fats: newTotals.fats - previousTotals.fats,
+            protein: newTotals.protein - previousTotals.protein,
+        };
+
+        const newTotalsData = {
+            calories: fixN(foodDiaryData?.totals.calories + differences.calories),
+            carbs: fixN(foodDiaryData?.totals.carbs + differences.carbs),
+            fats: fixN(foodDiaryData?.totals.fats + differences.fats),
+            protein: fixN(foodDiaryData?.totals.protein + differences.protein),
+        };
+
+        await updateDoc(foodDiaryDoc.ref, {totals: newTotalsData});
+
+    } catch (error) {
+        console.error("Error updating meal totals:", error);
+    }
+}
+
+// Update the totals of a meal in the food diary. Called upon editing a meal's food
+const updateMealTotals = async (date: string, idMeal: string, previousFoodData: mealMacroTotals, newValues: mealMacroTotals ) => {
+    const user = getLoggedUser().split('@')[0];
+    try {
+        const foodDiaryQuery = query(
+            collection(db, "users", user, "foodDiary"),
+            where("date", "==", date)
+        );
+        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
+        
+        if (foodDiarySnapshot.empty) {
+            console.log("No matching documents.");
+            return;
+        }
+
+        const foodDiaryDoc = foodDiarySnapshot.docs[0];
+        const docId = foodDiaryDoc.id;
+        const mealsCollectionRef = collection(db, "users", user, "foodDiary", docId, "meals");
+        const mealRef = doc(mealsCollectionRef, idMeal);
+        // const mealFoodsCollectionRef = collection(db, "users", user, "foodDiary", docId, "mealsFoods");
+        // const mealFoodsQuery = query(mealFoodsCollectionRef, where("idMeal", "==", idMeal));
+        // const mealFoodsSnapshot = await getDocs(mealFoodsQuery);
+        
+        // let newTotals = {calories: 0, carbs: 0, fats: 0, protein: 0};
+        // mealFoodsSnapshot.forEach((foodDoc) => {
+        //     const foodData = foodDoc.data() as Food;
+        //     newTotals.calories += foodData.calories;
+        //     newTotals.carbs += foodData.macroNutrients.carbs;
+        //     newTotals.fats += foodData.macroNutrients.fats;
+        //     newTotals.protein += foodData.macroNutrients.protein;
+        // });
+
+        const mealDoc = await getDoc(mealRef);
+        const mealData = mealDoc.data();
+        
+        const differences = {
+            calories: newValues.calories - previousFoodData.calories,
+            carbs: newValues.carbs - previousFoodData.carbs,
+            fats: newValues.fats - previousFoodData.fats,
+            protein: newValues.protein - previousFoodData.protein,
+        };
+        
+        const newTotals = {
+            calories: fixN(mealData?.totals.calories + differences.calories),
+            carbs: fixN(mealData?.totals.carbs + differences.carbs),
+            fats: fixN(mealData?.totals.fats + differences.fats),
+            protein: fixN(mealData?.totals.protein + differences.protein),
+        };
+
+        updateFoodDiaryTotals(date, mealData?.totals, newTotals);
+        await updateDoc(mealRef, {totals: newTotals});
+
+    } catch (error) {
+        console.error("Error updating meal totals:", error);
+    }
+}
+
+// Edit a meal food in the food diary
+const editMealFood = async (date: string, idMealsFoods: string, quantity: number) => {
+    const user = getLoggedUser().split('@')[0];
+    try {
+        const foodDiaryQuery = query(
+            collection(db, "users", user, "foodDiary"),
+            where("date", "==", date)
+        );
+        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
+        
+        if (foodDiarySnapshot.empty) {
+            console.log("No matching documents.");
+            return;
+        }
+
+        const foodDiaryDoc = foodDiarySnapshot.docs[0];
+        const docId = foodDiaryDoc.id;
+        const mealsFoodsCollectionRef = collection(db, "users", user, "foodDiary", docId, "mealsFoods");
+        const mealFoodRef = doc(mealsFoodsCollectionRef, idMealsFoods);
+
+        // Calculate new macros with the new quantity
+        const foodData = await fetchFoodData(mealFoodRef);
+        if (!foodData) return;
+        const fM = foodData.macroNutrients;
+        const newCarbs = fM.carbs * quantity / foodData.quantity;
+        const newFats = fM.fats * quantity / foodData.quantity;
+        const newProtein = fM.protein * quantity / foodData.quantity;
+        const newCalories = (newCarbs + newProtein) * 4 + newFats * 9;
+
+        const newFoodData = {
+            ...foodData,
+            quantity: quantity,
+            macroNutrients: {
+                ...fM,
+                carbs: fixN(newCarbs),
+                fats: fixN(newFats),
+                protein: fixN(newProtein),
+            },
+            calories: fixN(newCalories),
+        };
+
+        const previousFoodData = { calories: foodData.calories, carbs: fM.carbs, fats: fM.fats, protein: fM.protein };
+        const newValues = { calories: newCalories, carbs: newCarbs, fats: newFats, protein: newProtein };
+
+        await setDoc(mealFoodRef, newFoodData);
+
+        updateMealTotals(date, foodData.idMeal, previousFoodData, newValues);
+
+    } catch (error) {
+        console.error("Error editing meal:", error);
+    }
+};
+
 // PUBLIC FUNCTIONS
+
+// Edit a meal in the food diary
+export const editMeal = async (date: string, foods: Food[], meal: Meal) => {
+    foods.forEach((food, i) => {
+        editMealFood(date, food.id, food.quantity);
+        console.log(food)
+    });
+};
 
 // Get and shape local json data for the taco foods table
 export const getTacoTableFoods = (): Food[] => {
     return Object.values(tabelaTaco).map((food) => {
         return {
             id: String(food.id) ?? '',
+            idMeal: '',
             calories: food.energia ?? 0,
             macroNutrients: {
               carbs: food.carboidratos ?? 0,
@@ -41,7 +199,37 @@ export const getTacoTableFoods = (): Food[] => {
     });
 }
 
-export const getMealsOfDay = async (date: String): Promise<MealsOfDayResult> => {
+export const getFoodDiaryTotals = async (date: string): Promise<mealMacroTotals> => {
+    const user = getLoggedUser().split('@')[0];
+    try {
+        const foodDiaryQuery = query(
+            collection(db, "users", user, "foodDiary"),
+            where("date", "==", date)
+        );
+        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
+        
+        if (foodDiarySnapshot.empty) {
+            console.log("No matching documents.");
+            return { calories: 0, carbs: 0, fats: 0, protein: 0 };
+        }
+
+        const foodDiaryDoc = foodDiarySnapshot.docs[0];
+        const foodDiaryData = foodDiaryDoc.data();
+        
+        return {
+            calories: foodDiaryData?.totals.calories ?? 0,
+            carbs: foodDiaryData?.totals.carbs ?? 0,
+            fats: foodDiaryData?.totals.fats ?? 0,
+            protein: foodDiaryData?.totals.protein ?? 0,
+        };
+
+    } catch (error) {
+        console.error("Error fetching meals:", error);
+        return { calories: 0, carbs: 0, fats: 0, protein: 0};
+    }
+};
+
+export const getMealsOfDay = async (date: string): Promise<MealsOfDayResult> => {
     const user = getLoggedUser().split('@')[0];
     try {
         const foodDiaryQuery = query(
@@ -119,53 +307,6 @@ export const addNewBlankMeal = async (date: string) => {
     }
 };
 
-// Edit a meal in the food diary
-export const editMealFood = async (date: string, idMealsFoods: string, quantity: number) => {
-    const user = getLoggedUser().split('@')[0];
-    try {
-        const foodDiaryQuery = query(
-            collection(db, "users", user, "foodDiary"),
-            where("date", "==", date)
-        );
-        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
-        
-        if (foodDiarySnapshot.empty) {
-            console.log("No matching documents.");
-            return;
-        }
-
-        const foodDiaryDoc = foodDiarySnapshot.docs[0];
-        const docId = foodDiaryDoc.id;
-        const mealsFoodsCollectionRef = collection(db, "users", user, "foodDiary", docId, "mealsFoods");
-        const mealFoodRef = doc(mealsFoodsCollectionRef, idMealsFoods);
-
-        // Calculate new macros with the new quantity
-        const foodData = await fetchFoodData(mealFoodRef);
-        if (!foodData) return;
-        const fM = foodData.macroNutrients;
-        const newCarbs = fM.carbs * quantity / foodData.quantity;
-        const newFats = fM.fats * quantity / foodData.quantity;
-        const newProtein = fM.protein * quantity / foodData.quantity;
-        const newCalories = (newCarbs + newProtein) * 4 + newFats * 9;
-
-        const newFoodData = {
-            ...foodData,
-            quantity: quantity,
-            macroNutrients: {
-                ...fM,
-                carbs: fixN(newCarbs),
-                fats: fixN(newFats),
-                protein: fixN(newProtein),
-            },
-            calories: fixN(newCalories),
-        };
-
-        await setDoc(mealFoodRef, newFoodData);
-
-    } catch (error) {
-        console.error("Error editing meal:", error);
-    }
-};
 
 
 
@@ -203,5 +344,3 @@ export const deleteAllMealsButOne = async (date: string) => {
         console.error("Error deleting meals:", error);
     }
 };
-
-

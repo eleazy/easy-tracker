@@ -1,38 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, StyleSheet, useColorScheme } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { Meal, Food, mealMacroTotals } from '@/types/general';
+import { Meal, Food, mealMacroTotals, MealCardProps } from '@/types/general';
 import { fixN } from '@/utils/helperFunctions';
-import { getMealFoods, editMealFood, getTacoTableFoods } from '@/firebase/dataHandling';
+import { getMealFoods, getTacoTableFoods } from '@/firebase/dataHandling';
 
-const MealCard = ( {meal}: { meal: Meal } ) => {
+const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotals }: MealCardProps) => {
   const colorScheme = useColorScheme() ?? 'dark';
 
-  const [foods, setFoods] = useState<Food[]>([]);
+  const [foods, setFoods] = useState<Food[]>(meal.foods);
   const [mealTotals, setMealTotals] = useState<mealMacroTotals>(meal.totals);
 
-  useEffect(() => {
-    // Fetch and set the foods data
-    getMealFoods(meal.foods)
-      .then((foodsData) => {
-        setFoods(foodsData);        
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
-
   const changeQuantity = (i:number, value: string) => {
-    // change quantity of a food in a meal
-    // update meal in firebase    
-    // update totals in firebase
-    // trigger onSnapshot in parent component    
-    // editMealFood('2024-08-28', foods[i].id, parseInt(value));
-    
+    // change quantity of a food in a meal    
     const newQuantity = parseInt(value);
     if (isNaN(newQuantity) || newQuantity <= 0) return;
     
     // Update meal in state
+    // Here, we update the quantity of the food and with the new quantity recalculate the macros
     setFoods((prevFoods) => {
       const newFoods = [...prevFoods];
       const oldQuantity = newFoods[i].quantity;
@@ -44,14 +29,14 @@ const MealCard = ( {meal}: { meal: Meal } ) => {
       newFoods[i].macroNutrients.fats = fixN((fM.fats / oldQuantity) * newQuantity);
       newFoods[i].macroNutrients.protein = fixN((fM.protein / oldQuantity) * newQuantity);
 
-      // (carbs and protein = 4 kcal per gram, fats = 9 kcal per gram)
+      // carbs and protein = 4 kcal per gram, fats = 9 kcal per gram
       newFoods[i].calories = fixN(
         newFoods[i].macroNutrients.carbs * 4 +
         newFoods[i].macroNutrients.protein * 4 +
         newFoods[i].macroNutrients.fats * 9
       );        
 
-      // Update totals in state    
+      // Update totals in state
       let newTotals = {calories: 0, carbs: 0, fats: 0, protein: 0};
       newFoods.forEach((food) => {        
         newTotals.calories += food.calories;
@@ -60,12 +45,17 @@ const MealCard = ( {meal}: { meal: Meal } ) => {
         newTotals.protein += food.macroNutrients.protein;
       });
       setMealTotals(newTotals);
+      
+      // Update meals state in parent component
+      const newMeals = [...meals];
+      newMeals[mealIndex].foods = newFoods;
+      newMeals[mealIndex].totals = newTotals;
+      setMeals(newMeals);
 
       return newFoods;
     });
-
   } 
-    
+  
   return (
     <View style={styles.container}>
       <Text style={[{ color: Colors[colorScheme].text }, styles.text, styles.mealHeader]}>
@@ -73,7 +63,7 @@ const MealCard = ( {meal}: { meal: Meal } ) => {
       </Text>      
       
       {/* ontouch will be input for quantity */}
-      {/* display each food of meal and its macros */}      
+      {/* display each food of meal and its macros */}
 
       {foods.map((food, i) => (
         <View key={i} style={styles.foodDiv}>
@@ -86,14 +76,13 @@ const MealCard = ( {meal}: { meal: Meal } ) => {
               value={food.quantity.toString()}
               onChangeText={(text) => changeQuantity(i, text)}
               keyboardType="numeric"
-            />          
+            />               
           </View>             
           <Text style={[{ color: Colors[colorScheme].text }, styles.text, {marginVertical: 10, marginRight: 10}]}>
             {food.calories} kcal - {food.macroNutrients.carbs}g C - {food.macroNutrients.fats}g F - {food.macroNutrients.protein}g P
           </Text>
         </View>
-      ))}
-      
+      ))}      
     </View>
   )
 }
@@ -118,7 +107,7 @@ const styles = StyleSheet.create({
   mealHeader: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'red',
+    color: 'green',
     borderBottomColor: 'white',
     borderBottomWidth: 1,
   },
@@ -126,6 +115,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'white',
     borderBottomWidth: 1,
   },
+  
 });
 
 export default MealCard

@@ -16,7 +16,6 @@ export default function HomeScreen() {
   const [ macroTotals, setMacroTotals ] = useState<mealMacroTotals>({calories: 0, carbs: 0, fats: 0, protein: 0});
   
   useEffect(() => {   
-    console.log('index useEffect');
     //deleteAllMealsButOne('2024-08-28');
 
     // this gets the meals of the day
@@ -51,7 +50,7 @@ export default function HomeScreen() {
             }
           })
         );
-      console.log('mappedMeals', mappedMeals);
+      
         setMeals(mappedMeals.filter(meal => meal !== null));      
       })
       .catch((error) => { console.error(error); }); 
@@ -68,7 +67,7 @@ export default function HomeScreen() {
       newTotals.fats += meal.totals.fats;
       newTotals.protein += meal.totals.protein;
     });
-    console.log('newTotals', newTotals);
+    
     setMacroTotals(newTotals);
   }, [meals]);
   
@@ -86,13 +85,13 @@ export default function HomeScreen() {
           {macroTotals.calories} kcal
         </Text>
         <Text style={{ color: Colors.light.tint, fontSize: 24 }}>
-          {macroTotals.carbs}C
+          {macroTotals.carbs} C
         </Text>
         <Text style={{ color: Colors.light.tint, fontSize: 24 }}>
-          {macroTotals.fats}F
+          {macroTotals.fats} F
         </Text>
         <Text style={{ color: Colors.light.tint, fontSize: 24 }}>
-          {macroTotals.protein}P
+          {macroTotals.protein} P
         </Text>
       </View>
 
@@ -101,9 +100,9 @@ export default function HomeScreen() {
       ))}
 
       {/* Add More Meals icon */}
-      {/* <TouchableOpacity style={styles.titleContainer} onPress={() => addNewBlankMeal('2024-08-28')}>
+      <TouchableOpacity style={styles.titleContainer} onPress={() => addNewBlankMeal('2024-08-28')}>
         <svg height="60px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M7 12L12 12M12 12L17 12M12 12V7M12 12L12 17" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <circle cx="12" cy="12" r="9" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></circle> </g></svg>        
-      </TouchableOpacity> */}
+      </TouchableOpacity>
 
       <TouchableOpacity style={styles.saveBtn} onPress={() => saveFoodDiary('2024-08-28', meals)}>
         <Text style={[{ color: Colors[colorScheme].text }, styles.saveText]}>Save</Text>

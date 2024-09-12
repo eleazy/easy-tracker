@@ -1,8 +1,9 @@
 import { db, auth } from "./firebaseConfig";
 import { collection, getDocs, query, where, setDoc, doc, deleteDoc, updateDoc, DocumentReference, getDoc } from "firebase/firestore";
+import { User } from "firebase/auth";
 import tabelaTaco from './tabelaTaco.json';
 import { Food, Meal, MealsOfDayResult, mealMacroTotals } from "@/types/general";
-import { getLoggedUser, fixN } from "@/utils/helperFunctions";
+import { getLoggedUser, fixN, getTodayString } from "@/utils/helperFunctions";
 
 // PRIVATE FUNCTIONS
 
@@ -22,101 +23,101 @@ const fetchFoodData = async (docRef: DocumentReference): Promise<Food | null> =>
   }
 };
 
-// Update the totals of the food diary. Called upon meal's totals being updated
-const updateFoodDiaryTotals = async (date: string, previousTotals: mealMacroTotals, newTotals: mealMacroTotals ) => {
-    const user = getLoggedUser().split('@')[0];
-    try {
-        const foodDiaryQuery = query(
-            collection(db, "users", user, "foodDiary"),
-            where("date", "==", date)
-        );
-        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
+// // Update the totals of the food diary. Called upon meal's totals being updated
+// const updateFoodDiaryTotals = async (date: string, previousTotals: mealMacroTotals, newTotals: mealMacroTotals ) => {
+//     const user = getLoggedUser().split('@')[0];
+//     try {
+//         const foodDiaryQuery = query(
+//             collection(db, "users", user, "foodDiary"),
+//             where("date", "==", date)
+//         );
+//         const foodDiarySnapshot = await getDocs(foodDiaryQuery);
         
-        if (foodDiarySnapshot.empty) {
-            console.log("No matching documents.");
-            return;
-        }
+//         if (foodDiarySnapshot.empty) {
+//             console.log("No matching documents.");
+//             return;
+//         }
 
-        const foodDiaryDoc = foodDiarySnapshot.docs[0];
-        const foodDiaryData = foodDiaryDoc.data();
+//         const foodDiaryDoc = foodDiarySnapshot.docs[0];
+//         const foodDiaryData = foodDiaryDoc.data();
         
-        const differences = {
-            calories: newTotals.calories - previousTotals.calories,
-            carbs: newTotals.carbs - previousTotals.carbs,
-            fats: newTotals.fats - previousTotals.fats,
-            protein: newTotals.protein - previousTotals.protein,
-        };
+//         const differences = {
+//             calories: newTotals.calories - previousTotals.calories,
+//             carbs: newTotals.carbs - previousTotals.carbs,
+//             fats: newTotals.fats - previousTotals.fats,
+//             protein: newTotals.protein - previousTotals.protein,
+//         };
 
-        const newTotalsData = {
-            calories: fixN(foodDiaryData?.totals.calories + differences.calories),
-            carbs: fixN(foodDiaryData?.totals.carbs + differences.carbs),
-            fats: fixN(foodDiaryData?.totals.fats + differences.fats),
-            protein: fixN(foodDiaryData?.totals.protein + differences.protein),
-        };
+//         const newTotalsData = {
+//             calories: fixN(foodDiaryData?.totals.calories + differences.calories),
+//             carbs: fixN(foodDiaryData?.totals.carbs + differences.carbs),
+//             fats: fixN(foodDiaryData?.totals.fats + differences.fats),
+//             protein: fixN(foodDiaryData?.totals.protein + differences.protein),
+//         };
 
-        await updateDoc(foodDiaryDoc.ref, {totals: newTotalsData});
+//         await updateDoc(foodDiaryDoc.ref, {totals: newTotalsData});
 
-    } catch (error) {
-        console.error("Error updating meal totals:", error);
-    }
-}
+//     } catch (error) {
+//         console.error("Error updating meal totals:", error);
+//     }
+// }
 
-// Update the totals of a meal in the food diary. Called upon editing a meal's food
-const updateMealTotals = async (date: string, idMeal: string, previousFoodData: mealMacroTotals, newValues: mealMacroTotals ) => {
-    const user = getLoggedUser().split('@')[0];
-    try {
-        const foodDiaryQuery = query(
-            collection(db, "users", user, "foodDiary"),
-            where("date", "==", date)
-        );
-        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
+// // Update the totals of a meal in the food diary. Called upon editing a meal's food
+// const updateMealTotals = async (date: string, idMeal: string, previousFoodData: mealMacroTotals, newValues: mealMacroTotals ) => {
+//     const user = getLoggedUser().split('@')[0];
+//     try {
+//         const foodDiaryQuery = query(
+//             collection(db, "users", user, "foodDiary"),
+//             where("date", "==", date)
+//         );
+//         const foodDiarySnapshot = await getDocs(foodDiaryQuery);
         
-        if (foodDiarySnapshot.empty) {
-            console.log("No matching documents.");
-            return;
-        }
+//         if (foodDiarySnapshot.empty) {
+//             console.log("No matching documents.");
+//             return;
+//         }
 
-        const foodDiaryDoc = foodDiarySnapshot.docs[0];
-        const docId = foodDiaryDoc.id;
-        const mealsCollectionRef = collection(db, "users", user, "foodDiary", docId, "meals");
-        const mealRef = doc(mealsCollectionRef, idMeal);
-        // const mealFoodsCollectionRef = collection(db, "users", user, "foodDiary", docId, "mealsFoods");
-        // const mealFoodsQuery = query(mealFoodsCollectionRef, where("idMeal", "==", idMeal));
-        // const mealFoodsSnapshot = await getDocs(mealFoodsQuery);
+//         const foodDiaryDoc = foodDiarySnapshot.docs[0];
+//         const docId = foodDiaryDoc.id;
+//         const mealsCollectionRef = collection(db, "users", user, "foodDiary", docId, "meals");
+//         const mealRef = doc(mealsCollectionRef, idMeal);
+//         // const mealFoodsCollectionRef = collection(db, "users", user, "foodDiary", docId, "mealsFoods");
+//         // const mealFoodsQuery = query(mealFoodsCollectionRef, where("idMeal", "==", idMeal));
+//         // const mealFoodsSnapshot = await getDocs(mealFoodsQuery);
         
-        // let newTotals = {calories: 0, carbs: 0, fats: 0, protein: 0};
-        // mealFoodsSnapshot.forEach((foodDoc) => {
-        //     const foodData = foodDoc.data() as Food;
-        //     newTotals.calories += foodData.calories;
-        //     newTotals.carbs += foodData.macroNutrients.carbs;
-        //     newTotals.fats += foodData.macroNutrients.fats;
-        //     newTotals.protein += foodData.macroNutrients.protein;
-        // });
+//         // let newTotals = {calories: 0, carbs: 0, fats: 0, protein: 0};
+//         // mealFoodsSnapshot.forEach((foodDoc) => {
+//         //     const foodData = foodDoc.data() as Food;
+//         //     newTotals.calories += foodData.calories;
+//         //     newTotals.carbs += foodData.macroNutrients.carbs;
+//         //     newTotals.fats += foodData.macroNutrients.fats;
+//         //     newTotals.protein += foodData.macroNutrients.protein;
+//         // });
 
-        const mealDoc = await getDoc(mealRef);
-        const mealData = mealDoc.data();
+//         const mealDoc = await getDoc(mealRef);
+//         const mealData = mealDoc.data();
         
-        const differences = {
-            calories: newValues.calories - previousFoodData.calories,
-            carbs: newValues.carbs - previousFoodData.carbs,
-            fats: newValues.fats - previousFoodData.fats,
-            protein: newValues.protein - previousFoodData.protein,
-        };
+//         const differences = {
+//             calories: newValues.calories - previousFoodData.calories,
+//             carbs: newValues.carbs - previousFoodData.carbs,
+//             fats: newValues.fats - previousFoodData.fats,
+//             protein: newValues.protein - previousFoodData.protein,
+//         };
         
-        const newTotals = {
-            calories: fixN(mealData?.totals.calories + differences.calories),
-            carbs: fixN(mealData?.totals.carbs + differences.carbs),
-            fats: fixN(mealData?.totals.fats + differences.fats),
-            protein: fixN(mealData?.totals.protein + differences.protein),
-        };
-        console.log(newTotals);
-        updateFoodDiaryTotals(date, mealData?.totals, newTotals);
-        await updateDoc(mealRef, {totals: newTotals});
+//         const newTotals = {
+//             calories: fixN(mealData?.totals.calories + differences.calories),
+//             carbs: fixN(mealData?.totals.carbs + differences.carbs),
+//             fats: fixN(mealData?.totals.fats + differences.fats),
+//             protein: fixN(mealData?.totals.protein + differences.protein),
+//         };
+//         console.log(newTotals);
+//         updateFoodDiaryTotals(date, mealData?.totals, newTotals);
+//         await updateDoc(mealRef, {totals: newTotals});
 
-    } catch (error) {
-        console.error("Error updating meal totals:", error);
-    }
-}
+//     } catch (error) {
+//         console.error("Error updating meal totals:", error);
+//     }
+// }
 
 // Edit a meal food in the food diary
 const editMealFood = async (date: string, idMealsFoods: string, quantity: number) => {
@@ -308,7 +309,7 @@ export const getMealFoods = async (docRefs: DocumentReference[]): Promise<Food[]
 };
 
 // Add a new meal to the food diary in a given day
-export const addNewBlankMeal = async (date: string) => {
+export const addNewBlankMeal = async (date: string, mealTitle: string = '') => {
     const user = getLoggedUser().split('@')[0];
     try {
         const foodDiaryQuery = query(
@@ -330,14 +331,8 @@ export const addNewBlankMeal = async (date: string) => {
         const newMeal = {
             id: newMealRef.id,
             mealPosition: 0,
-            title: "Refeição",
-            foods: [],
-            totals: {
-                calories: 0,
-                carbs: 0,
-                fats: 0,
-                protein: 0,
-            },
+            title: mealTitle !== '' ? mealTitle : "Refeição",
+            foods: [],            
         };
         await setDoc(newMealRef, newMeal);
 
@@ -346,8 +341,19 @@ export const addNewBlankMeal = async (date: string) => {
     }
 };
 
+// INITIAL DATABASE LOAD
+export const loadInitialData = async ( user: User ) => {
+    // Create a new document in the users collection with the user's UID and email
+    setDoc(doc(db, "users", user.uid), { uid: user.uid, email: user.email });
 
+    // Create collection foodDiary for the user and add a document with today's date
+    setDoc(doc(db, "users", user.uid, "foodDiary", getTodayString()), { date: getTodayString() });
 
+    // Add four default blank meals to the food diary
+    ['Café da Manhã', 'Almoço', 'Lanche', 'Jantar'].forEach(async (mealTitle, i) => {
+        addNewBlankMeal(getTodayString(), mealTitle);
+    });
+};
 
 // FOR DEVELOPMENT PURPOSES ONLY
 

@@ -1,3 +1,3 @@
 🚀 EASY TRACKER 🚀
 
-Aplicativo para rastrear calorias e nutrientes 
+Aplicativo para rastrear calorias e nutrientes

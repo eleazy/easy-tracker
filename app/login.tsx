@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Alert, StyleSheet } from 'react-native';
-
-import { doc, setDoc } from "firebase/firestore";
-import { db, auth } from "@/firebase/firebaseConfig";
+import { auth } from "@/firebase/firebaseConfig";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInAnonymously } from "firebase/auth";
+import { useNavigation } from '@react-navigation/native';
+import { loadInitialData } from '@/firebase/dataHandling';
 
-interface LoginProps {}
+export default function Login(): JSX.Element {
 
-export default function Login({}: LoginProps): JSX.Element {
-
+    const navigation = useNavigation() as any;
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [blockInput, setBlockInput] = useState<boolean>(false);
@@ -20,11 +19,11 @@ export default function Login({}: LoginProps): JSX.Element {
     const userLogin = () => {
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                // Handle successful login
+                navigation.navigate('index');
             })
             .catch((error) => {
                 if (error.code === 'auth/invalid-login-credentials') {
-                    Alert.alert('That email address is invalid!');
+                    Alert.alert('Email incorreto!');
                 } else {
                     error.message && Alert.alert(fixMessage(error.code));
                 }
@@ -34,7 +33,7 @@ export default function Login({}: LoginProps): JSX.Element {
     const userRegister = async () => {        
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                setDoc(doc(db, "users", email), { email });
+                loadInitialData(userCredential.user).then(() => { navigation.navigate('index'); });
 
                 setBlockInput(true);
             })
@@ -45,6 +44,9 @@ export default function Login({}: LoginProps): JSX.Element {
 
     const anonymousLogin = () => {
         signInAnonymously(auth)
+            .then((userCredential) => {
+                loadInitialData(userCredential.user).then(() => { navigation.navigate('index'); });
+            })
             .catch(error => {
                 console.error(error);
             });

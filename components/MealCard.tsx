@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { Meal, Food, mealMacroTotals, MealCardProps } from '@/types/general';
+import { Food, mealMacroTotals, MealCardProps } from '@/types/general';
 import { fixN } from '@/utils/helperFunctions';
-import { getMealFoods, getTacoTableFoods } from '@/firebase/dataHandling';
+import { getTacoTableFoods, getCustomFoods } from '@/firebase/dataHandling';
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotals }: MealCardProps) => {
   const colorScheme = useColorScheme() ?? 'dark';
 
+  const [showAddFood, setShowAddFood] = useState<boolean>(false);
   const [foods, setFoods] = useState<Food[]>(meal.foods);
-  //const [mealTotals, setMealTotals] = useState<mealMacroTotals>(meal.totals);
+
+  const tacoTableFoods: Food[] = getTacoTableFoods();
+  const [customFoods, setCustomFoods] = useState<Food[]>([]);
+
+  useEffect(() => {
+    getCustomFoods().then((data: Food[]) => { setCustomFoods(data); });
+  }, []);
 
   const changeQuantity = (i:number, value: string) => {
     // change quantity of a food in a meal    
@@ -44,7 +52,6 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotal
         newTotals.fats += food.macroNutrients.fats;
         newTotals.protein += food.macroNutrients.protein;
       });
-      //setMealTotals(newTotals);
       
       // Update meals state in parent component
       const newMeals = [...meals];
@@ -54,7 +61,31 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotal
 
       return newFoods;
     });
-  } 
+  }; 
+
+  const addFoodToMeal = (food: Food) => {
+    // add a food to a meal
+    setFoods((prevFoods) => {
+      const newFoods = [...prevFoods];
+      newFoods.push(food);
+
+      let newTotals = {calories: 0, carbs: 0, fats: 0, protein: 0};
+      newFoods.forEach((food) => {        
+        newTotals.calories += food.calories;
+        newTotals.carbs += food.macroNutrients.carbs;
+        newTotals.fats += food.macroNutrients.fats;
+        newTotals.protein += food.macroNutrients.protein;
+      });
+
+      // Update meals state in parent component
+      const newMeals = [...meals];
+      newMeals[mealIndex].foods = newFoods;
+      newMeals[mealIndex].totals = newTotals;
+      setMeals(newMeals);
+
+      return newFoods;
+    });
+  };
   
   return (
     <View style={styles.container}>
@@ -82,7 +113,30 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotal
             {food.calories} kcal - {food.macroNutrients.carbs}g C - {food.macroNutrients.fats}g F - {food.macroNutrients.protein}g P
           </Text>
         </View>
-      ))}      
+      ))}  
+
+      <Pressable onPress={() => setShowAddFood(!showAddFood)}>
+        <svg height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M7 12L12 12M12 12L17 12M12 12V7M12 12L12 17" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> <circle cx="12" cy="12" r="9" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></circle> </g></svg>        
+      </Pressable>
+
+      {showAddFood && (
+        <View style={styles.foodList}>
+          {tacoTableFoods.map((food, i) => (
+            <Pressable key={i} onPress={() => addFoodToMeal(food)}>
+              <Text style={[{ color: Colors[colorScheme].text }, styles.text]}>
+                {food.title} - {food.calories} kcal - {food.macroNutrients.carbs}g C - {food.macroNutrients.fats}g F - {food.macroNutrients.protein}g P
+              </Text>
+            </Pressable>
+          ))}
+          {customFoods.map((food, i) => (
+            <Pressable key={i} onPress={() => addFoodToMeal(food)}>
+              <Text style={[{ color: Colors[colorScheme].text }, styles.text]}>
+                {food.title} - {food.calories} kcal - {food.macroNutrients.carbs}g C - {food.macroNutrients.fats}g F - {food.macroNutrients.protein}g P
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      )}
     </View>
   )
 }
@@ -115,7 +169,14 @@ const styles = StyleSheet.create({
     borderBottomColor: 'white',
     borderBottomWidth: 1,
   },
-  
+  foodList: {
+    padding: 10,
+    margin: 5,
+    borderRadius: 10,
+    backgroundColor: 'rgba(0,0,0,0.1)',
+    borderColor: 'white',
+    borderWidth: 1,
+  },  
 });
 
 export default MealCard

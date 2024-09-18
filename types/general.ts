@@ -43,10 +43,3 @@ export interface MealCardProps {
   macroTotals: mealMacroTotals;
   setMacroTotals: (totals: mealMacroTotals) => void;
 };
-
-// TYPES
-
-export type MealsOfDayResult = {
-  mealsData: DocumentData[];
-  foodDiaryDoc: string;
-};

@@ -3,11 +3,10 @@ import { Image, StyleSheet, View, ScrollView, Pressable, Text } from "react-nati
 import { useColorScheme } from "react-native";
 import MealCard from "@/components/MealCard";
 import { Colors } from "@/constants/Colors";
-//import { DocumentReference, DocumentData, doc, onSnapshot } from 'firebase/firestore';
 import { getMealsOfDay, addNewBlankMeal, deleteAllMealsButOne } from "@/firebase/dataHandling";
 import { Food, Meal, mealMacroTotals } from "@/types/general";
-import { saveFoodDiary, saveFoodsToMeal } from "@/firebase/dataHandling";
-import { getTodayString } from "@/utils/helperFunctions";
+import { saveFoodDiary } from "@/firebase/dataHandling";
+import { getTodayString, fixN } from "@/utils/helperFunctions";
 
 export default function HomeScreen() {
   
@@ -15,12 +14,9 @@ export default function HomeScreen() {
   const [ meals, setMeals ] = useState<Meal[]>([]);
   const [ foodDiaryDay, setFoodDiaryDay ] = useState<string>(getTodayString());
   const [ macroTotals, setMacroTotals ] = useState<mealMacroTotals>({calories: 0, carbs: 0, fats: 0, protein: 0});
-  //console.log('index loaded');
+  // console.log('index loaded');
 
-  useEffect(() => {   
-    //deleteAllMealsButOne(foodDiaryDay);
-
-    // this gets the meals of the day
+  useEffect(() => {    
     getMealsOfDay(foodDiaryDay)
       .then( async (meals) => { 
         setMeals(meals);
@@ -35,15 +31,16 @@ export default function HomeScreen() {
       newTotals.calories += meal.totals.calories;
       newTotals.carbs += meal.totals.carbs;
       newTotals.fats += meal.totals.fats;
-      newTotals.protein += meal.totals.protein;
+      newTotals.protein += meal.totals.protein;      
+    });
+    (['calories', 'carbs', 'fats', 'protein'] as (keyof typeof newTotals)[]).forEach((key) => {
+      newTotals[key] = fixN(newTotals[key]);
     });
     
     setMacroTotals(newTotals);
   }, [meals]);
 
   const saveAll = () => {
-console.log(meals, 'saveAll')
-    // Continue here
     saveFoodDiary(foodDiaryDay, meals);
   };
   

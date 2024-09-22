@@ -1,5 +1,3 @@
-import { DocumentReference, DocumentData } from 'firebase/firestore';
-
 // INTERFACES
 
 export interface Food {
@@ -42,4 +40,22 @@ export interface MealCardProps {
   setMeals: (meals: Meal[]) => void;
   macroTotals: mealMacroTotals;
   setMacroTotals: (totals: mealMacroTotals) => void;
+};
+
+export interface FoodSelectionProps {
+  addFoodToMeal: (food: Food) => void;
+};
+
+// REPLACES
+
+export const macrosDisplay = {
+  carbs: 'Carboidratos',
+  fats: 'Gorduras',
+  protein: 'Proteínas',
+};
+
+export const macrosDisplayShort = {
+  carbs: 'C',
+  fats: 'G',
+  protein: 'P',
 };

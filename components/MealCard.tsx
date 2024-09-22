@@ -1,23 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { Food, mealMacroTotals, MealCardProps } from '@/types/general';
+import { Food, MealCardProps, macrosDisplay, macrosDisplayShort } from '@/types/general';
 import { fixN } from '@/utils/helperFunctions';
-import { getTacoTableFoods, getCustomFoods } from '@/firebase/dataHandling';
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import FoodSelection from "@/components/FoodSelection";
 
 const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotals }: MealCardProps) => {
   const colorScheme = useColorScheme() ?? 'dark';
 
   const [showAddFood, setShowAddFood] = useState<boolean>(false);
   const [foods, setFoods] = useState<Food[]>(meal.foods);
-
-  const tacoTableFoods: Food[] = getTacoTableFoods();
-  const [customFoods, setCustomFoods] = useState<Food[]>([]);
-
-  useEffect(() => {
-    getCustomFoods().then((data: Food[]) => { setCustomFoods(data); });
-  }, []);
 
   const changeQuantity = (i:number, value: string) => {
     // change quantity of a food in a meal    
@@ -88,30 +80,70 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotal
   };
   
   return (
-    <View style={styles.container}>
-      <Text style={[{ color: Colors[colorScheme].text }, styles.text, styles.mealHeader]}>
-        {meal.title} - {meal.totals.calories} kcal - {meal.totals.carbs}g C - {meal.totals.fats}g F - {meal.totals.protein}g P
-      </Text>      
+    <View style={styles.mealCardOuter}>
+
+      <View style={styles.mealHeader}>
+
+        <View style={styles.mealTitleOuter}>
+          <Text style={[{ color: Colors[colorScheme].text }, styles.mealTitle]}> {meal.title} </Text>
+          <Text style={[{ color: Colors[colorScheme].text }, styles.mealCalories]}> {meal.totals.calories} kcal  </Text>
+        </View>
+
+        <View style={styles.mealMacrosOuter}>
+          {Object.keys(meal.totals).slice(1).map((macro, i) => (
+            <View key={macro} style={styles.mealMacros}>
+              <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroValue]}>
+                {meal.totals[macro as keyof typeof meal.totals]}g
+              </Text>            
+
+              <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroType]}>
+                {macrosDisplay[macro as keyof typeof macrosDisplay]}
+              </Text>            
+            </View>
+          ))}
+        </View>
+
+      </View>
       
-      {/* ontouch will be input for quantity */}
       {/* display each food of meal and its macros */}
 
       {foods.map((food, i) => (
-        <View key={i} style={styles.foodDiv}>
-          <View style={[styles.flex, {marginVertical: 10, marginRight: 10}]}>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.text]}>
-              {food.title} - 
-            </Text>
-            <TextInput
-              style={[{ color: Colors[colorScheme].text }, styles.text, {width: 50}]}
-              value={food.quantity.toString()}
-              onChangeText={(text) => changeQuantity(i, text)}
-              keyboardType="numeric"
-            />               
-          </View>             
-          <Text style={[{ color: Colors[colorScheme].text }, styles.text, {marginVertical: 10, marginRight: 10}]}>
-            {food.calories} kcal - {food.macroNutrients.carbs}g C - {food.macroNutrients.fats}g F - {food.macroNutrients.protein}g P
-          </Text>
+        <View key={i} style={styles.foodOuter}>
+
+          <View style={styles.foodTitleOuter}>
+
+            <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}> {food.title} </Text>
+
+            <View style={styles.foodKcalOuter}>
+
+              <TextInput
+                style={[{ color: Colors[colorScheme].text }, styles.quantityInput]}
+                value={food.quantity.toString()}
+                onChangeText={(text) => changeQuantity(i, text)}
+                inputMode="numeric"
+              />  
+
+              <Text style={[{ color: Colors[colorScheme].text }, styles.foodKcalValue]}> {food.calories}</Text>
+              <Text style={[{ color: Colors[colorScheme].text }, styles.foodKcal]}> kcal </Text>
+            </View>
+
+          </View> 
+
+
+          <View style={styles.foodMacrosOuter}>
+            {Object.keys(food.macroNutrients).map((macro) => (
+              <View key={macro} style={styles.foodMacros}>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroValue]}>
+                  {food.macroNutrients[macro as keyof typeof food.macroNutrients]}g
+                </Text>
+
+                <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroType]}>
+                  {macrosDisplayShort[macro as keyof typeof macrosDisplayShort]}
+                </Text>            
+              </View>
+            ))}
+          </View>
+          
         </View>
       ))}  
 
@@ -119,30 +151,13 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotal
         <svg height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M7 12L12 12M12 12L17 12M12 12V7M12 12L12 17" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> <circle cx="12" cy="12" r="9" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></circle> </g></svg>        
       </Pressable>
 
-      {showAddFood && (
-        <View style={styles.foodList}>
-          {tacoTableFoods.map((food, i) => (
-            <Pressable key={i} onPress={() => addFoodToMeal(food)}>
-              <Text style={[{ color: Colors[colorScheme].text }, styles.text]}>
-                {food.title} - {food.calories} kcal - {food.macroNutrients.carbs}g C - {food.macroNutrients.fats}g F - {food.macroNutrients.protein}g P
-              </Text>
-            </Pressable>
-          ))}
-          {customFoods.map((food, i) => (
-            <Pressable key={i} onPress={() => addFoodToMeal(food)}>
-              <Text style={[{ color: Colors[colorScheme].text }, styles.text]}>
-                {food.title} - {food.calories} kcal - {food.macroNutrients.carbs}g C - {food.macroNutrients.fats}g F - {food.macroNutrients.protein}g P
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-      )}
+      {showAddFood && <FoodSelection addFoodToMeal={addFoodToMeal} />}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
+  mealCardOuter: {
     padding: 10,
     margin: 5,
     borderRadius: 10,
@@ -150,6 +165,92 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     borderWidth: 1,
   },
+  mealHeader: {
+    borderBottomColor: 'gray',
+    borderBottomWidth: 1,
+    paddingBottom: 5,
+  },
+  mealTitleOuter: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  mealTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'orange',    
+  },
+  mealCalories: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  mealMacrosOuter: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+  },
+  mealMacros: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 5,    
+    alignItems: 'baseline',
+  },
+  mealMacroValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  mealMacroType: {
+    fontSize: 13,
+  },
+  foodOuter: {  
+    borderBottomColor: 'white',
+    borderBottomWidth: 1,
+    gap: 5,
+    paddingHorizontal: 3,
+    marginVertical: 3,
+  },
+  foodTitleOuter: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  foodTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  quantityInput: {
+    width: 50,
+    fontSize: 15,
+    textAlign: 'center',
+  },
+  foodKcalOuter: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  foodKcalValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  foodKcal: {
+    fontSize: 13,
+    color: 'gray',
+  },
+  foodMacrosOuter: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+  },
+  foodMacros: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 5,
+  },
+
+
   text: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -158,25 +259,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
   },
-  mealHeader: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'green',
-    borderBottomColor: 'white',
-    borderBottomWidth: 1,
-  },
-  foodDiv: {  
-    borderBottomColor: 'white',
-    borderBottomWidth: 1,
-  },
-  foodList: {
-    padding: 10,
-    margin: 5,
-    borderRadius: 10,
-    backgroundColor: 'rgba(0,0,0,0.1)',
-    borderColor: 'white',
-    borderWidth: 1,
-  },  
+ 
 });
 
 export default MealCard

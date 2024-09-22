@@ -1,5 +1,5 @@
 import { db, auth } from "./firebaseConfig";
-import { collection, getDocs, query, where, setDoc, doc, deleteDoc, updateDoc, DocumentReference, getDoc, DocumentData } from "firebase/firestore";
+import { collection, getDocs, query, where, setDoc, doc, deleteDoc, updateDoc, arrayUnion, DocumentReference, getDoc, DocumentData } from "firebase/firestore";
 import { User } from "firebase/auth";
 import tabelaTaco from './tabelaTaco.json';
 import { Food, Meal, mealMacroTotals } from "@/types/general";
@@ -23,7 +23,7 @@ const fetchFoodData = async (docRef: DocumentReference): Promise<Food | null> =>
   }
 };
 
-// Edit a meal food in the food diary
+// Edit a food in the mealFood collection
 const editMealFood = async (date: string, idMealsFoods: string, quantity: number) => {
     const loggedUser = getLoggedUser();
     const user = loggedUser.uid;
@@ -33,11 +33,6 @@ const editMealFood = async (date: string, idMealsFoods: string, quantity: number
             where("date", "==", date)
         );
         const foodDiarySnapshot = await getDocs(foodDiaryQuery);
-        
-        if (foodDiarySnapshot.empty) {
-            console.log("No matching documents.");
-            return;
-        }
 
         const foodDiaryDoc = foodDiarySnapshot.docs[0];
         const docId = foodDiaryDoc.id;
@@ -67,9 +62,7 @@ const editMealFood = async (date: string, idMealsFoods: string, quantity: number
 
         await setDoc(mealFoodRef, newFoodData);
 
-    } catch (error) {
-        console.error("Error editing meal:", error);
-    }
+    } catch (error) { console.error("Error editing meal:", error); }
 };
 
 // Load initial data for the food diary
@@ -84,7 +77,8 @@ const setFoodDiaryInitialData = async (date: string) => {
     });
 };
 
-// Takes Meal and fetch data for the food document references, calculates totals and returns a Meal object with Food[] instead of DocumentReference[]
+// Takes Meal and fetch data for the food document references, 
+// calculates totals and returns a Meal object with Food[] instead of DocumentReference[]
 const getAndSetMealFoods = async (meal: DocumentData): Promise<Meal> => {
     try {
         const docRefs = meal.foods;
@@ -113,7 +107,7 @@ const getAndSetMealFoods = async (meal: DocumentData): Promise<Meal> => {
       console.error('getAndSetMealFoods - Error fetching documents:', error);
       return {foods: [], id: '', mealPosition: 0, title: '', totals: {calories: 0, carbs: 0, fats: 0, protein: 0}};
     }
-  };
+};
 
 // PUBLIC FUNCTIONS
 
@@ -127,12 +121,7 @@ export const saveFoodDiary = async (date: string, meals: Meal[]) => {
             where("date", "==", date)
         );
         const foodDiarySnapshot = await getDocs(foodDiaryQuery);
-        
-        if (foodDiarySnapshot.empty) {
-            console.log("No matching documents.");
-            return;
-        }
-
+       
         const foodDiaryDoc = foodDiarySnapshot.docs[0];
         const docId = foodDiaryDoc.id;
         const mealsCollectionRef = collection(db, "users", user, "foodDiary", docId, "meals");
@@ -150,72 +139,34 @@ export const saveFoodDiary = async (date: string, meals: Meal[]) => {
             const mealDoc = await getDoc(mealRef);
             const mealData = mealDoc.data();
             const foodsRefs = mealData?.foods as DocumentReference[];
-            console.log(mealData?.foods);
+
             if (foodsRefs.length == 0) {
                 // If there are no foods references in the meal data in firebase, it mean the foods were just added
                 // So we need to create them in the mealsFoods collection, with the meal id it belongs to
                 const addFoodsPromises = meal.foods.map(async (food) => {
                     const newFoodRef = doc(mealsFoodsCollectionRef);
-                    await setDoc(newFoodRef, food);
+                    food = {...food, idMeal: meal.id}; // add the meal id to the food here                    
+                    await setDoc(newFoodRef, food);                    
+                    await updateDoc(mealRef, {
+                        foods: arrayUnion(newFoodRef) // add the new food reference to the meals.foods in firebase
+                      });
                     foodsRefs.push(newFoodRef);
-                });                
-            }
-            //console.log(meals);
-            const updateFoodsPromises = meal.foods.map(async (food, i) => {
-                const foodRef = doc(mealsFoodsCollectionRef, foodsRefs[i].id);
-                await editMealFood(date, foodRef.id, food.quantity);
-            });
+                });
+                await Promise.all(addFoodsPromises);
 
-            await Promise.all(updateFoodsPromises);
+            } else {                
+                // if the docs existed, just update the mealsFoods items
+                const updateFoodsPromises = meal.foods.map(async (food, i) => {
+                    const foodRef = doc(mealsFoodsCollectionRef, foodsRefs[i].id);
+                    await editMealFood(date, foodRef.id, food.quantity);
+                });    
+                await Promise.all(updateFoodsPromises);
+            }
         });
 
         await Promise.all(updatePromises);
 
-    } catch (error) {
-        console.error("Error saving food diary:", error);
-    }
-};
-
-// Save foods to meal
-export const saveFoodsToMeal = async (date: string, mealId: string, foods: Food[]) => {
-    // Creates the document in mealsFoods for each food added to the meal
-    const loggedUser = getLoggedUser();
-    const user = loggedUser.uid;
-
-    try {
-        const foodDiaryQuery = query(
-            collection(db, "users", user, "foodDiary"),
-            where("date", "==", date)
-        );
-        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
-        
-        if (foodDiarySnapshot.empty) {
-            console.log("No matching documents.");
-            return;
-        }
-
-        const foodDiaryDoc = foodDiarySnapshot.docs[0];
-        const docId = foodDiaryDoc.id;
-        const mealsFoodsCollectionRef = collection(db, "users", user, "foodDiary", docId, "mealsFoods");
-        const mealsCollectionRef = collection(db, "users", user, "foodDiary", docId, "meals");
-        const mealRef = doc(mealsCollectionRef, mealId);
-        const mealDoc = await getDoc(mealRef);
-        const mealData = mealDoc.data();
-        const foodsRefs = mealData?.foods as DocumentReference[];
-
-        const addFoodsPromises = foods.map(async (food, i) => {
-            const newFoodRef = doc(mealsFoodsCollectionRef);
-            await setDoc(newFoodRef, food);
-            foodsRefs.push(newFoodRef);
-        });
-
-        await Promise.all(addFoodsPromises);
-
-        await updateDoc(mealRef, { foods: foodsRefs });
-
-    } catch (error) {
-        console.error("Error saving foods to meal:", error);
-    }
+    } catch (error) { console.error("Error saving food diary:", error); }
 };
 
 // Get and shape local json data for the taco foods table
@@ -261,7 +212,7 @@ export const getMealsOfDay = async (date: string): Promise<Meal[]> => {
         const foodDiarySnapshot = await getDocs(foodDiaryQuery);
         
         if (foodDiarySnapshot.empty) {
-            console.log("getMealsOfDay - No matching documents.");
+            console.log("getMealsOfDay - No matching documents, creating food diary.");
            
             // in this case here, a new food diary for the day is created
             // and add the default meals to it

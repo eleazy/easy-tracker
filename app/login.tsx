@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, Alert, StyleSheet } from 'react-native';
+import { View, Text, Pressable, TextInput, Alert, StyleSheet } from 'react-native';
 import { auth } from "@/firebase/firebaseConfig";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInAnonymously } from "firebase/auth";
-import { useNavigation } from '@react-navigation/native';
+import { navigate } from '@/components/navigation/RootNavigation';
 import { loadInitialData } from '@/firebase/dataHandling';
 
 export default function Login(): JSX.Element {
 
-    const navigation = useNavigation() as any;
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [blockInput, setBlockInput] = useState<boolean>(false);
-    const [signUp, setSignUp] = useState<boolean>(false);
+    const [signUp, setSignUp] = useState<boolean>(true);
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const fixMessage = (message: string): string => message.slice(5).split('-').join(' ');
@@ -19,7 +18,7 @@ export default function Login(): JSX.Element {
     const userLogin = () => {
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                navigation.navigate('index');
+                navigate('index');
             })
             .catch((error) => {
                 if (error.code === 'auth/invalid-login-credentials') {
@@ -33,7 +32,7 @@ export default function Login(): JSX.Element {
     const userRegister = async () => {        
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                loadInitialData(userCredential.user).then(() => { navigation.navigate('index'); });
+                loadInitialData(userCredential.user).then(() => { navigate('index'); });
 
                 setBlockInput(true);
             })
@@ -45,7 +44,7 @@ export default function Login(): JSX.Element {
     const anonymousLogin = () => {
         signInAnonymously(auth)
             .then((userCredential) => {
-                loadInitialData(userCredential.user).then(() => { navigation.navigate('index'); });
+                loadInitialData(userCredential.user).then(() => { navigate('index'); });
             })
             .catch(error => {
                 console.error(error);
@@ -54,52 +53,51 @@ export default function Login(): JSX.Element {
     
     const inputValue = [email, password];
     const inputSetters = [setEmail, setPassword];
-    const inputMode: ('numeric' | 'email' | 'text')[] = ['numeric', 'email', 'text'];
+    const inputMode: ('email' | 'text')[] = ['email', 'text'];
 
     return (
         <View style={styles.container}>
             <View style={styles.formContainer}>
-                {['Email', 'Password'].map((e, i) => {                    
+                {['Email', 'Senha'].map((e, i) => {                    
                     return (
                         <View key={i} style={styles.inputGroup}>
                             <Text style={styles.label}>{e}</Text>
                             <View style={styles.inputContainer}>
-                                <TextInput
+                                <TextInput  
                                     style={styles.input}
                                     onChangeText={inputSetters[i]}
                                     inputMode={inputMode[i]}
-                                    secureTextEntry={e === "Password" && !showPassword}
-                                    maxLength={e === 'Age' ? 2 : 40}
+                                    secureTextEntry={e === "Senha" && !showPassword}                                    
                                     autoFocus={i === 0}
                                     value={inputValue[i]}
                                     editable={!blockInput}
                                 />
-                                {e === 'Password' && (
-                                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                        <Text style={styles.showHideButton}>{showPassword ? 'Hide' : 'Show'}</Text>
-                                    </TouchableOpacity>
+                                {e === 'Senha' && (
+                                    <Pressable onPress={() => setShowPassword(!showPassword)}>
+                                        <Text style={styles.showHideButton}>{showPassword ? 'Ocultar' : 'Mostrar'}</Text>
+                                    </Pressable>
                                 )}
                             </View>
-                            {e === "Password" && (
-                                <Text style={styles.passwordHint}>At least 6 characters</Text>
+                            {e === "Senha" && (
+                                <Text style={styles.passwordHint}>Pelo menos 6 caracteres</Text>
                             )}
                         </View>
                     )
                 })}
 
-                <TouchableOpacity onPress={signUp ? userLogin : userRegister}>
-                    <Text style={styles.button}>{signUp ? 'Log In' : 'Sign Up'}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
+                <Pressable onPress={signUp ? userLogin : userRegister}>
+                    <Text style={styles.button}>{signUp ? 'Entrar' : 'Registrar'}</Text>
+                </Pressable>
+                <Pressable onPress={() => {
                     setSignUp(!signUp);
                     setShowPassword(false);
                 }}>
-                    <Text style={styles.switchButton}>{signUp ? 'Sign Up instead' : 'Return'}</Text>
-                </TouchableOpacity>
+                    <Text style={styles.switchButton}>{signUp ? 'Registrar se' : 'Voltar'}</Text>
+                </Pressable>
             </View>
-            <TouchableOpacity onPress={anonymousLogin}>
-                <Text style={styles.guestButton}>Continue in guest mode</Text>
-            </TouchableOpacity>
+            <Pressable onPress={anonymousLogin}>
+                <Text style={styles.guestButton}>Entrar no modo visitante</Text>
+            </Pressable>
         </View>
     );
 }

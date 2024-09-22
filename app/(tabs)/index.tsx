@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Image, StyleSheet, View, ScrollView, Pressable, Text } from "react-native";
+import { StyleSheet, View, ScrollView, Pressable, Text } from "react-native";
 import { useColorScheme } from "react-native";
 import MealCard from "@/components/MealCard";
 import { Colors } from "@/constants/Colors";
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { getMealsOfDay, addNewBlankMeal, deleteAllMealsButOne } from "@/firebase/dataHandling";
-import { Food, Meal, mealMacroTotals } from "@/types/general";
+import { Food, Meal, mealMacroTotals, macrosDisplay } from "@/types/general";
 import { saveFoodDiary } from "@/firebase/dataHandling";
 import { getTodayString, fixN } from "@/utils/helperFunctions";
 
@@ -14,12 +15,13 @@ export default function HomeScreen() {
   const [ meals, setMeals ] = useState<Meal[]>([]);
   const [ foodDiaryDay, setFoodDiaryDay ] = useState<string>(getTodayString());
   const [ macroTotals, setMacroTotals ] = useState<mealMacroTotals>({calories: 0, carbs: 0, fats: 0, protein: 0});
+  const [ hasChanges, setHasChanges ] = useState<boolean>(false);
   // console.log('index loaded');
 
-  useEffect(() => {    
+  useEffect(() => {
     getMealsOfDay(foodDiaryDay)
       .then( async (meals) => { 
-        setMeals(meals);
+        setMeals(meals);  
       })
       .catch((error) => { console.error(error); });
   }, [foodDiaryDay]);
@@ -31,94 +33,133 @@ export default function HomeScreen() {
       newTotals.calories += meal.totals.calories;
       newTotals.carbs += meal.totals.carbs;
       newTotals.fats += meal.totals.fats;
-      newTotals.protein += meal.totals.protein;      
+      newTotals.protein += meal.totals.protein;
     });
     (['calories', 'carbs', 'fats', 'protein'] as (keyof typeof newTotals)[]).forEach((key) => {
       newTotals[key] = fixN(newTotals[key]);
     });
     
     setMacroTotals(newTotals);
+
   }, [meals]);
 
   const saveAll = () => {
-    saveFoodDiary(foodDiaryDay, meals);
+    saveFoodDiary(foodDiaryDay, meals);    
+    setHasChanges(false);
   };
   
   return (
-    // Página inicial do aplicativo
-    // Card de cada refeição
+    <View style={styles.outerView}>
+      <ScrollView style={styles.indexOuter} showsVerticalScrollIndicator={false} >
+        {/* Macro Totals */}
+        <View style={styles.diaryHeader}>
 
-    <ScrollView
-      style={styles.stepContainer}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Macro Totals */}
-      <View style={styles.titleContainer}>
-        <Text style={{ color: Colors.light.tint, fontSize: 24 }}>
-          {macroTotals.calories} kcal
-        </Text>
-        <Text style={{ color: Colors.light.tint, fontSize: 24 }}>
-          {macroTotals.carbs} C
-        </Text>
-        <Text style={{ color: Colors.light.tint, fontSize: 24 }}>
-          {macroTotals.fats} F
-        </Text>
-        <Text style={{ color: Colors.light.tint, fontSize: 24 }}>
-          {macroTotals.protein} P
-        </Text>
-      </View>
+          <View style={styles.diaryTitleOuter}>
+            <Text style={[{ color: Colors[colorScheme].text }, styles.diaryTitle]}> {foodDiaryDay} </Text>
+            <Text style={[{ color: Colors[colorScheme].text }, styles.diaryCalories]}> {macroTotals.calories} kcal </Text>
+          </View>
+          
+          <View style={styles.diaryTotalsOuter}>
+            {Object.keys(macroTotals).slice(1).map((macro, i) => (
+              <View key={macro} style={styles.diaryMacros}>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.diaryMacroValue]}>
+                  {macroTotals[macro as keyof typeof macroTotals]}g
+                </Text>            
 
-      {meals.map((meal, i) => (
-        <MealCard key={i} meal={meal} mealIndex={i} meals={meals} setMeals={setMeals} macroTotals={macroTotals} setMacroTotals={setMacroTotals} />
-      ))}
+                <Text style={[{ color: Colors[colorScheme].text }, styles.diaryMacroType]}>
+                  {macrosDisplay[macro as keyof typeof macrosDisplay]}
+                </Text>            
+              </View>
+            ))}
+          </View>
 
-      {/* Add More Meals icon */}
-      <Pressable style={styles.titleContainer} onPress={ async () => {
-        await addNewBlankMeal(foodDiaryDay);
-        const updatedMeals = await getMealsOfDay(foodDiaryDay);
-        setMeals(updatedMeals);
-      }}>
-        <svg height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M7 12L12 12M12 12L17 12M12 12V7M12 12L12 17" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> <circle cx="12" cy="12" r="9" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></circle> </g></svg>        
-      </Pressable>
+        </View>
 
-      <Pressable style={styles.saveBtn} onPress={() => saveAll()}>
-        <Text style={[{ color: Colors[colorScheme].text }, styles.saveText]}>Save</Text>
-      </Pressable>
-    </ScrollView>
+        {meals.map((meal, i) => (
+          <MealCard key={i} meal={meal} mealIndex={i} meals={meals} setMeals={setMeals} setHasChanges={setHasChanges} />
+        ))}
+
+        {/* Add More Meals icon */}
+        {/* <Pressable style={styles.addMealIcon} onPress={ async () => {
+          await addNewBlankMeal(foodDiaryDay);
+          const updatedMeals = await getMealsOfDay(foodDiaryDay);
+          setMeals(updatedMeals);
+        }}>
+          <Ionicons name="add-circle-outline" size={32} color="white"></Ionicons>
+        </Pressable> */}
+
+
+      </ScrollView>
+      
+      {hasChanges && (
+        <Pressable style={styles.saveBtn} onPress={() => saveAll()}>
+          <Text style={[{ color: Colors[colorScheme].text }, styles.saveText]}>Salvar</Text>
+        </Pressable>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
+  outerView: {
+    flex: 1,
+    position: 'relative',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  indexOuter: {   
+    backgroundColor: Colors.dark.background,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
+  diaryHeader: {    
+    paddingBottom: 5,
+    width: '100%',
+    marginVertical: 15,
+  },
+  diaryTitleOuter: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  diaryTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: Colors.dark.mealTitleC,
+  },
+  diaryCalories: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  diaryTotalsOuter: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+    marginHorizontal: 5,
+    borderRadius: 10,
+    backgroundColor: Colors.dark.diaryTotalsBG,
+  },
+  diaryMacros: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 5,    
+    alignItems: 'baseline',    
+  },
+  diaryMacroValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  diaryMacroType: {
+    fontSize: 14,
   },
   saveText: {
-    color: 'lightblue',
-    fontSize: 16,
-    padding: 7,
+    color: 'white',
+    fontSize: 19,
+    paddingVertical: 26,
     fontWeight: 'bold',
   },
   saveBtn: {
-    width: 100,
-    backgroundColor: 'rgba(0,0,0,0.1)',    
-    borderRadius: 10,
-    borderColor: 'white',
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    marginLeft: 20,
-    display: 'flex',
+    width: '100%',
+    backgroundColor: Colors.dark.saveBtnBG,
+    display: 'flex',    
+    alignItems: 'center',  
   },
 });

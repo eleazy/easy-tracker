@@ -31,6 +31,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "owner": "Eleazy Soares",
+    "androidStatusBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#000000",
+      "translucent": true
     }
   }
 }

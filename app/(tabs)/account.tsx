@@ -2,14 +2,14 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import React from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/firebase/firebaseConfig';
-import { navigate } from '@/components/navigation/navigationRef';
+import { navigate } from '@/components/navigation/RootNavigation';
 
 export default function Account() {
+  
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      // Navigate to the login screen after successful sign-out
-      navigate('login');
+      navigate('login');      
     } catch (error) {
       console.error('Error logging out: ', error);
     }

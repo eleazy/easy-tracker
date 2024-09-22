@@ -88,12 +88,11 @@ const styles = StyleSheet.create({
     },
     foodSelectionOuter: {
       padding: 10,      
-      borderRadius: 10,
-      backgroundColor: 'rgba(0,0,0,0.1)',
+      borderRadius: 10,      
       borderColor: 'gray',
       borderWidth: 1,
       height: vh * 0.33,
-      overflow: 'scroll',      
+      overflow: 'scroll',            
     },
     foodRow: {
       paddingBottom: 4,

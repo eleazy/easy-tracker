@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme } from 'react-native';
 import { Colors } from '@/constants/Colors';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { Food, MealCardProps, macrosDisplay, macrosDisplayShort } from '@/types/general';
 import { fixN } from '@/utils/helperFunctions';
 import FoodSelection from "@/components/FoodSelection";
 
-const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotals }: MealCardProps) => {
+const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardProps) => {
   const colorScheme = useColorScheme() ?? 'dark';
 
   const [showAddFood, setShowAddFood] = useState<boolean>(false);
@@ -50,7 +51,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotal
       newMeals[mealIndex].foods = newFoods;
       newMeals[mealIndex].totals = newTotals;
       setMeals(newMeals);
-
+      setHasChanges(true);
       return newFoods;
     });
   }; 
@@ -74,7 +75,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotal
       newMeals[mealIndex].foods = newFoods;
       newMeals[mealIndex].totals = newTotals;
       setMeals(newMeals);
-
+      setHasChanges(true);
       return newFoods;
     });
   };
@@ -148,7 +149,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, macroTotals, setMacroTotal
       ))}  
 
       <Pressable onPress={() => setShowAddFood(!showAddFood)}>
-        <svg height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M7 12L12 12M12 12L17 12M12 12V7M12 12L12 17" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> <circle cx="12" cy="12" r="9" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></circle> </g></svg>        
+        <Ionicons name="add-circle-outline" size={32} color="white"></Ionicons>
       </Pressable>
 
       {showAddFood && <FoodSelection addFoodToMeal={addFoodToMeal} />}
@@ -164,11 +165,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.1)',
     borderColor: 'white',
     borderWidth: 1,
+    display: 'flex',
+    alignItems: 'center',
   },
   mealHeader: {
     borderBottomColor: 'gray',
     borderBottomWidth: 1,
     paddingBottom: 5,
+    width: '100%',
   },
   mealTitleOuter: {
     display: 'flex',
@@ -179,7 +183,7 @@ const styles = StyleSheet.create({
   mealTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'orange',    
+    color: Colors.dark.mealTitleC,    
   },
   mealCalories: {
     fontSize: 16,
@@ -189,13 +193,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    gap: 10,
+    gap: 10,    
   },
   mealMacros: {
     display: 'flex',
     flexDirection: 'row',
     gap: 5,    
-    alignItems: 'baseline',
+    alignItems: 'baseline',    
   },
   mealMacroValue: {
     fontSize: 16,
@@ -210,6 +214,7 @@ const styles = StyleSheet.create({
     gap: 5,
     paddingHorizontal: 3,
     marginVertical: 3,
+    width: '100%',
   },
   foodTitleOuter: {
     display: 'flex',
@@ -224,6 +229,7 @@ const styles = StyleSheet.create({
     width: 50,
     fontSize: 15,
     textAlign: 'center',
+    color: Colors.dark.mealTitleC,
   },
   foodKcalOuter: {
     display: 'flex',

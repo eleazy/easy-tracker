@@ -38,8 +38,7 @@ export interface MealCardProps {
   mealIndex: number;
   meals: Meal[];
   setMeals: (meals: Meal[]) => void;
-  macroTotals: mealMacroTotals;
-  setMacroTotals: (totals: mealMacroTotals) => void;
+  setHasChanges: (hasChanges: boolean) => void;
 };
 
 export interface FoodSelectionProps {

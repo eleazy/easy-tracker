@@ -261,12 +261,7 @@ export const addNewBlankMeal = async (date: string, mealTitle: string = '', meal
             where("date", "==", date)
         );
         const foodDiarySnapshot = await getDocs(foodDiaryQuery);
-        
-        if (foodDiarySnapshot.empty) {
-            console.log("addNewBlankMeal - No matching documents.");
-            return;
-        }
-        
+               
         const foodDiaryDoc = foodDiarySnapshot.docs[0];
         const docId = foodDiaryDoc.id;
         const mealsCollectionRef = collection(db, "users", user, "foodDiary", docId, "meals");
@@ -297,42 +292,4 @@ export const loadInitialData = async ( user: User ) => {
     ['Café da Manhã', 'Almoço', 'Lanche', 'Jantar'].forEach(async (mealTitle, i) => {
         addNewBlankMeal(getTodayString(), mealTitle);
     });
-};
-
-
-
-// FOR DEVELOPMENT PURPOSES ONLY
-
-// Delete all meals but leave one 
-export const deleteAllMealsButOne = async (date: string) => {
-    const loggedUser = getLoggedUser();
-    const user = loggedUser.uid;
-    try {
-        const foodDiaryQuery = query(
-            collection(db, "users", user, "foodDiary"),
-            where("date", "==", date)
-        );
-        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
-
-        if (foodDiarySnapshot.empty) {
-            console.log("No matching documents.");
-            return;
-        }
-
-        const foodDiaryDoc = foodDiarySnapshot.docs[0];
-        const docId = foodDiaryDoc.id;
-        const mealsCollectionRef = collection(db, "users", user, "foodDiary", docId, "meals");
-        const mealsSnapshot = await getDocs(mealsCollectionRef);
-
-        // Filter out the meal to keep and delete the rest
-        const deletePromises = mealsSnapshot.docs
-            .filter(mealDoc => mealDoc.id !== '4pCnqG8IhwHzER16WzQy')
-            .map(mealDoc => deleteDoc(doc(mealsCollectionRef, mealDoc.id)));
-
-        await Promise.all(deletePromises);
-        console.log("All meals deleted except the one");
-        
-    } catch (error) {
-        console.error("Error deleting meals:", error);
-    }
 };

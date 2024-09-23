@@ -7,6 +7,24 @@ export const getTodayString = () => {
     return date.toISOString().split('T')[0];
 };
 
+export const AddOrSubDay = (dateStr: string, offset: number): string => {
+    // Split the date string into components and construct the date with no time zone ambiguity
+    const [year, month, day] = dateStr.split('-').map(Number);
+    
+    // Create a new Date object using the UTC constructor to avoid time zone issues
+    const date = new Date(Date.UTC(year, month - 1, day));
+    
+    // Adjust the date by the offset (forwards or backwards)
+    date.setUTCDate(date.getUTCDate() + offset);
+    
+    // Format the result back to "YYYY-MM-DD"
+    const newYear = date.getUTCFullYear();
+    const newMonth = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const newDay = String(date.getUTCDate()).padStart(2, '0');
+    
+    return `${newYear}-${newMonth}-${newDay}`;
+};
+
 // Utility function to fix number precision
 export const fixN = (n: Number) => parseFloat(n.toFixed(2));
 

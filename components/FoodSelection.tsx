@@ -35,11 +35,10 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
       });
   
       setCombinedFoods(filteredFoods);
-      //console.log([...tacoTableFoods, ...customFoods].length, filteredFoods.length);
     };
 
     return (
-      <View>
+      <View style={styles.foodSelectionOuter}>
         {/* Search engine */}
         <TextInput
             style={[{ color: Colors[colorScheme].text }, styles.searchInput]}
@@ -49,7 +48,7 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
             value={searchQuery}
         />
 
-        <View style={styles.foodSelectionOuter}>
+        <View style={styles.foodSelection}>
 
               {combinedFoods.map((food, i) => (
 
@@ -77,6 +76,9 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
 const vh = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
+    foodSelectionOuter: {
+      width: '100%',
+    },
     searchInput: {
       fontSize: 16,
       padding: 8,
@@ -86,7 +88,7 @@ const styles = StyleSheet.create({
       borderColor: 'gray',
       borderWidth: 1,
     },
-    foodSelectionOuter: {
+    foodSelection: {
       padding: 10,      
       borderRadius: 10,      
       borderColor: 'gray',

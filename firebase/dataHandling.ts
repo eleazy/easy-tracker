@@ -14,7 +14,7 @@ const fetchFoodData = async (docRef: DocumentReference): Promise<Food | null> =>
     if (docSnapshot.exists()) {
       return docSnapshot.data() as Food;
     } else {
-      console.log('No such document!');
+      console.log('No such document! Deleted food?');      
       return null;
     }
   } catch (error) {
@@ -38,7 +38,7 @@ const editMealFood = async (date: string, idMealsFoods: string, quantity: number
         const docId = foodDiaryDoc.id;
         const mealsFoodsCollectionRef = collection(db, "users", user, "foodDiary", docId, "mealsFoods");
         const mealFoodRef = doc(mealsFoodsCollectionRef, idMealsFoods);
-
+       
         // Calculate new macros with the new quantity
         const foodData = await fetchFoodData(mealFoodRef);
         if (!foodData) return;
@@ -82,7 +82,7 @@ const setFoodDiaryInitialData = async (date: string) => {
 const getAndSetMealFoods = async (meal: DocumentData): Promise<Meal> => {
     try {
         const docRefs = meal.foods;
-        const dataPromises = docRefs.map((docRef: DocumentReference) => fetchFoodData(docRef));
+        const dataPromises = docRefs.map((docRef: DocumentReference) => fetchFoodData(docRef) );
         const foodsData = await Promise.all(dataPromises);
 
         let totalsOfMeal = {calories: 0, carbs: 0, fats: 0, protein: 0};
@@ -134,7 +134,7 @@ export const saveFoodDiary = async (date: string, meals: Meal[]) => {
         // So it's necessary to update the mealsFoods collection with the new values of the foods
         // And then update the meals collection with the new values of the meals, keeping the DocumentReferences to the foods documents
 
-        const updatePromises = meals.map(async (meal) => {
+        const updateMealPromises = meals.map(async (meal) => {
             const mealRef = doc(mealsCollectionRef, meal.id);
             const mealDoc = await getDoc(mealRef);
             const mealData = mealDoc.data();
@@ -157,21 +157,28 @@ export const saveFoodDiary = async (date: string, meals: Meal[]) => {
             } else {                
                 // if the docs existed, just update the mealsFoods items
                 const updateFoodsPromises = meal.foods.map(async (food, i) => {
-                    const foodRef = doc(mealsFoodsCollectionRef, foodsRefs[i].id);
+                    const foodRef = doc(mealsFoodsCollectionRef, foodsRefs[i].id);     
+
+                    if (food.quantity == 0) {
+                        // If the quantity is 0, the food was removed from the meal
+                        await deleteDoc(foodRef);
+                        await updateDoc(mealRef, { foods: foodsRefs.filter((f) => f.id !== foodRef.id) });
+                        return;
+                    }              
                     await editMealFood(date, foodRef.id, food.quantity);
                 });    
                 await Promise.all(updateFoodsPromises);
             }
         });
 
-        await Promise.all(updatePromises);
+        await Promise.all(updateMealPromises);
 
     } catch (error) { console.error("Error saving food diary:", error); }
 };
 
 // Get and shape local json data for the taco foods table
 export const getTacoTableFoods = (): Food[] => {
-    return Object.values(tabelaTaco).map((food) => {
+    return Object.values(tabelaTaco).slice(0,15).map((food) => {
         return {
             id: String(food.id) ?? '',
             idMeal: '',
@@ -224,7 +231,7 @@ export const getMealsOfDay = async (date: string): Promise<Meal[]> => {
             const mealsCollectionRef = collection(db, "users", user, "foodDiary", docId, "meals");
             const newMealsSnapshot = await getDocs(mealsCollectionRef);
             const newMealsPromises = newMealsSnapshot.docs.map(async (mealDoc) => {
-            const mealData = mealDoc.data();
+                const mealData = mealDoc.data();
                 // will replace the DocumentReferences in foods with the actual Food[] data                        
                 return await getAndSetMealFoods(mealData);
             });

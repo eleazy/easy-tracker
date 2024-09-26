@@ -21,7 +21,6 @@ export default function HomeScreen() {
   useEffect(() => {
     getMealsOfDay(foodDiaryDay)
       .then( async (meals) => { 
-        console.log(meals, 'of day', foodDiaryDay);        
         setMeals(meals);  
       })
       .catch((error) => { console.error(error); });
@@ -39,12 +38,12 @@ export default function HomeScreen() {
     (['calories', 'carbs', 'fats', 'protein'] as (keyof typeof newTotals)[]).forEach((key) => {
       newTotals[key] = fixN(newTotals[key]);
     });
-    
+    console.log(meals)
     setMacroTotals(newTotals);
-console.log('meals changed', meals);
   }, [meals]);
 
   const saveAll = () => {
+    //console.log(meals);
     saveFoodDiary(foodDiaryDay, meals);    
     setHasChanges(false);
   };
@@ -60,11 +59,11 @@ console.log('meals changed', meals);
       {/* One day back or forth */}
       <View style={styles.datePickerOuter}>
         <Pressable onPress={() => changeDate(foodDiaryDay, -1)}>
-          <Ionicons name="arrow-back" size={24} color={Colors[colorScheme].text} />
+          <Ionicons name="arrow-back" size={30} color={Colors[colorScheme].text} />
         </Pressable>
 
         <Pressable onPress={() => changeDate(foodDiaryDay, 1)}>
-          <Ionicons name="arrow-forward" size={24} color={Colors[colorScheme].text} />
+          <Ionicons name="arrow-forward" size={30} color={Colors[colorScheme].text} />
         </Pressable>
       </View>
 

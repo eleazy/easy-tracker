@@ -2,7 +2,7 @@
   "expo": {
     "name": "easy-tracker",
     "slug": "easy-tracker",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.liazi.easytracker"
     },
     "web": {
       "bundler": "metro",
@@ -32,11 +33,16 @@
     "experiments": {
       "typedRoutes": true
     },
-    "owner": "Eleazy Soares",
+    "owner": "liazi",
     "androidStatusBar": {
       "barStyle": "dark-content",
       "backgroundColor": "#000000",
       "translucent": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e60b3fd2-9ad8-44be-9e83-7112b2fcbb9f"
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Food, MealCardProps, macrosDisplay, macrosDisplayShort } from '@/types/general';
@@ -15,7 +15,10 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
   const changeQuantity = (i:number, value: string) => {
     // change quantity of a food in a meal    
     const newQuantity = parseInt(value);
-    if (isNaN(newQuantity) || newQuantity <= 0) return;
+    // Set food quantity to 0 to remove it from meal
+    // Foods with quantity 0 are not displayed
+    // And they will be deleted in next save, both their DocumentReference in meal.foods and their Document in mealsFoods
+    if (isNaN(newQuantity) || newQuantity < 0) return;
     
     // Update meal in state
     // Here, we update the quantity of the food and with the new quantity recalculate the macros
@@ -52,6 +55,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
       newMeals[mealIndex].totals = newTotals;
       setMeals(newMeals);
       setHasChanges(true);
+      console.log(newFoods);
       return newFoods;
     });
   }; 
@@ -107,46 +111,47 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
       </View>
       
       {/* display each food of meal and its macros */}
+      {foods.map(( food, i ) => {
+        if (food.quantity == 0) return;
 
-      {foods.map((food, i) => (
-        <View key={i} style={styles.foodOuter}>
-
-          <View style={styles.foodTitleOuter}>
-
-            <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}> {food.title} </Text>
-
-            <View style={styles.foodKcalOuter}>
-
-              <TextInput
-                style={[{ color: Colors[colorScheme].text }, styles.quantityInput]}
-                value={food.quantity.toString()}
-                onChangeText={(text) => changeQuantity(i, text)}
-                inputMode="numeric"
-              />  
-
-              <Text style={[{ color: Colors[colorScheme].text }, styles.foodKcalValue]}> {food.calories}</Text>
-              <Text style={[{ color: Colors[colorScheme].text }, styles.foodKcal]}> kcal </Text>
-            </View>
-
-          </View> 
-
-
-          <View style={styles.foodMacrosOuter}>
-            {Object.keys(food.macroNutrients).map((macro) => (
-              <View key={macro} style={styles.foodMacros}>
-                <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroValue]}>
-                  {food.macroNutrients[macro as keyof typeof food.macroNutrients]}g
-                </Text>
-
-                <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroType]}>
-                  {macrosDisplayShort[macro as keyof typeof macrosDisplayShort]}
-                </Text>            
+        return (
+          <View key={food.id} style={styles.foodOuter}>
+  
+            <View style={styles.foodTitleOuter}>
+              {showAddFood && 
+                <Ionicons name="remove-circle-outline" size={24} color={Colors.dark.mealTitleC}  onPress={() => changeQuantity(i, "0")}></Ionicons>
+              }
+              <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}> {food.title} </Text>
+            </View> 
+  
+            <View style={styles.foodMacrosOuter}>
+              {Object.keys(food.macroNutrients).map((macro) => (
+                <View key={macro} style={styles.foodMacros}>
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroValue]}>
+                    {food.macroNutrients[macro as keyof typeof food.macroNutrients]}g
+                  </Text>
+  
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroType]}>
+                    {macrosDisplayShort[macro as keyof typeof macrosDisplayShort]}
+                  </Text>            
+                </View>
+              ))}
+  
+              <View style={styles.foodKcalOuter}>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.foodKcalValue]}> {food.calories}</Text>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.foodKcal]}> kcal </Text>
+                <TextInput
+                  style={[{ color: Colors[colorScheme].text }, styles.quantityInput]}
+                  value={food.quantity.toString()}
+                  onChangeText={(text) => changeQuantity(i, text)}
+                  inputMode="numeric"
+                  />
               </View>
-            ))}
+            </View>
+            
           </View>
-          
-        </View>
-      ))}  
+        )
+      })}  
 
       <Pressable onPress={() => setShowAddFood(!showAddFood)}>
         <Ionicons name="add-circle-outline" size={32} color="white"></Ionicons>
@@ -157,8 +162,10 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
   )
 }
 
+const vw = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
-  mealCardOuter: {
+  mealCardOuter: {    
     padding: 10,
     margin: 5,
     borderRadius: 10,
@@ -209,21 +216,24 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   foodOuter: {  
-    borderBottomColor: 'white',
+    borderBottomColor: 'gray',
     borderBottomWidth: 1,
-    gap: 5,
+    gap: 8,
     paddingHorizontal: 3,
     marginVertical: 3,
     width: '100%',
   },
-  foodTitleOuter: {
+  foodTitleOuter: {    
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: 'row',    
+    alignItems: 'center',
+    maxWidth: vw * 0.9,        
+    overflow: 'hidden',
   },
   foodTitle: {
     fontSize: 15,
     fontWeight: 'bold',
+    marginLeft: 5,
   },
   quantityInput: {
     width: 50,
@@ -234,7 +244,7 @@ const styles = StyleSheet.create({
   foodKcalOuter: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'baseline',
+    alignItems: 'center',
   },
   foodKcalValue: {
     fontSize: 16,
@@ -247,13 +257,13 @@ const styles = StyleSheet.create({
   foodMacrosOuter: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-evenly',
     gap: 10,
   },
   foodMacros: {
     display: 'flex',
-    flexDirection: 'row',
-    gap: 5,
+    flexDirection: 'row',    
+    gap: 5,    
   },
 
 

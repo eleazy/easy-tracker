@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { Food, FoodSelectionProps, macrosDisplay } from '@/types/general';
 import { getTacoTableFoods, getCustomFoods } from '@/firebase/dataHandling';
@@ -48,27 +48,26 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
             value={searchQuery}
         />
 
-        <View style={styles.foodSelection}>
+          <ScrollView style={styles.foodSelection}>
+            {combinedFoods.map((food, i) => (
+              // TO DO -> Optimize this list, it's slow cause of the amount of items
+              <Pressable key={i} style={styles.foodRow} onPress={() => addFoodToMeal(food)}>
+                  <View style={styles.foodTitleOuter}>
+                    <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}> {food.title} </Text>
+                    <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfo]}> por 100g - {food.calories} kcal </Text>
+                  </View>
 
-              {combinedFoods.map((food, i) => (
+                  <View style={styles.macrosOuter}>
+                    {(['carbs', 'fats', 'protein'] as Array<keyof typeof food.macroNutrients>).map((macro) => (
+                      <Text key={macro} style={[{ color: Colors[colorScheme].text }, styles.foodMacros]}>
+                        {food.macroNutrients[macro]}g {macrosDisplay[macro]}
+                      </Text>
+                    ))}
+                  </View>                 
+              </Pressable>
 
-                <Pressable key={i} style={styles.foodRow} onPress={() => addFoodToMeal(food)}>
-                    <View style={styles.foodTitleOuter}>
-                      <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}> {food.title} </Text>
-                      <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfo]}> por 100g - {food.calories} kcal </Text>
-                    </View>
-
-                    <View style={styles.macrosOuter}>
-                      {(['carbs', 'fats', 'protein'] as Array<keyof typeof food.macroNutrients>).map((macro) => (
-                        <Text key={macro} style={[{ color: Colors[colorScheme].text }, styles.foodMacros]}>
-                          {food.macroNutrients[macro]}g {macrosDisplay[macro]}
-                        </Text>
-                      ))}
-                    </View>                 
-                </Pressable>
-
-              ))}          
-        </View>
+            ))}
+          </ScrollView>
       </View>
     )
 }
@@ -76,7 +75,7 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
 const vh = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-    foodSelectionOuter: {
+    foodSelectionOuter: {      
       width: '100%',
     },
     searchInput: {
@@ -93,8 +92,8 @@ const styles = StyleSheet.create({
       borderRadius: 10,      
       borderColor: 'gray',
       borderWidth: 1,
-      height: vh * 0.33,
-      overflow: 'scroll',            
+      overflow: 'scroll',
+      height: vh * 0.40,
     },
     foodRow: {
       paddingBottom: 4,

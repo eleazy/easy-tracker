@@ -9,7 +9,6 @@ export default function Login(): JSX.Element {
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [blockInput, setBlockInput] = useState<boolean>(false);
     const [signUp, setSignUp] = useState<boolean>(true);
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -33,8 +32,6 @@ export default function Login(): JSX.Element {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 loadInitialData(userCredential.user).then(() => { navigate('index'); });
-
-                setBlockInput(true);
             })
             .catch((error) => {
                 error.message && Alert.alert(fixMessage(error.code));
@@ -69,8 +66,7 @@ export default function Login(): JSX.Element {
                                     inputMode={inputMode[i]}
                                     secureTextEntry={e === "Senha" && !showPassword}                                    
                                     autoFocus={i === 0}
-                                    value={inputValue[i]}
-                                    editable={!blockInput}
+                                    value={inputValue[i]}                                    
                                 />
                                 {e === 'Senha' && (
                                     <Pressable onPress={() => setShowPassword(!showPassword)}>

@@ -12,7 +12,7 @@ web-build/
 eas.json
 
 # Ignore Firebase configuration file
-firebase/firebaseConfig.js
+firebase/firebaseConfig.ts
 
 
 

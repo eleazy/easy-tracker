@@ -9,11 +9,21 @@ import FoodSelection from "@/components/FoodSelection";
 const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardProps) => {
   const colorScheme = useColorScheme() ?? 'dark';
 
-  const [showAddFood, setShowAddFood] = useState<boolean>(false);
-  const [foods, setFoods] = useState<Food[]>(meal.foods);
+  const [ showAddFood, setShowAddFood ] = useState<boolean>(false);
+  const [ foods, setFoods ] = useState<Food[]>(meal.foods);
 
   const changeQuantity = (i:number, value: string) => {
-    // change quantity of a food in a meal    
+    // change quantity of a food in a meal
+
+    if (value === '') {
+      setFoods((prevFoods) => {
+        const newFoods = [...prevFoods];
+        newFoods[i].quantity = 0;
+        return newFoods;
+      });
+      return;
+    }
+
     const newQuantity = parseInt(value);
     // Set food quantity to 0 to remove it from meal
     // Foods with quantity 0 are not displayed
@@ -48,6 +58,10 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
         newTotals.fats += food.macroNutrients.fats;
         newTotals.protein += food.macroNutrients.protein;
       });
+
+      (['calories', 'carbs', 'fats', 'protein'] as (keyof typeof newTotals)[]).forEach((key) => {
+        newTotals[key] = fixN(newTotals[key]);
+      });
       
       // Update meals state in parent component
       const newMeals = [...meals];
@@ -55,16 +69,15 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
       newMeals[mealIndex].totals = newTotals;
       setMeals(newMeals);
       setHasChanges(true);
-      console.log(newFoods);
       return newFoods;
     });
   }; 
 
   const addFoodToMeal = (food: Food) => {
     // add a food to a meal
+    const newFood = { ...food, id: `${food.id}-${Date.now()}` };
     setFoods((prevFoods) => {
-      const newFoods = [...prevFoods];
-      newFoods.push(food);
+      const newFoods = [...prevFoods, newFood];      
 
       let newTotals = {calories: 0, carbs: 0, fats: 0, protein: 0};
       newFoods.forEach((food) => {        
@@ -72,7 +85,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
         newTotals.carbs += food.macroNutrients.carbs;
         newTotals.fats += food.macroNutrients.fats;
         newTotals.protein += food.macroNutrients.protein;
-      });
+      });      
 
       // Update meals state in parent component
       const newMeals = [...meals];
@@ -112,10 +125,10 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
       
       {/* display each food of meal and its macros */}
       {foods.map(( food, i ) => {
-        if (food.quantity == 0) return;
+        // if (food.quantity == 0) return; // CONTINUE HERE
 
         return (
-          <View key={food.id} style={styles.foodOuter}>
+          <View key={i} style={styles.foodOuter}>
   
             <View style={styles.foodTitleOuter}>
               {showAddFood && 
@@ -151,7 +164,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
             
           </View>
         )
-      })}  
+      })} 
 
       <Pressable onPress={() => setShowAddFood(!showAddFood)}>
         <Ionicons name="add-circle-outline" size={32} color="white"></Ionicons>

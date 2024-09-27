@@ -21,7 +21,7 @@ export default function HomeScreen() {
   useEffect(() => {
     getMealsOfDay(foodDiaryDay)
       .then( async (meals) => { 
-        setMeals(meals);  
+        setMeals(meals);
       })
       .catch((error) => { console.error(error); });
   }, [foodDiaryDay]);
@@ -35,15 +35,15 @@ export default function HomeScreen() {
       newTotals.fats += meal.totals.fats;
       newTotals.protein += meal.totals.protein;
     });
+    
     (['calories', 'carbs', 'fats', 'protein'] as (keyof typeof newTotals)[]).forEach((key) => {
       newTotals[key] = fixN(newTotals[key]);
     });
-    console.log(meals)
+    
     setMacroTotals(newTotals);
   }, [meals]);
 
   const saveAll = () => {
-    //console.log(meals);
     saveFoodDiary(foodDiaryDay, meals);    
     setHasChanges(false);
   };
@@ -67,7 +67,7 @@ export default function HomeScreen() {
         </Pressable>
       </View>
 
-      <ScrollView style={styles.indexOuter} showsVerticalScrollIndicator={false} >
+      <View style={styles.indexOuter} >
         {/* Macro Totals */}
         <View style={styles.diaryHeader}>
 
@@ -106,7 +106,7 @@ export default function HomeScreen() {
         </Pressable> */}
 
 
-      </ScrollView>
+      </View>
       
       {hasChanges && (
         <Pressable style={styles.saveBtn} onPress={() => saveAll()}>
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   saveText: {
     color: 'white',
     fontSize: 19,
-    paddingVertical: 26,
+    paddingVertical: 18,
     fontWeight: 'bold',
   },
   saveBtn: {

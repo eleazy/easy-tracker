@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, FlatList, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { Food, FoodSelectionProps, macrosDisplay } from '@/types/general';
 import { getTacoTableFoods, getCustomFoods } from '@/firebase/dataHandling';
@@ -12,6 +12,7 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
     const [customFoods, setCustomFoods] = useState<Food[]>([]);
     const [combinedFoods, setCombinedFoods] = useState<Food[]>([...tacoTableFoods, ...customFoods]);
     const [searchQuery, setSearchQuery] = useState<string>("");
+    const [visibleItems, setVisibleItems] = useState<number>(10);
 
     useEffect(() => {
         getCustomFoods().then((data: Food[]) => { setCustomFoods(data); });
@@ -35,11 +36,16 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
       });
   
       setCombinedFoods(filteredFoods);
+      setVisibleItems(10);
+    };
+
+    const loadMoreItems = () => {
+      setVisibleItems((prev) => prev + 10);
     };
 
     return (
       <View style={styles.foodSelectionOuter}>
-        {/* Search engine */}
+        {/* Search logic */}
         <TextInput
             style={[{ color: Colors[colorScheme].text }, styles.searchInput]}
             placeholder='Pesquisar...'
@@ -48,26 +54,32 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
             value={searchQuery}
         />
 
-          <ScrollView style={styles.foodSelection}>
-            {combinedFoods.map((food, i) => (
-              // TO DO -> Optimize this list, it's slow cause of the amount of items
-              <Pressable key={i} style={styles.foodRow} onPress={() => addFoodToMeal(food)}>
-                  <View style={styles.foodTitleOuter}>
-                    <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}> {food.title} </Text>
-                    <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfo]}> por 100g - {food.calories} kcal </Text>
-                  </View>
+        <View style={styles.foodSelection}>
+          <FlatList
+            data={combinedFoods.slice(0, visibleItems)}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item: food }) => (
+              <Pressable style={styles.foodRow} onPress={() => addFoodToMeal(food)}>
+                <View style={styles.foodTitleOuter}>
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}>{food.title}</Text>
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfo]}>
+                    por 100g - {food.calories} kcal
+                  </Text>
+                </View>
 
-                  <View style={styles.macrosOuter}>
-                    {(['carbs', 'fats', 'protein'] as Array<keyof typeof food.macroNutrients>).map((macro) => (
-                      <Text key={macro} style={[{ color: Colors[colorScheme].text }, styles.foodMacros]}>
-                        {food.macroNutrients[macro]}g {macrosDisplay[macro]}
-                      </Text>
-                    ))}
-                  </View>                 
+                <View style={styles.macrosOuter}>
+                  {(['carbs', 'fats', 'protein'] as Array<keyof typeof food.macroNutrients>).map((macro) => (
+                    <Text key={macro} style={[{ color: Colors[colorScheme].text }, styles.foodMacros]}>
+                      {food.macroNutrients[macro]}g {macrosDisplay[macro]}
+                    </Text>
+                  ))}
+                </View>
               </Pressable>
-
-            ))}
-          </ScrollView>
+            )}
+            onEndReached={loadMoreItems}
+            onEndReachedThreshold={0.5} // How close to the bottom to trigger loading more (0.5 = halfway)
+          />
+        </View>
       </View>
     )
 }
@@ -92,8 +104,8 @@ const styles = StyleSheet.create({
       borderRadius: 10,      
       borderColor: 'gray',
       borderWidth: 1,
-      overflow: 'scroll',
-      height: vh * 0.40,
+      //overflow: 'scroll',
+      height: vh * 0.26,
     },
     foodRow: {
       paddingBottom: 4,

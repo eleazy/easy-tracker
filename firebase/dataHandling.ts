@@ -1,4 +1,4 @@
-import { db, auth } from "./firebaseConfig";
+import { db } from "./firebaseConfig";
 import { collection, getDocs, query, where, setDoc, doc, deleteDoc, updateDoc, arrayUnion, DocumentReference, getDoc, DocumentData } from "firebase/firestore";
 import { User } from "firebase/auth";
 import tabelaTaco from './tabelaTaco.json';
@@ -93,6 +93,10 @@ const getAndSetMealFoods = async (meal: DocumentData): Promise<Meal> => {
             totalsOfMeal.fats += food.macroNutrients.fats;
             totalsOfMeal.protein += food.macroNutrients.protein;
         });
+
+        (['calories', 'carbs', 'fats', 'protein'] as (keyof typeof totalsOfMeal)[]).forEach((key) => {
+            totalsOfMeal[key] = fixN(totalsOfMeal[key]);
+        });
         
         const mealObj: Meal = {
             foods: foodsData as Food[],
@@ -178,7 +182,7 @@ export const saveFoodDiary = async (date: string, meals: Meal[]) => {
 
 // Get and shape local json data for the taco foods table
 export const getTacoTableFoods = (): Food[] => {
-    return Object.values(tabelaTaco).slice(0,15).map((food) => {
+    return Object.values(tabelaTaco).map((food) => {
         return {
             id: String(food.id) ?? '',
             idMeal: '',

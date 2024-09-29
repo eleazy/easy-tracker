@@ -52,6 +52,7 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
             placeholderTextColor={Colors[colorScheme].text}
             onChangeText={doSearch}
             value={searchQuery}
+            autoFocus
         />
 
         <View style={styles.foodSelection}>
@@ -85,6 +86,7 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
 }
 
 const vh = Dimensions.get('window').height;
+const vw = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
     foodSelectionOuter: {      
@@ -121,7 +123,7 @@ const styles = StyleSheet.create({
     foodTitle: {
       fontSize: 16,
       fontWeight: 'bold',
-      
+      width: '50%',
     },
     foodTitleInfo: {
       fontSize: 14,      

@@ -5,7 +5,7 @@ import MealCard from "@/components/MealCard";
 import { Colors } from "@/constants/Colors";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { getMealsOfDay, addNewBlankMeal } from "@/firebase/dataHandling";
-import { Food, Meal, mealMacroTotals, macrosDisplay } from "@/types/general";
+import { Food, Meal, mealMacroTotals, macrosDisplayShort } from "@/types/general";
 import { saveFoodDiary } from "@/firebase/dataHandling";
 import { getTodayString, fixN, AddOrSubDay } from "@/utils/helperFunctions";
 
@@ -77,14 +77,14 @@ export default function HomeScreen() {
           </View>
           
           <View style={styles.diaryTotalsOuter}>
-            {Object.keys(macroTotals).slice(1).map((macro, i) => (
+            {['carbs', 'fats', 'protein'].map((macro, i) => (
               <View key={macro} style={styles.diaryMacros}>
                 <Text style={[{ color: Colors[colorScheme].text }, styles.diaryMacroValue]}>
-                  {macroTotals[macro as keyof typeof macroTotals]}g
+                  {macroTotals[macro as keyof typeof macroTotals]} g
                 </Text>            
 
                 <Text style={[{ color: Colors[colorScheme].text }, styles.diaryMacroType]}>
-                  {macrosDisplay[macro as keyof typeof macrosDisplay]}
+                  {macrosDisplayShort[macro as keyof typeof macrosDisplayShort]}
                 </Text>            
               </View>
             ))}
@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   indexOuter: {   
+    padding: 10,
   },
   diaryHeader: {    
     paddingBottom: 5,
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'center', 
   },
   diaryTitle: {
     fontSize: 18,
@@ -155,16 +156,15 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: 10,
-    marginHorizontal: 5,
-    borderRadius: 10,
+    padding: 10,    
+    borderRadius: 10,    
     backgroundColor: Colors.dark.diaryTotalsBG,
   },
   diaryMacros: {
     display: 'flex',
     flexDirection: 'row',
     gap: 5,    
-    alignItems: 'baseline',    
+    alignItems: 'baseline',
   },
   diaryMacroValue: {
     fontSize: 18,

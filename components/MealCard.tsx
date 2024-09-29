@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Food, MealCardProps, macrosDisplay, macrosDisplayShort } from '@/types/general';
+import { Food, MealCardProps, macrosDisplayShort } from '@/types/general';
 import { fixN } from '@/utils/helperFunctions';
 import FoodSelection from "@/components/FoodSelection";
 
@@ -11,22 +11,20 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
 
   const [ showAddFood, setShowAddFood ] = useState<boolean>(false);
   const [ foods, setFoods ] = useState<Food[]>(meal.foods);
-
+  const [ quantityInputValue, setQuantityInputValue ] = useState<string[]>([]);
+  
+  useEffect(() => {
+    setQuantityInputValue(foods.map(food => food.quantity.toString()));
+  }, [foods]);
+ 
   const changeQuantity = (i:number, value: string) => {
     // change quantity of a food in a meal
 
-    if (value === '') {
-      setFoods((prevFoods) => {
-        const newFoods = [...prevFoods];
-        newFoods[i].quantity = 0;
-        return newFoods;
-      });
-      return;
-    }
-
+    // If user delete the quantity, same behavior of pressing the input
+    if (value === '') { inputPress(i); }
+    
     const newQuantity = parseInt(value);
     // Set food quantity to 0 to remove it from meal
-    // Foods with quantity 0 are not displayed
     // And they will be deleted in next save, both their DocumentReference in meal.foods and their Document in mealsFoods
     if (isNaN(newQuantity) || newQuantity < 0) return;
     
@@ -42,7 +40,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
       newFoods[i].macroNutrients.carbs = fixN((fM.carbs / oldQuantity) * newQuantity);
       newFoods[i].macroNutrients.fats = fixN((fM.fats / oldQuantity) * newQuantity);
       newFoods[i].macroNutrients.protein = fixN((fM.protein / oldQuantity) * newQuantity);
-
+      
       // carbs and protein = 4 kcal per gram, fats = 9 kcal per gram
       newFoods[i].calories = fixN(
         newFoods[i].macroNutrients.carbs * 4 +
@@ -75,9 +73,8 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
 
   const addFoodToMeal = (food: Food) => {
     // add a food to a meal
-    const newFood = { ...food, id: `${food.id}-${Date.now()}` };
     setFoods((prevFoods) => {
-      const newFoods = [...prevFoods, newFood];      
+      const newFoods = [...prevFoods, { ...food, id: `${food.id}-${Date.now()}`}];
 
       let newTotals = {calories: 0, carbs: 0, fats: 0, protein: 0};
       newFoods.forEach((food) => {        
@@ -96,6 +93,26 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
       return newFoods;
     });
   };
+
+  const inputPress = (i: number) => {
+    // When the input is focused, clear the current value in the input field
+    setQuantityInputValue((prevValues) => {
+      const newValues = [...prevValues];
+      newValues[i] = '';
+      return newValues;
+    });
+  };
+
+  const handleBlur = (i: number) => {
+    // Restore the old quantity if the input is left empty
+    if (quantityInputValue[i] === '') {
+      setQuantityInputValue((prevValues) => {
+        const newValues = [...prevValues];
+        newValues[i] = foods[i].quantity.toString();
+        return newValues;
+      });
+    }
+  };
   
   return (
     <View style={styles.mealCardOuter}>
@@ -108,14 +125,14 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
         </View>
 
         <View style={styles.mealMacrosOuter}>
-          {Object.keys(meal.totals).slice(1).map((macro, i) => (
+          {['carbs', 'fats', 'protein'].map((macro, i) => (
             <View key={macro} style={styles.mealMacros}>
               <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroValue]}>
-                {meal.totals[macro as keyof typeof meal.totals]}g
+                {meal.totals[macro as keyof typeof meal.totals]} g
               </Text>            
 
               <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroType]}>
-                {macrosDisplay[macro as keyof typeof macrosDisplay]}
+                {macrosDisplayShort[macro as keyof typeof macrosDisplayShort]}
               </Text>            
             </View>
           ))}
@@ -125,7 +142,8 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
       
       {/* display each food of meal and its macros */}
       {foods.map(( food, i ) => {
-        // if (food.quantity == 0) return; // CONTINUE HERE
+        if (food.quantity === 0) return;
+        // Foods with quantity 0 are not displayed
 
         return (
           <View key={i} style={styles.foodOuter}>
@@ -138,10 +156,10 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
             </View> 
   
             <View style={styles.foodMacrosOuter}>
-              {Object.keys(food.macroNutrients).map((macro) => (
+              {['carbs', 'fats', 'protein'].map((macro) => (
                 <View key={macro} style={styles.foodMacros}>
                   <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroValue]}>
-                    {food.macroNutrients[macro as keyof typeof food.macroNutrients]}g
+                    {food.macroNutrients[macro as keyof typeof food.macroNutrients]} g
                   </Text>
   
                   <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroType]}>
@@ -149,16 +167,18 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
                   </Text>            
                 </View>
               ))}
-  
+
               <View style={styles.foodKcalOuter}>
                 <Text style={[{ color: Colors[colorScheme].text }, styles.foodKcalValue]}> {food.calories}</Text>
                 <Text style={[{ color: Colors[colorScheme].text }, styles.foodKcal]}> kcal </Text>
                 <TextInput
                   style={[{ color: Colors[colorScheme].text }, styles.quantityInput]}
-                  value={food.quantity.toString()}
-                  onChangeText={(text) => changeQuantity(i, text)}
                   inputMode="numeric"
-                  />
+                  value={quantityInputValue[i]}
+                  onChangeText={(text) => changeQuantity(i, text)}
+                  onFocus={() => inputPress(i)}
+                  onBlur={() => handleBlur(i)}
+                />
               </View>
             </View>
             
@@ -166,8 +186,8 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
         )
       })} 
 
-      <Pressable onPress={() => setShowAddFood(!showAddFood)}>
-        <Ionicons name="add-circle-outline" size={32} color="white"></Ionicons>
+      <Pressable style={{ marginTop: 10 }} onPress={() => setShowAddFood(!showAddFood)}>
+        <Ionicons name="add-circle-outline" size={24} color={Colors.dark.mealTitleC}></Ionicons>
       </Pressable>
 
       {showAddFood && <FoodSelection addFoodToMeal={addFoodToMeal} />}
@@ -180,7 +200,7 @@ const vw = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   mealCardOuter: {    
     padding: 10,
-    margin: 5,
+    marginBottom: 10,
     borderRadius: 10,
     backgroundColor: 'rgba(0,0,0,0.1)',
     borderColor: 'white',
@@ -222,7 +242,7 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',    
   },
   mealMacroValue: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
   },
   mealMacroType: {

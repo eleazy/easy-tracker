@@ -33,7 +33,6 @@ const editMealFood = async (date: string, idMealsFoods: string, quantity: number
             where("date", "==", date)
         );
         const foodDiarySnapshot = await getDocs(foodDiaryQuery);
-
         const foodDiaryDoc = foodDiarySnapshot.docs[0];
         const docId = foodDiaryDoc.id;
         const mealsFoodsCollectionRef = collection(db, "users", user, "foodDiary", docId, "mealsFoods");
@@ -143,36 +142,33 @@ export const saveFoodDiary = async (date: string, meals: Meal[]) => {
             const mealDoc = await getDoc(mealRef);
             const mealData = mealDoc.data();
             const foodsRefs = mealData?.foods as DocumentReference[];
-
-            if (foodsRefs.length == 0) {
-                // If there are no foods references in the meal data in firebase, it mean the foods were just added
-                // So we need to create them in the mealsFoods collection, with the meal id it belongs to
-                const addFoodsPromises = meal.foods.map(async (food) => {
-                    const newFoodRef = doc(mealsFoodsCollectionRef);
-                    food = {...food, idMeal: meal.id}; // add the meal id to the food here                    
-                    await setDoc(newFoodRef, food);                    
-                    await updateDoc(mealRef, {
-                        foods: arrayUnion(newFoodRef) // add the new food reference to the meals.foods in firebase
-                      });
-                    foodsRefs.push(newFoodRef);
-                });
-                await Promise.all(addFoodsPromises);
-
-            } else {                
-                // if the docs existed, just update the mealsFoods items
-                const updateFoodsPromises = meal.foods.map(async (food, i) => {
-                    const foodRef = doc(mealsFoodsCollectionRef, foodsRefs[i].id);     
-
-                    if (food.quantity == 0) {
+           
+            const updateFoodsPromises = meal.foods.map(async (food, i) => {
+                if (foodsRefs[i]) {
+                    // If the food exists in the meal, update it
+                    const foodRef = doc(mealsFoodsCollectionRef, foodsRefs[i].id);
+    
+                    if (food.quantity ===  0) {
                         // If the quantity is 0, the food was removed from the meal
                         await deleteDoc(foodRef);
                         await updateDoc(mealRef, { foods: foodsRefs.filter((f) => f.id !== foodRef.id) });
                         return;
                     }              
                     await editMealFood(date, foodRef.id, food.quantity);
-                });    
-                await Promise.all(updateFoodsPromises);
-            }
+
+                } else {
+                    // If the food doesn't exist in the meal, add it
+                    if (food.quantity === 0) return;
+
+                    const newFoodRef = doc(mealsFoodsCollectionRef);
+                    food = {...food, idMeal: meal.id}; // add the meal id to the food here                    
+                    await setDoc(newFoodRef, food);                    
+                    await updateDoc(mealRef, {
+                        foods: arrayUnion(newFoodRef) // add the new food reference to the meals.foods in firebase
+                      });
+                }
+            });    
+            await Promise.all(updateFoodsPromises);
         });
 
         await Promise.all(updateMealPromises);

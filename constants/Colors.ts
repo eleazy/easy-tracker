@@ -22,7 +22,7 @@ export const Colors = {
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
-    diaryTotalsBG: '#e39036',
+    diaryTotalsBG: '#bf7728',
     mealTitleC: 'rgb(227, 144, 54)',
     saveBtnBG: 'rgba(227, 144, 54, 0.9)',
   },

@@ -66,6 +66,7 @@ export default function Login(): JSX.Element {
                                     inputMode={inputMode[i]}
                                     secureTextEntry={e === "Senha" && !showPassword}                                    
                                     autoFocus={i === 0}
+                                    autoCapitalize='none'
                                     value={inputValue[i]}                                    
                                 />
                                 {e === 'Senha' && (

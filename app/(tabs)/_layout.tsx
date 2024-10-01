@@ -8,26 +8,35 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
+    <Tabs 
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'dark'].tint,
-        headerShown: false,
+        headerShown: false,        
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Diary',
+          title: 'Diary',          
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'calendar' : 'calendar-outline'} color={color} />
+            <TabBarIcon name={focused ? 'book' : 'book-outline'} color={color} size={22} />
           ),
         }}
       />    
+      <Tabs.Screen
+        name="foodbank"
+        options={{
+          title: 'Alimentos',          
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'albums' : 'albums-outline'} color={color} size={22} />
+          ),
+        }}
+      />
        <Tabs.Screen
         name="account"
         options={{
           title: 'Account',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
+            <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} size={22} />
           ),
         }}
       />

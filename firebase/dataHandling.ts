@@ -258,6 +258,57 @@ export const getMealsOfDay = async (date: string): Promise<Meal[]> => {
     }
 };
 
+export const getTotalCaloriesOfMonth = async (year: number, month: number): Promise<{ [key: string]: string }> => {
+    const loggedUser = getLoggedUser();
+    const user = loggedUser.uid;
+    const monthString = month < 10 ? `0${month}` : `${month}`;
+    const yearMonthString = `${year}-${monthString}`;
+    const daysInMonth = new Date(year, month, 0).getDate();
+
+    const totalCalories: { [key: string]: string } = {};
+
+    try {
+        const foodDiaryQuery = query(
+            collection(db, "users", user, "foodDiary"),
+            where("date", ">=", `${yearMonthString}-01`),
+            where("date", "<=", `${yearMonthString}-${daysInMonth}`)
+        );
+        
+        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
+
+        // Loop through food diary entries
+        for (const doc of foodDiarySnapshot.docs) {
+            const foodDiaryId = doc.id;
+            const foodDiaryData = doc.data();
+            const date = foodDiaryData.date;
+
+            // Fetch meals for the food diary entry
+            const mealsFoodColletion = collection(db, "users", user, "foodDiary", foodDiaryId, "mealsFoods");
+            const mealsFoodSnapshot = await getDocs(mealsFoodColletion);  // Await here
+            
+            // Initialize the total for the day if not already
+            if (!totalCalories[date]) {
+                totalCalories[date] = '0';
+            }
+
+            // Sum up the calories for each meal
+            mealsFoodSnapshot.forEach((mealFoodDoc) => {
+                const mealFoodData = mealFoodDoc.data();
+                const mealFoodCalories = mealFoodData.calories || 0;  // Default to 0 if no calories field
+                
+                totalCalories[date] = String(fixN(Number(totalCalories[date]) + mealFoodCalories));
+            });
+        }
+
+        return totalCalories;
+
+    } catch (error) {
+        console.error("Error fetching total calories of the month:", error);
+        return {};
+    }
+};
+
+
 // Add a new meal to the food diary in a given day
 export const addNewBlankMeal = async (date: string, mealTitle: string = '', mealPosition: number = 0) => {
     const loggedUser = getLoggedUser();

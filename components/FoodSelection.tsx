@@ -39,23 +39,21 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
       setVisibleItems(10);
     };
 
-    const loadMoreItems = () => {
-      setVisibleItems((prev) => prev + 10);
-    };
+    const loadMoreItems = () => { setVisibleItems((prev) => prev + 10); };
 
     return (
       <View style={styles.foodSelectionOuter}>
         {/* Search logic */}
         <TextInput
-            style={[{ color: Colors[colorScheme].text }, styles.searchInput]}
+            style={[{ color: Colors[colorScheme].text, backgroundColor: Colors.dark.basicBG }, styles.searchInput]}
             placeholder='Pesquisar...'
             placeholderTextColor={Colors[colorScheme].text}
             onChangeText={doSearch}
             value={searchQuery}
-            autoFocus
+            //autoFocus
         />
 
-        <View style={styles.foodSelection}>
+        <View style={[ styles.foodSelection , {backgroundColor: Colors.dark.basicBG}]}>
           <FlatList
             data={combinedFoods.slice(0, visibleItems)}
             keyExtractor={(item, index) => index.toString()}
@@ -63,16 +61,19 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
               <Pressable style={styles.foodRow} onPress={() => addFoodToMeal(food)}>
                 <View style={styles.foodTitleOuter}>
                   <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}>{food.title}</Text>
-                  <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfo]}>
-                    por 100g - {food.calories} kcal
-                  </Text>
+                  <View style={styles.foodkcalOuter}>
+                    <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfoSuble]}>por 100g - </Text>
+                    <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfo]}>{food.calories}</Text>
+                    <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfoSuble]}> kcal</Text>
+                  </View>
                 </View>
 
                 <View style={styles.macrosOuter}>
                   {(['carbs', 'fats', 'protein'] as Array<keyof typeof food.macroNutrients>).map((macro) => (
-                    <Text key={macro} style={[{ color: Colors[colorScheme].text }, styles.foodMacros]}>
-                      {food.macroNutrients[macro]}g {macrosDisplay[macro]}
-                    </Text>
+                    <View key={macro} style={styles.foodkcalOuter}>
+                      <Text style={[{ color: Colors[colorScheme].text }, styles.foodMacros]}>{food.macroNutrients[macro]} g </Text>
+                      <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfoSuble]}>{macrosDisplay[macro]}</Text>
+                    </View>
                   ))}
                 </View>
               </Pressable>
@@ -86,28 +87,27 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
 }
 
 const vh = Dimensions.get('window').height;
-const vw = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
     foodSelectionOuter: {      
-      width: '100%',
+      width: '100%',      
     },
     searchInput: {
       fontSize: 16,
       padding: 8,
+      paddingLeft: 16,
       marginVertical: 10,
-      borderRadius: 10,
-      backgroundColor: 'rgba(0,0,0,0.1)',
+      borderRadius: 99,
       borderColor: 'gray',
       borderWidth: 1,
     },
-    foodSelection: {
+    foodSelection: {      
       padding: 10,      
       borderRadius: 10,      
       borderColor: 'gray',
-      borderWidth: 1,
-      //overflow: 'scroll',
-      height: vh * 0.26,
+      borderWidth: 1,      
+      height: vh * 0.33,
+      overflow: 'hidden',
     },
     foodRow: {
       paddingBottom: 4,
@@ -125,8 +125,17 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       width: '50%',
     },
+    foodkcalOuter: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'baseline',
+    },
     foodTitleInfo: {
       fontSize: 14,      
+    },
+    foodTitleInfoSuble: {
+      fontSize: 13,
+      color: 'gray',
     },
     macrosOuter: {
       display: 'flex',

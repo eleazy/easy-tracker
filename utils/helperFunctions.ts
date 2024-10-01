@@ -25,6 +25,20 @@ export const AddOrSubDay = (dateStr: string, offset: number): string => {
     return `${newYear}-${newMonth}-${newDay}`;
 };
 
+export const getDaysOfMonth = (year: number, month: number) => {
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const daysArray = Array.from({ length: daysInMonth }, (v, k) => k + 1);
+    return daysArray;
+}    
+
+export const monthName = (month: number) => {
+    const monthNames = [
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+    return monthNames[month];
+};
+
 // Utility function to fix number precision
 export const fixN = (n: Number) => parseFloat(n.toFixed(2));
 

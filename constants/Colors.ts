@@ -25,5 +25,6 @@ export const Colors = {
     diaryTotalsBG: '#bf7728',
     mealTitleC: 'rgb(227, 144, 54)',
     saveBtnBG: 'rgba(227, 144, 54, 0.9)',
+    basicBG: 'black',
   },
 };

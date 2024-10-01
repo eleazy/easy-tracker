@@ -45,6 +45,12 @@ export interface FoodSelectionProps {
   addFoodToMeal: (food: Food) => void;
 };
 
+export interface CalendarViewProps {
+  setShowCalendar: (showCalendar: boolean) => void;
+  foodDiaryDay: string;
+  setFoodDiaryDay: (foodDiaryDay: string) => void;
+};
+
 // REPLACES
 
 export const macrosDisplay = {

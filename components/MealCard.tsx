@@ -5,6 +5,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Food, MealCardProps, macrosDisplayShort } from '@/types/general';
 import { fixN } from '@/utils/helperFunctions';
 import FoodSelection from "@/components/FoodSelection";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardProps) => {
   const colorScheme = useColorScheme() ?? 'dark';
@@ -149,9 +150,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
           <View key={i} style={styles.foodOuter}>
   
             <View style={styles.foodTitleOuter}>
-              {showAddFood && 
-                <Ionicons name="remove-circle-outline" size={24} color={Colors.dark.mealTitleC}  onPress={() => changeQuantity(i, "0")}></Ionicons>
-              }
+              {showAddFood && <MaterialIcons name="playlist-remove" size={26} color={Colors.dark.mealTitleC}   onPress={() => changeQuantity(i, "0")}/> }
               <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}> {food.title} </Text>
             </View> 
   
@@ -186,8 +185,8 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
         )
       })} 
 
-      <Pressable style={{ marginTop: 10 }} onPress={() => setShowAddFood(!showAddFood)}>
-        <Ionicons name="add-circle-outline" size={24} color={Colors.dark.mealTitleC}></Ionicons>
+      <Pressable style={{ marginTop: 9 }} onPress={() => setShowAddFood(!showAddFood)}>
+        <Ionicons name={showAddFood ? "arrow-up-circle" :  "add-circle-outline"} size={26} color={Colors.dark.mealTitleC}/>
       </Pressable>
 
       {showAddFood && <FoodSelection addFoodToMeal={addFoodToMeal} />}
@@ -207,6 +206,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     display: 'flex',
     alignItems: 'center',
+    width: vw * 0.95,
   },
   mealHeader: {
     borderBottomColor: 'gray',
@@ -251,9 +251,7 @@ const styles = StyleSheet.create({
   foodOuter: {  
     borderBottomColor: 'gray',
     borderBottomWidth: 1,
-    gap: 8,
-    paddingHorizontal: 3,
-    marginVertical: 3,
+    marginVertical: 4,    
     width: '100%',
   },
   foodTitleOuter: {    
@@ -264,9 +262,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   foodTitle: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginLeft: 5,
+    fontSize: 15,    
+    marginBottom: 3,
   },
   quantityInput: {
     width: 50,
@@ -297,16 +294,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',    
     gap: 5,    
-  },
-
-
-  text: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  flex: {
-    display: 'flex',
-    flexDirection: 'row',
   },
  
 });

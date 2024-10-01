@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import { StyleSheet, View, ScrollView, Pressable, Text } from "react-native";
+import { StyleSheet, View, ScrollView, Pressable, Text, FlatList, Dimensions } from "react-native";
 import { useColorScheme } from "react-native";
 import MealCard from "@/components/MealCard";
+import CalendarView from "@/components/CalendarView";
 import { Colors } from "@/constants/Colors";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { getMealsOfDay, addNewBlankMeal } from "@/firebase/dataHandling";
 import { Food, Meal, mealMacroTotals, macrosDisplayShort } from "@/types/general";
 import { saveFoodDiary } from "@/firebase/dataHandling";
 import { getTodayString, fixN, AddOrSubDay } from "@/utils/helperFunctions";
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 export default function HomeScreen() {
   
@@ -16,7 +18,8 @@ export default function HomeScreen() {
   const [ foodDiaryDay, setFoodDiaryDay ] = useState<string>(getTodayString());
   const [ macroTotals, setMacroTotals ] = useState<mealMacroTotals>({calories: 0, carbs: 0, fats: 0, protein: 0});
   const [ hasChanges, setHasChanges ] = useState<boolean>(false);
-  // console.log('index loaded');
+  const [ showCalendar, setShowCalendar ] = useState<boolean>(false);
+  //console.log('index loaded');
 
   useEffect(() => {
     getMealsOfDay(foodDiaryDay)
@@ -48,32 +51,40 @@ export default function HomeScreen() {
     setHasChanges(false);
   };
 
-  const changeDate = (date: string, offset: number) => {
-    const newStringDate = AddOrSubDay(date, offset);
+  const changeDate = (offset: number) => {
+    const newStringDate = AddOrSubDay(foodDiaryDay, offset);
     setFoodDiaryDay(newStringDate);
   };
   
   return (
     <View style={styles.outerView}>
 
-      {/* One day back or forth */}
-      <View style={styles.datePickerOuter}>
-        <Pressable onPress={() => changeDate(foodDiaryDay, -1)}>
-          <Ionicons name="arrow-back" size={30} color={Colors[colorScheme].text} />
-        </Pressable>
+      { showCalendar && <CalendarView setShowCalendar={setShowCalendar} foodDiaryDay={foodDiaryDay} setFoodDiaryDay={setFoodDiaryDay} /> }
 
-        <Pressable onPress={() => changeDate(foodDiaryDay, 1)}>
-          <Ionicons name="arrow-forward" size={30} color={Colors[colorScheme].text} />
-        </Pressable>
+      {/* One day back or forth */}
+      <View style={styles.calendarOuter}>
+        <View style={styles.datePickerOuter}>
+          <Pressable onPress={() => changeDate(-1)}>
+            <Ionicons name="arrow-back" size={24} color={Colors[colorScheme].text} />
+          </Pressable>
+
+          <Text style={[{ color: Colors[colorScheme].text }, styles.diaryTitle]}>{foodDiaryDay}</Text>
+
+          <Pressable onPress={() => changeDate(1)}>
+            <Ionicons name="arrow-forward" size={24} color={Colors[colorScheme].text} />
+          </Pressable>
+        </View>
+
+        <AntDesign name="calendar" size={24} color="white" onPress={() => setShowCalendar(true)}/>
       </View>
+
 
       <View style={styles.indexOuter} >
         {/* Macro Totals */}
         <View style={styles.diaryHeader}>
 
           <View style={styles.diaryTitleOuter}>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.diaryTitle]}> {foodDiaryDay} </Text>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.diaryCalories]}> {macroTotals.calories} kcal </Text>
+            <Text style={[{ color: Colors[colorScheme].text }, styles.diaryCalories]}>{macroTotals.calories} kcal </Text>
           </View>
           
           <View style={styles.diaryTotalsOuter}>
@@ -92,19 +103,22 @@ export default function HomeScreen() {
 
         </View>
 
-        {meals.map((meal, i) => (
-          <MealCard key={meal.id} meal={meal} mealIndex={i} meals={meals} setMeals={setMeals} setHasChanges={setHasChanges} />
-        ))}
+        <FlatList
+          data={meals}
+          keyExtractor={(meal) => meal.id.toString()}
+          renderItem={({ item, index }) => (
+            <MealCard key={item.id} meal={item} mealIndex={index} meals={meals} setMeals={setMeals} setHasChanges={setHasChanges} />
+          )}
+        />
 
         {/* Add More Meals icon */}
-        {/* <Pressable style={styles.addMealIcon} onPress={ async () => {
+        {/* <Pressable onPress={ async () => {
           await addNewBlankMeal(foodDiaryDay);
           const updatedMeals = await getMealsOfDay(foodDiaryDay);
           setMeals(updatedMeals);
         }}>
-          <Ionicons name="add-circle-outline" size={32} color="white"></Ionicons>
+          <Ionicons name="add-circle" size={30} color={Colors.dark.mealTitleC}/>
         </Pressable> */}
-
 
       </View>
       
@@ -117,6 +131,8 @@ export default function HomeScreen() {
   );
 }
 
+const vh = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
   outerView: {
     flex: 1,
@@ -127,10 +143,21 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 10,
+    alignItems: 'center',
+    gap: 16,
   },
-  indexOuter: {   
+  calendarOuter: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,    
+  },
+  indexOuter: {
     padding: 10,
+    display: 'flex',    
+    flexDirection: 'column',
+    alignItems: 'center',
+    //height: vh * 0.9,
   },
   diaryHeader: {    
     paddingBottom: 5,
@@ -140,7 +167,7 @@ const styles = StyleSheet.create({
   diaryTitleOuter: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center', 
   },
   diaryTitle: {

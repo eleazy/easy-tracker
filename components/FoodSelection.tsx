@@ -47,7 +47,7 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
         <TextInput
             style={[{ color: Colors[colorScheme].text, backgroundColor: Colors.dark.basicBG }, styles.searchInput]}
             placeholder='Pesquisar...'
-            placeholderTextColor={Colors[colorScheme].text}
+            placeholderTextColor='gray'
             onChangeText={doSearch}
             value={searchQuery}
             //autoFocus
@@ -94,18 +94,18 @@ const styles = StyleSheet.create({
     },
     searchInput: {
       fontSize: 16,
-      padding: 8,
+      padding: 6,
       paddingLeft: 16,
       marginVertical: 10,
       borderRadius: 99,
       borderColor: 'gray',
-      borderWidth: 1,
+      borderWidth: 1,      
     },
     foodSelection: {      
       padding: 10,      
       borderRadius: 10,      
       borderColor: 'gray',
-      borderWidth: 1,      
+      borderWidth: 1,
       height: vh * 0.33,
       overflow: 'hidden',
     },

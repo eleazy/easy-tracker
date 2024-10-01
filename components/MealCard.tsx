@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, BackHandler} from 'react-native';
 import { Colors } from '@/constants/Colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Food, MealCardProps, macrosDisplayShort } from '@/types/general';
@@ -16,6 +16,17 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
   
   useEffect(() => {
     setQuantityInputValue(foods.map(food => food.quantity.toString()));
+
+    // Override the back button to close add food
+    const backAction = () => {
+      setShowAddFood(false);
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+    );
+    return () => backHandler.remove();
   }, [foods]);
  
   const changeQuantity = (i:number, value: string) => {
@@ -122,17 +133,17 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
 
         <View style={styles.mealTitleOuter}>
           <Text style={[{ color: Colors[colorScheme].text }, styles.mealTitle]}> {meal.title} </Text>
-          <Text style={[{ color: Colors[colorScheme].text }, styles.mealCalories]}> {meal.totals.calories} kcal  </Text>
+          <Text style={[{ color: meal.totals.calories == 0 ? 'gray' : Colors[colorScheme].text }, styles.mealCalories]}>{meal.totals.calories} kcal</Text>
         </View>
 
         <View style={styles.mealMacrosOuter}>
           {['carbs', 'fats', 'protein'].map((macro, i) => (
             <View key={macro} style={styles.mealMacros}>
-              <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroValue]}>
+              <Text style={[{ color: meal.totals.calories == 0 ? 'gray' : Colors[colorScheme].text }, styles.mealMacroValue]}>
                 {meal.totals[macro as keyof typeof meal.totals]} g
               </Text>            
 
-              <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroType]}>
+              <Text style={[{ color: meal.totals.calories == 0 ? 'gray' : Colors[colorScheme].text }, styles.mealMacroType]}>
                 {macrosDisplayShort[macro as keyof typeof macrosDisplayShort]}
               </Text>            
             </View>
@@ -204,9 +215,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.1)',
     borderColor: 'white',
     borderWidth: 1,
-    display: 'flex',
+    display: 'flex',    
     alignItems: 'center',
-    width: vw * 0.95,
   },
   mealHeader: {
     borderBottomColor: 'gray',

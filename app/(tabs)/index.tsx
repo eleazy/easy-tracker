@@ -6,7 +6,7 @@ import CalendarView from "@/components/CalendarView";
 import { Colors } from "@/constants/Colors";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { getMealsOfDay, addNewBlankMeal } from "@/firebase/dataHandling";
-import { Food, Meal, mealMacroTotals, macrosDisplayShort } from "@/types/general";
+import { Meal, mealMacroTotals, macrosDisplayShort } from "@/types/general";
 import { saveFoodDiary } from "@/firebase/dataHandling";
 import { getTodayString, fixN, AddOrSubDay } from "@/utils/helperFunctions";
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -78,7 +78,6 @@ export default function HomeScreen() {
         <AntDesign name="calendar" size={24} color="white" onPress={() => setShowCalendar(true)}/>
       </View>
 
-
       <View style={styles.indexOuter} >
         {/* Macro Totals */}
         <View style={styles.diaryHeader}>
@@ -106,19 +105,25 @@ export default function HomeScreen() {
         <FlatList
           data={meals}
           keyExtractor={(meal) => meal.id.toString()}
+          contentContainerStyle={{ paddingBottom: 125 }}
           renderItem={({ item, index }) => (
             <MealCard key={item.id} meal={item} mealIndex={index} meals={meals} setMeals={setMeals} setHasChanges={setHasChanges} />
           )}
-        />
 
-        {/* Add More Meals icon */}
-        {/* <Pressable onPress={ async () => {
-          await addNewBlankMeal(foodDiaryDay);
-          const updatedMeals = await getMealsOfDay(foodDiaryDay);
-          setMeals(updatedMeals);
-        }}>
-          <Ionicons name="add-circle" size={30} color={Colors.dark.mealTitleC}/>
-        </Pressable> */}
+          ListFooterComponent={() => (            
+            <Pressable 
+              // Add More Meals icon 
+              onPress={ async () => {
+                await addNewBlankMeal(foodDiaryDay);
+                const updatedMeals = await getMealsOfDay(foodDiaryDay);
+                setMeals(updatedMeals);
+              }}
+              style={styles.addMealBtn}
+            >
+              <Ionicons name="add-circle" size={30} color={Colors.dark.mealTitleC}/>
+            </Pressable>
+          )}
+        />
 
       </View>
       
@@ -132,12 +137,14 @@ export default function HomeScreen() {
 }
 
 const vh = Dimensions.get('window').height;
+const vw = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   outerView: {
     flex: 1,
-    position: 'relative',
+    //position: 'relative',
     backgroundColor: Colors.dark.background,
+    marginTop: 25,    
   },
   datePickerOuter: {
     display: 'flex',
@@ -150,19 +157,17 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 10,    
+    paddingTop: 10,    
+    paddingBottom: 5,
+    paddingHorizontal: 10,
   },
   indexOuter: {
-    padding: 10,
-    display: 'flex',    
-    flexDirection: 'column',
-    alignItems: 'center',
-    //height: vh * 0.9,
+    padding: 6,
+    //display: 'flex',
   },
   diaryHeader: {    
-    paddingBottom: 5,
     width: '100%',
-    marginVertical: 15,
+    marginBottom: 10,
   },
   diaryTitleOuter: {
     display: 'flex',
@@ -184,7 +189,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 10,    
-    borderRadius: 10,    
     backgroundColor: Colors.dark.diaryTotalsBG,
   },
   diaryMacros: {
@@ -200,6 +204,11 @@ const styles = StyleSheet.create({
   diaryMacroType: {
     fontSize: 14,
   },
+  addMealBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
   saveText: {
     color: 'white',
     fontSize: 19,
@@ -211,5 +220,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dark.saveBtnBG,
     display: 'flex',    
     alignItems: 'center',  
+    position: 'absolute',
+    bottom: 0,
   },
 });

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, FlatList } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { Food, FoodSelectionProps, macrosDisplay } from '@/types/general';
+import { Food, macrosDisplay } from '@/types/general';
 import { getTacoTableFoods, getCustomFoods } from '@/firebase/dataHandling';
 import { removeAccents, singularPluralMatch } from '@/utils/helperFunctions';
+import CreateFood from '@/components/CreateFood';
 
 const FoodBank = () => {
   const colorScheme = useColorScheme() ?? 'dark';
@@ -13,6 +14,7 @@ const FoodBank = () => {
     const [combinedFoods, setCombinedFoods] = useState<Food[]>([...tacoTableFoods, ...customFoods]);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [visibleItems, setVisibleItems] = useState<number>(10);
+    const [showCreateFood, setShowCreateFood] = useState<boolean>(false);
 
     useEffect(() => {
         getCustomFoods().then((data: Food[]) => { setCustomFoods(data); });
@@ -43,6 +45,9 @@ const FoodBank = () => {
 
     return (
       <View style={styles.foodBankOuter}>
+
+        { showCreateFood && <CreateFood setShowCreateFood={setShowCreateFood} customFoods={customFoods} setCustomFoods={setCustomFoods} /> }
+
         <Text style={[{ color: Colors[colorScheme].text }, styles.pageTitle]}>Banco de Alimentos</Text>
 
         {/* Filter session */}
@@ -54,12 +59,16 @@ const FoodBank = () => {
           <Pressable style={styles.filterButton}>
             <Text style={[{ color: Colors[colorScheme].text }, styles.filterText]}>Meus Alimentos</Text>
           </Pressable>
+
+          <Pressable style={styles.filterButton} onPress={() => setShowCreateFood(true)}>
+            <Text style={[{ color: Colors[colorScheme].text }, styles.filterText]}>Adicionar Alimento</Text>
+          </Pressable>
         </View>
 
         <View style={styles.foodSelectionOuter}>
           {/* Search logic */}
           <TextInput
-              style={[{ color: Colors[colorScheme].text, backgroundColor: Colors.dark.basicBG }, styles.searchInput]}
+              style={[{ color: Colors[colorScheme].text }, styles.searchInput]}
               placeholder='Pesquisar...'
               placeholderTextColor='gray'
               onChangeText={doSearch}
@@ -67,7 +76,7 @@ const FoodBank = () => {
               //autoFocus
           />
 
-          <View style={[ styles.foodSelection , {backgroundColor: Colors.dark.basicBG}]}>
+          <View style={[ styles.foodSelection ]}>
             <FlatList
               data={combinedFoods.slice(0, visibleItems)}
               keyExtractor={(item, index) => index.toString()}
@@ -96,14 +105,7 @@ const FoodBank = () => {
               onEndReachedThreshold={0.5} // How close to the bottom to trigger loading more (0.5 = halfway)
             />
           </View>
-        </View>
-
-        <View>
-          <Pressable style={styles.addFoodBtn}>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.addFoodText]}>Adicionar Alimento</Text>
-          </Pressable>
-        </View>
-
+        </View>      
       </View>
     )
 }
@@ -114,11 +116,10 @@ const styles = StyleSheet.create({
     foodBankOuter: {
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+      alignItems: 'center',      
       height: vh,
       width: '100%',
-      backgroundColor: Colors.dark.basicBG,
+      backgroundColor: Colors.dark.background,
       marginTop: 25,      
     },
     pageTitle: {
@@ -132,6 +133,7 @@ const styles = StyleSheet.create({
       marginBottom: 10,
       display: 'flex',
       flexDirection: 'row',
+      justifyContent: 'space-between',
       gap: 10,
     },
     filterButton: {
@@ -147,9 +149,9 @@ const styles = StyleSheet.create({
     foodSelectionOuter: {      
       width: '100%',
       display: 'flex',
-      flex: 1,
+      //flex: 1,
       flexDirection: 'column',  
-      alignItems: 'center',      
+      alignItems: 'center',
     },
     searchInput: {
       fontSize: 13,      
@@ -164,7 +166,6 @@ const styles = StyleSheet.create({
     foodSelection: {      
       padding: 10,      
       //height: vh * 0.60,
-      //overflow: 'hidden',
       width: '100%',
     },
     foodRow: {
@@ -203,18 +204,6 @@ const styles = StyleSheet.create({
     },
     foodMacros: {
       fontSize: 14,      
-    },
-    addFoodBtn: {
-      paddingHorizontal: 10,
-      paddingVertical: 6,
-      borderRadius: 99,      
-      borderColor: 'gray',
-      borderWidth: 1,
-      position: 'absolute',
-      bottom: 0, 
-    },
-    addFoodText: {
-      fontSize: 13,
     },    
 });
 

@@ -184,7 +184,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
                 <TextInput
                   style={[{ color: Colors[colorScheme].text }, styles.quantityInput]}
                   inputMode="numeric"
-                  value={quantityInputValue[i]}
+                  value={quantityInputValue[i] ?? ''}
                   onChangeText={(text) => changeQuantity(i, text)}
                   onFocus={() => inputPress(i)}
                   onBlur={() => handleBlur(i)}
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   foodOuter: {  
     borderBottomColor: 'gray',
     borderBottomWidth: 1,
-    marginVertical: 4,    
+    marginVertical: 3,    
     width: '100%',
   },
   foodTitleOuter: {    
@@ -302,6 +302,7 @@ const styles = StyleSheet.create({
   },
   foodMacros: {
     display: 'flex',
+    alignItems: 'center',
     flexDirection: 'row',    
     gap: 5,    
   },

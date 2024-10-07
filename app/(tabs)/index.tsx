@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     flex: 1,
     //position: 'relative',
     backgroundColor: Colors.dark.background,
-    marginTop: 25,    
+    marginTop: 27,    
   },
   datePickerOuter: {
     display: 'flex',

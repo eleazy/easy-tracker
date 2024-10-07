@@ -17,11 +17,7 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
     useEffect(() => {
         getCustomFoods().then((data: Food[]) => { setCustomFoods(data); });
     }, []);
-
-    useEffect(() => {
-      setCombinedFoods([...tacoTableFoods, ...customFoods]);
-    }, [customFoods]); // test the need of this later when custom foods can be added
- 
+     
     const doSearch = (search: string) => {
       setSearchQuery(search);
 
@@ -45,15 +41,15 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
       <View style={styles.foodSelectionOuter}>
         {/* Search logic */}
         <TextInput
-            style={[{ color: Colors[colorScheme].text, backgroundColor: Colors.dark.basicBG }, styles.searchInput]}
+            style={[{ color: Colors[colorScheme].text, backgroundColor: Colors.dark.background }, styles.searchInput]}
             placeholder='Pesquisar...'
             placeholderTextColor='gray'
             onChangeText={doSearch}
             value={searchQuery}
-            //autoFocus
+            autoFocus
         />
 
-        <View style={[ styles.foodSelection , {backgroundColor: Colors.dark.basicBG}]}>
+        <View style={[ styles.foodSelection , {backgroundColor: Colors.dark.background}]}>
           <FlatList
             data={combinedFoods.slice(0, visibleItems)}
             keyExtractor={(item, index) => index.toString()}
@@ -106,12 +102,12 @@ const styles = StyleSheet.create({
       borderRadius: 10,      
       borderColor: 'gray',
       borderWidth: 1,
-      height: vh * 0.33,
+      height: vh * 0.35,
       overflow: 'hidden',
     },
     foodRow: {
-      paddingBottom: 4,
-      marginBottom: 10,      
+      paddingBottom: 1,
+      marginBottom: 3,      
       borderColor: 'gray',
       borderBottomWidth: 1,      
     },
@@ -121,7 +117,7 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
     },
     foodTitle: {
-      fontSize: 16,
+      fontSize: 15,
       fontWeight: 'bold',
       width: '50%',
     },
@@ -134,7 +130,7 @@ const styles = StyleSheet.create({
       fontSize: 14,      
     },
     foodTitleInfoSuble: {
-      fontSize: 13,
+      fontSize: 12,
       color: 'gray',
     },
     macrosOuter: {

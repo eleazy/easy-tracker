@@ -1,3 +1,6 @@
+import { RefObject } from 'react';
+import { TextInput } from 'react-native';
+
 // INTERFACES
 
 export interface Food {
@@ -7,7 +10,7 @@ export interface Food {
   macroNutrients: {
     carbs: number;
     fats: number;
-    protein: number;
+    protein: number;    
   };
   quantity: number;
   title: string;
@@ -33,6 +36,12 @@ export interface mealMacroTotals {
   protein: number;
 };
 
+export interface MacroInput {
+  value: string;
+  setValue: (value: string) => void;
+  ref: RefObject<TextInput>;
+}
+
 export interface MealCardProps {
   meal: Meal;
   mealIndex: number;
@@ -51,6 +60,12 @@ export interface CalendarViewProps {
   setFoodDiaryDay: (foodDiaryDay: string) => void;
 };
 
+export interface CreateFoodProps {
+  setShowCreateFood: (showCreateFood: boolean) => void;
+  customFoods: Food[];  
+  setCustomFoods: (customFoods: Food[]) => void;
+};
+
 // REPLACES
 
 export const macrosDisplay = {
@@ -64,3 +79,42 @@ export const macrosDisplayShort = {
   fats: 'G',
   protein: 'P',
 };
+
+// Types
+
+export type MacroInputsObj = {
+  [key in 'carbs' | 'fats' | 'protein']: MacroInput;
+};
+
+// [
+//   "id",
+//   "alimento",
+//   "energia",
+//   "proteinas",
+//   "carboidratos",
+//   "gorduras",
+//   "gordurasSaturadas",
+//   "gordurasMonoinsaturadas",
+//   "gordurasPoliinsaturadas",
+//   "fibrasAlimentares",
+//   "cinzas",
+//   "calcio",
+//   "magnesio",
+//   "manganes",
+//   "fosforo",
+//   "ferro",
+//   "sodio",
+//   "potassio",
+//   "cobre",
+//   "zinco",
+//   "tiamina",
+//   "piridoxina",
+//   "niacina",
+//   "riboflavina",
+//   "vitaminaC",
+//   "RE",
+//   "RAE ",
+//   "colesterol",
+//   "Retinol",
+//   "Colesterol"
+// ]

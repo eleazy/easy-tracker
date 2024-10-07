@@ -308,7 +308,6 @@ export const getTotalCaloriesOfMonth = async (year: number, month: number): Prom
     }
 };
 
-
 // Add a new meal to the food diary in a given day
 export const addNewBlankMeal = async (date: string, mealTitle: string = '', mealPosition: number = 0) => {
     const loggedUser = getLoggedUser();
@@ -335,6 +334,20 @@ export const addNewBlankMeal = async (date: string, mealTitle: string = '', meal
 
     } catch (error) {
         console.error("Error adding new meal:", error);
+    }
+};
+
+export const addCustomFood = async (food: Food): Promise<void> => {
+    // Add a new custom food to the user's customFoods collection
+    const loggedUser = getLoggedUser();
+    const user = loggedUser.uid;
+    try {
+        const customFoodsCollectionRef = collection(db, "users", user, "customFoods");
+        const newFoodRef = doc(customFoodsCollectionRef);
+        let foodFB = { ...food, id: newFoodRef.id };
+        await setDoc(newFoodRef, foodFB);
+    } catch (error) {
+        console.error("Error adding custom food:", error);
     }
 };
 

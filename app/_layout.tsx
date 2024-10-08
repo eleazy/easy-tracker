@@ -1,11 +1,11 @@
-import { DarkTheme, DefaultTheme, ThemeProvider, NavigationContainer } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../firebase/firebaseConfig';
+import { auth } from '@/firebase/firebaseConfig';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { getLoggedUser, setLoggedUser } from '@/utils/helperFunctions';
 import Login from '@/app/login';

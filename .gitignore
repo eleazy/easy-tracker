@@ -11,9 +11,6 @@ npm-debug.*
 web-build/
 eas.json
 
-# Ignore Firebase configuration file
-firebase/firebaseConfig.ts
-
 
 
 # macOS

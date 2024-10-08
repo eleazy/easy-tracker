@@ -297,12 +297,12 @@ const styles = StyleSheet.create({
   foodMacrosOuter: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    gap: 10,
+    justifyContent: 'space-between',        
+    alignItems: 'center',
   },
   foodMacros: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'baseline',
     flexDirection: 'row',    
     gap: 5,    
   },

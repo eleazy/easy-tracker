@@ -10,13 +10,17 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
 
     const tacoTableFoods: Food[] = getTacoTableFoods();
     const [customFoods, setCustomFoods] = useState<Food[]>([]);
-    const [combinedFoods, setCombinedFoods] = useState<Food[]>([...tacoTableFoods, ...customFoods]);
+    const [combinedFoods, setCombinedFoods] = useState<Food[]>([...tacoTableFoods, ...customFoods]); // maybe not necessary
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [visibleItems, setVisibleItems] = useState<number>(10);
 
     useEffect(() => {
         getCustomFoods().then((data: Food[]) => { setCustomFoods(data); });
     }, []);
+
+    useEffect(() => {
+      setCombinedFoods([...tacoTableFoods, ...customFoods]);
+    }, [customFoods]);
      
     const doSearch = (search: string) => {
       setSearchQuery(search);
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
       width: '100%',      
     },
     searchInput: {
-      fontSize: 16,
+      fontSize: vh * 0.021,
       padding: 6,
       paddingLeft: 16,
       marginVertical: 10,
@@ -117,7 +121,7 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
     },
     foodTitle: {
-      fontSize: 15,
+      fontSize: vh * 0.018,
       fontWeight: 'bold',
       width: '50%',
     },
@@ -127,10 +131,10 @@ const styles = StyleSheet.create({
       alignItems: 'baseline',
     },
     foodTitleInfo: {
-      fontSize: 14,      
+      fontSize: vh * 0.018,      
     },
     foodTitleInfoSuble: {
-      fontSize: 12,
+      fontSize: vh * 0.016,
       color: 'gray',
     },
     macrosOuter: {
@@ -140,30 +144,8 @@ const styles = StyleSheet.create({
       marginVertical: 4,
     },
     foodMacros: {
-      fontSize: 14,      
+      fontSize: vh * 0.018,      
     },
-    text: {
-      fontSize: 16,
-      fontWeight: 'bold',
-    },
-    flex: {
-      display: 'flex',
-      flexDirection: 'row',
-    },
-    mealHeader: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: 'green',
-      borderBottomColor: 'white',
-      borderBottomWidth: 1,
-    },
-    foodDiv: {  
-      borderBottomColor: 'white',
-      borderBottomWidth: 1,
-    },
-    foodList: {
-      
-    },  
 });
 
 export default FoodSelection

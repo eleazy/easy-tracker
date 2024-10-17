@@ -42,6 +42,10 @@ export const monthName = (month: number) => {
 // Utility function to fix number precision
 export const fixN = (n: Number) => parseFloat(n.toFixed(2));
 
+export const getPercentual = (value: number, factor: number, dailyValue: number) => {
+    return fixN(((value * factor) / dailyValue) * 100);
+};
+
 // Logged user
 let loggedUser: User;
 export const setLoggedUser = (value: User) => loggedUser = value;
@@ -58,4 +62,43 @@ export const singularPluralMatch = (str: string) => {
         return [str, str.slice(0, -1)]; // Remove 's' for singular
     }
     return [str, `${str}s`]; // Add 's' for plural
+};
+
+export const emptyDetailedFood = {
+    id: '',
+    idMeal: '',
+    calories: 0,
+    macroNutrients: {
+        carbs: 0,
+        fats: 0,
+        protein: 0,
+    },
+    microNutrients: {
+        saturatedFats: 0,
+        monounsaturatedFats: 0,
+        polyunsaturatedFats: 0,
+        dietaryFiber: 0,
+        ash: 0,
+        calcium: 0,
+        magnesium: 0,
+        manganese: 0,
+        phosphorus: 0,
+        iron: 0,
+        sodium: 0,
+        potassium: 0,
+        copper: 0,
+        zinc: 0,
+        thiamine: 0,
+        pyridoxine: 0,
+        niacin: 0,
+        riboflavin: 0,
+        vitaminC: 0,
+        RE: 0,
+        RAE: 0,
+        cholesterol: 0,
+        retinol: 0,
+    },
+    quantity: 100,
+    title: '',
+    isCustom: true,    
 };

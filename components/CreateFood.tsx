@@ -57,6 +57,7 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
             },
             quantity: Number(portionInput),
             title: titleInput,
+            isCustom: true,
         };
 
         addCustomFood(food)

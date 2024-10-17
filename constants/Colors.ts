@@ -24,7 +24,8 @@ export const Colors = {
     tabIconSelected: tintColorDark,
     diaryTotalsBG: '#bf7728',
     mealTitleC: 'rgb(227, 144, 54)',
-    saveBtnBG: 'rgba(227, 144, 54, 0.9)',
+    saveBtnBG: 'rgba(227, 144, 54, 0.8)',
     basicBG: 'black',
+    borderBottomFoodDetail: 'rgba(255, 255, 255, 0.9)',
   },
 };

@@ -206,6 +206,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
 }
 
 const vw = Dimensions.get('window').width;
+const vh = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   mealCardOuter: {    
@@ -231,12 +232,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mealTitle: {
-    fontSize: 18,
+    fontSize: vh * 0.022,
     fontWeight: 'bold',
     color: Colors.dark.mealTitleC,    
   },
   mealCalories: {
-    fontSize: 16,
+    fontSize: vh * 0.020,
     fontWeight: 'bold',
   },
   mealMacrosOuter: {
@@ -252,11 +253,11 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',    
   },
   mealMacroValue: {
-    fontSize: 15,
+    fontSize: vh * 0.018,
     fontWeight: 'bold',
   },
   mealMacroType: {
-    fontSize: 13,
+    fontSize: vh * 0.015,
   },
   foodOuter: {  
     borderBottomColor: 'gray',
@@ -272,12 +273,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   foodTitle: {
-    fontSize: 15,    
+    fontSize: vh * 0.019,    
     marginBottom: 3,
   },
   quantityInput: {
     width: 50,
-    fontSize: 15,
+    fontSize: vh * 0.018,
     textAlign: 'center',
     color: Colors.dark.mealTitleC,
   },
@@ -287,11 +288,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   foodKcalValue: {
-    fontSize: 16,
+    fontSize: vh * 0.018,
     fontWeight: 'bold',
   },
   foodKcal: {
-    fontSize: 13,
+    fontSize: vh * 0.015,
     color: 'gray',
   },
   foodMacrosOuter: {

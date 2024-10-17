@@ -176,12 +176,12 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
   },
   diaryTitle: {
-    fontSize: 18,
+    fontSize: vh * 0.023,
     fontWeight: 'bold',
     color: Colors.dark.mealTitleC,
   },
   diaryCalories: {
-    fontSize: 18,
+    fontSize: vh * 0.024,
     fontWeight: 'bold',
   },
   diaryTotalsOuter: {
@@ -198,11 +198,11 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
   },
   diaryMacroValue: {
-    fontSize: 18,
+    fontSize: vh * 0.022,
     fontWeight: 'bold',
   },
   diaryMacroType: {
-    fontSize: 14,
+    fontSize: vh * 0.019,
   },
   addMealBtn: {
     display: 'flex',
@@ -211,8 +211,8 @@ const styles = StyleSheet.create({
   },
   saveText: {
     color: 'white',
-    fontSize: 19,
-    paddingVertical: 18,
+    fontSize: vh * 0.024,
+    paddingVertical: vh * 0.016,
     fontWeight: 'bold',
   },
   saveBtn: {

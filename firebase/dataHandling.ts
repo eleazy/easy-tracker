@@ -2,8 +2,8 @@ import { db } from "./firebaseConfig";
 import { collection, getDocs, query, where, setDoc, doc, deleteDoc, updateDoc, arrayUnion, DocumentReference, getDoc, DocumentData } from "firebase/firestore";
 import { User } from "firebase/auth";
 import tabelaTaco from './tabelaTaco.json';
-import { Food, Meal, mealMacroTotals } from "@/types/general";
-import { getLoggedUser, fixN, getTodayString } from "@/utils/helperFunctions";
+import { Food, Meal, detailedFood, mealMacroTotals } from "@/types/general";
+import { getLoggedUser, fixN, getTodayString, emptyDetailedFood } from "@/utils/helperFunctions";
 
 // PRIVATE FUNCTIONS
 
@@ -190,6 +190,7 @@ export const getTacoTableFoods = (): Food[] => {
             },
             quantity: 100,
             title: food.alimento ?? '',
+            isCustom: false,
         };
     });
 };
@@ -206,6 +207,101 @@ export const getCustomFoods = async (): Promise<Food[]> => {
         console.error("Error fetching custom foods:", error);
         return [];
     }
+};
+
+// get food with all atributtes on the database or taco table
+export const getDetailedFood = async (foodId: string): Promise<detailedFood> => {
+    const loggedUser = getLoggedUser();
+    const user = loggedUser.uid;
+
+    try {
+        const customFoodsCollectionRef = collection(db, "users", user, "customFoods");
+        const customFoodDoc = doc(customFoodsCollectionRef, foodId);
+        const customFoodData = await fetchFoodData(customFoodDoc);
+
+        if (customFoodData) {
+            const customFoodShaped: detailedFood = {
+                id: foodId,
+                idMeal: '',
+                calories: customFoodData.calories,
+                macroNutrients: customFoodData.macroNutrients,
+                microNutrients: {
+                    saturatedFats: 0,
+                    monounsaturatedFats: 0,
+                    polyunsaturatedFats: 0,
+                    dietaryFiber: 0,
+                    ash: 0,
+                    calcium: 0,
+                    magnesium: 0,
+                    manganese: 0,
+                    phosphorus: 0,
+                    iron: 0,
+                    sodium: 0,
+                    potassium: 0,
+                    copper: 0,
+                    zinc: 0,
+                    thiamine: 0,
+                    pyridoxine: 0,
+                    niacin: 0,
+                    riboflavin: 0,
+                    vitaminC: 0,
+                    RE: 0,
+                    RAE: 0,
+                    cholesterol: 0,
+                    retinol: 0,
+                },
+                quantity: 100,
+                title: customFoodData.title,
+                isCustom: true,
+            };
+            return customFoodShaped;
+        }
+
+        const tacoFood = Object.values(tabelaTaco).find((food) => food.id === Number(foodId));
+        if (tacoFood) {
+            const tacoFoodShaped: detailedFood = {
+                id: foodId,
+                idMeal: '',
+                calories: tacoFood.energia ?? 0,
+                macroNutrients: {
+                    carbs: tacoFood.carboidratos ?? 0,
+                    fats: tacoFood.gorduras ?? 0,
+                    protein: tacoFood.proteinas ?? 0,
+                },
+                microNutrients: {
+                    saturatedFats: tacoFood.gordurasSaturadas ?? 0,
+                    monounsaturatedFats: tacoFood.gordurasMonoinsaturadas ?? 0,
+                    polyunsaturatedFats: tacoFood.gordurasPoliinsaturadas ?? 0,
+                    dietaryFiber: tacoFood.fibrasAlimentares ?? 0,
+                    ash: tacoFood.cinzas ?? 0,
+                    calcium: tacoFood.calcio ?? 0,
+                    magnesium: tacoFood.magnesio ?? 0,
+                    manganese: tacoFood.manganes ?? 0,
+                    phosphorus: tacoFood.fosforo ?? 0,
+                    iron: tacoFood.ferro ?? 0,
+                    sodium: tacoFood.sodio ?? 0,
+                    potassium: tacoFood.potassio ?? 0,
+                    copper: tacoFood.cobre ?? 0,
+                    zinc: tacoFood.zinco ?? 0,
+                    thiamine: tacoFood.tiamina ?? 0,
+                    pyridoxine: tacoFood.piridoxina ?? 0,
+                    niacin: tacoFood.niacina ?? 0,
+                    riboflavin: tacoFood.riboflavina ?? 0,
+                    vitaminC: tacoFood.vitaminaC ?? 0,
+                    RE: tacoFood.RE ?? 0,
+                    RAE: tacoFood.RAE ?? 0,
+                    cholesterol: tacoFood.colesterol ?? 0,
+                    retinol: tacoFood.retinol ?? 0,
+                },
+                quantity: 100,
+                title: tacoFood.alimento ?? '',
+                isCustom: false,
+            }
+            return tacoFoodShaped;
+        }
+    } catch (error) { console.error("Error fetching detailed food:", error); }
+    
+    return emptyDetailedFood;
 };
 
 export const getMealsOfDay = async (date: string): Promise<Meal[]> => {

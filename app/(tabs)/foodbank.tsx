@@ -5,6 +5,7 @@ import { Food, macrosDisplay } from '@/types/general';
 import { getTacoTableFoods, getCustomFoods } from '@/firebase/dataHandling';
 import { removeAccents, singularPluralMatch } from '@/utils/helperFunctions';
 import CreateFood from '@/components/CreateFood';
+import FoodInfo from '@/components/FoodInfo';
 
 const FoodBank = () => {
   const colorScheme = useColorScheme() ?? 'dark';
@@ -15,6 +16,8 @@ const FoodBank = () => {
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [visibleItems, setVisibleItems] = useState<number>(10);
     const [showCreateFood, setShowCreateFood] = useState<boolean>(false);
+    const [showFoodInfo, setShowFoodInfo] = useState<boolean>(true); /////
+    const [foodId, setFoodId] = useState<string>('24'); /////
 
     useEffect(() => {
         getCustomFoods().then((data: Food[]) => { setCustomFoods(data); });
@@ -22,7 +25,7 @@ const FoodBank = () => {
 
     useEffect(() => {
       setCombinedFoods([...tacoTableFoods, ...customFoods]);
-    }, [customFoods]); // test the need of this later when custom foods can be added
+    }, [customFoods]);
  
     const doSearch = (search: string) => {
       setSearchQuery(search);
@@ -47,6 +50,8 @@ const FoodBank = () => {
       <View style={styles.foodBankOuter}>
 
         { showCreateFood && <CreateFood setShowCreateFood={setShowCreateFood} customFoods={customFoods} setCustomFoods={setCustomFoods} /> }
+
+        { showFoodInfo && <FoodInfo setShowFoodInfo={setShowFoodInfo} foodId={foodId}/> }
 
         <Text style={[{ color: Colors[colorScheme].text }, styles.pageTitle]}>Banco de Alimentos</Text>
 
@@ -81,7 +86,7 @@ const FoodBank = () => {
               data={combinedFoods.slice(0, visibleItems)}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item: food }) => (
-                <Pressable style={styles.foodRow} >
+                <Pressable style={styles.foodRow} onPress={() => { setFoodId(food.id); setShowFoodInfo(true); }}>
                   <View style={styles.foodTitleOuter}>
                     <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}>{food.title}</Text>
                     <View style={styles.foodkcalOuter}>
@@ -123,7 +128,7 @@ const styles = StyleSheet.create({
       marginTop: 25,      
     },
     pageTitle: {
-      fontSize: 20,
+      fontSize: vh * 0.025,
       fontWeight: 'bold',
       textAlign: 'center',
       marginVertical: 20,
@@ -144,7 +149,7 @@ const styles = StyleSheet.create({
       borderWidth: 1,
     },
     filterText: {
-      fontSize: 13,
+      fontSize: vh * 0.015,
     },
     foodSelectionOuter: {      
       width: '100%',
@@ -180,7 +185,7 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
     },
     foodTitle: {
-      fontSize: 16,
+      fontSize: vh * 0.018,
       fontWeight: 'bold',
       width: '50%',
     },
@@ -190,10 +195,10 @@ const styles = StyleSheet.create({
       alignItems: 'baseline',
     },
     foodTitleInfo: {
-      fontSize: 14,      
+      fontSize: vh * 0.018,      
     },
     foodTitleInfoSuble: {
-      fontSize: 13,
+      fontSize: vh * 0.015,
       color: 'gray',
     },
     macrosOuter: {
@@ -203,7 +208,7 @@ const styles = StyleSheet.create({
       marginVertical: 4,
     },
     foodMacros: {
-      fontSize: 14,      
+      fontSize: vh * 0.018,      
     },    
 });
 

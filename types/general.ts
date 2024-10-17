@@ -14,6 +14,35 @@ export interface Food {
   };
   quantity: number;
   title: string;
+  isCustom: boolean;
+};
+
+export interface detailedFood extends Food {
+  microNutrients: {    
+    saturatedFats: number;
+    monounsaturatedFats: number;
+    polyunsaturatedFats: number | string;
+    dietaryFiber: number | string;
+    ash: number | string;
+    calcium: number | string;
+    magnesium: number | string;
+    manganese: number | string;
+    phosphorus: number | string;
+    iron: number | string;
+    sodium: number | string;
+    potassium: number | string;
+    copper: number | string;
+    zinc: number | string;
+    thiamine: number | string;
+    pyridoxine: number | string;
+    niacin: number | string;
+    riboflavin: number | string;
+    vitaminC: number | string;
+    RE: number | string;
+    RAE: number | string;
+    cholesterol: number | string;
+    retinol: number | string;
+  };
 };
 
 export interface Meal {
@@ -66,18 +95,49 @@ export interface CreateFoodProps {
   setCustomFoods: (customFoods: Food[]) => void;
 };
 
+export interface FoodInfoProps {
+  setShowFoodInfo: (showFoodInfo: boolean) => void;
+  foodId: string;
+};
+
 // REPLACES
 
 export const macrosDisplay = {
   carbs: 'Carboidratos',
   fats: 'Gorduras',
-  protein: 'Proteínas',
+  protein: 'Proteínas',  
 };
 
 export const macrosDisplayShort = {
   carbs: 'C',
   fats: 'G',
   protein: 'P',
+};
+
+export const microsDisplay = {
+  saturatedFats: 'Gorduras Saturadas',
+  monounsaturatedFats: 'Gorduras Monoinsaturadas',
+  polyunsaturatedFats: 'Gorduras Poliinsaturadas',
+  dietaryFiber: 'Fibras Alimentares',
+  cholesterol: 'Colesterol',
+  sodium: 'Sódio',
+  ash: 'Cinzas',
+  calcium: 'Cálcio',
+  magnesium: 'Magnésio',
+  manganese: 'Manganês',
+  phosphorus: 'Fósforo',
+  iron: 'Ferro',
+  potassium: 'Potássio',
+  copper: 'Cobre',
+  zinc: 'Zinco',
+  thiamine: 'Tiamina',
+  pyridoxine: 'Piridoxina',
+  niacin: 'Niacina',
+  riboflavin: 'Riboflavina',
+  vitaminC: 'Vitamina C',
+  RE: 'RE',
+  RAE: 'RAE',
+  retinol: 'Retinol',
 };
 
 // Types

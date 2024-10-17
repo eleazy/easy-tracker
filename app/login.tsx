@@ -37,17 +37,7 @@ export default function Login(): JSX.Element {
                 error.message && Alert.alert(fixMessage(error.code));
             });
     };
-
-    const anonymousLogin = () => {
-        signInAnonymously(auth)
-            .then((userCredential) => {
-                loadInitialData(userCredential.user).then(() => { navigate('index'); });
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    };
-    
+        
     const inputValue = [email, password];
     const inputSetters = [setEmail, setPassword];
     const inputMode: ('email' | 'text')[] = ['email', 'text'];
@@ -91,10 +81,7 @@ export default function Login(): JSX.Element {
                 }}>
                     <Text style={styles.switchButton}>{signUp ? 'Registrar se' : 'Voltar'}</Text>
                 </Pressable>
-            </View>
-            <Pressable onPress={anonymousLogin}>
-                <Text style={styles.guestButton}>Entrar no modo visitante</Text>
-            </Pressable>
+            </View>          
         </View>
     );
 }

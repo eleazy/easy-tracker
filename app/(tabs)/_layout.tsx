@@ -1,12 +1,14 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { Dimensions } from "react-native";
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-
+  const vh = Dimensions.get('window').height;
+  
   return (
     <Tabs 
       screenOptions={{
@@ -18,7 +20,7 @@ export default function TabLayout() {
         options={{
           title: 'Diary',          
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'book' : 'book-outline'} color={color} size={22} />
+            <TabBarIcon name={focused ? 'book' : 'book-outline'} color={color} size={vh * 0.026} />
           ),
         }}
       />    
@@ -27,7 +29,7 @@ export default function TabLayout() {
         options={{
           title: 'Alimentos',          
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'albums' : 'albums-outline'} color={color} size={22} />
+            <TabBarIcon name={focused ? 'albums' : 'albums-outline'} color={color} size={vh * 0.026} />
           ),
         }}
       />
@@ -36,7 +38,7 @@ export default function TabLayout() {
         options={{
           title: 'Account',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} size={22} />
+            <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} size={vh * 0.026} />
           ),
         }}
       />

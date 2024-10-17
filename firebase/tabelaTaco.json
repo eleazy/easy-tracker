@@ -215,7 +215,7 @@
       "cobre": 0.27,
       "zinco": 1,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.32,
       "riboflavina": 0.39,
       "piridoxina": 0.46,
@@ -244,7 +244,7 @@
       "cobre": 0.13,
       "zinco": 0.7,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.9,
       "riboflavina": 0.42,
       "piridoxina": 0.21,
@@ -272,7 +272,7 @@
       "cobre": 0.26,
       "zinco": 0.9,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.37,
       "riboflavina": 0.03,
       "piridoxina": 0.3,
@@ -301,7 +301,7 @@
       "cobre": 0.08,
       "zinco": 0.5,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.36,
       "piridoxina": 0.94,
       "niacina": 0.37
@@ -380,7 +380,7 @@
       "cobre": 0.05,
       "zinco": 0.4,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.13,
       "riboflavina": 0.07
     },
@@ -407,7 +407,7 @@
       "cobre": 0.05,
       "zinco": 0.7,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.13,
       "riboflavina": 0.09,
       "piridoxina": 0.05
@@ -459,7 +459,7 @@
       "potassio": 118,
       "cobre": 0.04,
       "zinco": 0.4,
-      "Retinol": 57,
+      "retinol": 57,
       "tiamina": 0.11,
       "riboflavina": 0.05
     },
@@ -575,7 +575,7 @@
       "potassio": 82,
       "cobre": 0.04,
       "zinco": 0.4,
-      "Retinol": 21,
+      "retinol": 21,
       "tiamina": 3.72,
       "riboflavina": 0.47,
       "piridoxina": 5.08,
@@ -631,7 +631,7 @@
       "cobre": 0.06,
       "zinco": 7.6,
       "RE": 31,
-      "RAE ": 15,
+      "RAE": 15,
       "tiamina": 0.76,
       "riboflavina": 1.02,
       "piridoxina": 2.25,
@@ -660,7 +660,7 @@
       "cobre": 0.04,
       "zinco": 8.5,
       "RE": 31,
-      "RAE ": 15,
+      "RAE": 15,
       "tiamina": 0.73,
       "riboflavina": 1.11,
       "piridoxina": 0.79,
@@ -738,9 +738,9 @@
       "potassio": 162,
       "cobre": 0.03,
       "zinco": 0.4,
-      "Retinol": 12,
+      "retinol": 12,
       "RE": 20,
-      "RAE ": 16,
+      "RAE": 16,
       "tiamina": 0.04,
       "riboflavina": 0.07
     },
@@ -838,7 +838,7 @@
       "cobre": 0.27,
       "zinco": 0.6,
       "RE": 18,
-      "RAE ": 9,
+      "RAE": 9,
       "tiamina": 0.25,
       "piridoxina": 0.25
     },
@@ -912,7 +912,7 @@
       "potassio": 366,
       "cobre": 0.19,
       "zinco": 1.7,
-      "Retinol": 492,
+      "retinol": 492,
       "tiamina": 1.43,
       "riboflavina": 1.13,
       "piridoxina": 1.14,
@@ -1078,7 +1078,7 @@
       "cobre": 0.08,
       "zinco": 1.1,
       "RE": 26,
-      "RAE ": 13,
+      "RAE": 13,
       "tiamina": 0.25,
       "niacina": 0.75
     },
@@ -1104,7 +1104,7 @@
       "cobre": 0.05,
       "zinco": 0.5,
       "RE": 32,
-      "RAE ": 16,
+      "RAE": 16,
       "tiamina": 0.3,
       "piridoxina": 0.04
     },
@@ -1130,7 +1130,7 @@
       "cobre": 0.05,
       "zinco": 0.5,
       "RE": 48,
-      "RAE ": 24,
+      "RAE": 24,
       "riboflavina": 0.05,
       "niacina": 3.74,
       "vitaminaC": 1.7
@@ -1152,7 +1152,7 @@
       "ferro": 42,
       "sodio": 15,
       "zinco": 15.2,
-      "Retinol": 1533,
+      "retinol": 1533,
       "tiamina": 3.41,
       "piridoxina": 3.11,
       "niacina": 19.39
@@ -1201,7 +1201,7 @@
       "cobre": 0.14,
       "zinco": 1.7,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.09,
       "riboflavina": 0.03,
       "piridoxina": 0.08
@@ -1326,7 +1326,7 @@
       "potassio": 142,
       "cobre": 0.13,
       "zinco": 0.8,
-      "Retinol": 3,
+      "retinol": 3,
       "tiamina": 0.39,
       "riboflavina": 0.67,
       "piridoxina": 0.6,
@@ -1355,7 +1355,7 @@
       "potassio": 91,
       "zinco": 2.7,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.08,
       "riboflavina": 0.04,
       "piridoxina": 0.15
@@ -1453,7 +1453,7 @@
       "potassio": 124,
       "cobre": 0.1,
       "zinco": 0.8,
-      "Retinol": 18,
+      "retinol": 18,
       "tiamina": 0.09,
       "riboflavina": 0.04
     },
@@ -1616,7 +1616,7 @@
       "cobre": 0.06,
       "zinco": 0.3,
       "RE": 446,
-      "RAE ": 223,
+      "RAE": 223,
       "piridoxina": 0.1,
       "vitaminaC": 5.1
     },
@@ -1636,7 +1636,7 @@
       "potassio": 165,
       "cobre": 0.02,
       "RE": 1108,
-      "RAE ": 554,
+      "RAE": 554,
       "tiamina": 0.07,
       "piridoxina": 0.04,
       "vitaminaC": 1.5
@@ -1658,7 +1658,7 @@
       "cobre": 0.05,
       "zinco": 0.1,
       "RE": 278,
-      "RAE ": 139,
+      "RAE": 139,
       "piridoxina": 0.06,
       "vitaminaC": 9.6
     },
@@ -1684,7 +1684,7 @@
       "cobre": 0.04,
       "zinco": 0.1,
       "RE": 95,
-      "RAE ": 48,
+      "RAE": 48,
       "tiamina": 0.05,
       "piridoxina": 0.05,
       "vitaminaC": 6.7
@@ -1752,7 +1752,7 @@
       "cobre": 0.05,
       "zinco": 0.2,
       "RE": 41,
-      "RAE ": 20,
+      "RAE": 20,
       "riboflavina": 0.06,
       "piridoxina": 0.03,
       "vitaminaC": 6.9
@@ -1779,7 +1779,7 @@
       "cobre": 0.02,
       "zinco": 0.3,
       "RE": 42,
-      "RAE ": 21,
+      "RAE": 21,
       "tiamina": 0.04,
       "vitaminaC": 7.5
     },
@@ -1845,7 +1845,7 @@
       "cobre": 0.1,
       "zinco": 0.7,
       "RE": 458,
-      "RAE ": 229,
+      "RAE": 229,
       "tiamina": 0.11,
       "riboflavina": 0.23,
       "piridoxina": 0.09,
@@ -1871,7 +1871,7 @@
       "cobre": 0.31,
       "zinco": 0.1,
       "RE": 916,
-      "RAE ": 458,
+      "RAE": 458,
       "piridoxina": 0.18,
       "vitaminaC": 5.9
     },
@@ -1916,7 +1916,7 @@
       "cobre": 0.03,
       "zinco": 0.3,
       "RE": 234,
-      "RAE ": 117,
+      "RAE": 117,
       "tiamina": 0.11,
       "riboflavina": 0.12,
       "niacina": 1.09,
@@ -1941,7 +1941,7 @@
       "cobre": 0.03,
       "zinco": 0.3,
       "RE": 368,
-      "RAE ": 184,
+      "RAE": 184,
       "tiamina": 0.09,
       "riboflavina": 0.08,
       "piridoxina": 0.07,
@@ -1967,7 +1967,7 @@
       "cobre": 0.04,
       "zinco": 0.2,
       "RE": 312,
-      "RAE ": 156,
+      "RAE": 156,
       "vitaminaC": 13.5
     },
     {
@@ -2033,7 +2033,7 @@
       "cobre": 0.29,
       "zinco": 0.2,
       "RE": 16,
-      "RAE ": 8,
+      "RAE": 8,
       "tiamina": 0.06,
       "piridoxina": 0.08,
       "niacina": 0.34,
@@ -2058,7 +2058,7 @@
       "cobre": 0.1,
       "zinco": 0.3,
       "RE": 566,
-      "RAE ": 283,
+      "RAE": 283,
       "tiamina": 0.1,
       "riboflavina": 0.18,
       "niacina": 0.63,
@@ -2131,7 +2131,7 @@
       "cobre": 0.05,
       "zinco": 0.2,
       "RE": 25,
-      "RAE ": 12,
+      "RAE": 12,
       "tiamina": 0.05,
       "piridoxina": 0.12,
       "vitaminaC": 7.6
@@ -2336,7 +2336,7 @@
       "cobre": 0.06,
       "zinco": 0.1,
       "RE": 24,
-      "RAE ": 12,
+      "RAE": 12,
       "tiamina": 0.04,
       "riboflavina": 0.05,
       "vitaminaC": 3
@@ -2455,7 +2455,7 @@
       "cobre": 0.06,
       "zinco": 0.5,
       "RE": 279,
-      "RAE ": 140,
+      "RAE": 140,
       "tiamina": 0.12,
       "riboflavina": 0.18,
       "piridoxina": 0.08,
@@ -2525,7 +2525,7 @@
       "cobre": 0.37,
       "zinco": 6,
       "RE": 1906,
-      "RAE ": 953,
+      "RAE": 953,
       "riboflavina": 0.1,
       "piridoxina": 0.11,
       "vitaminaC": 5.4
@@ -2577,7 +2577,7 @@
       "cobre": 0.18,
       "zinco": 0.4,
       "RE": 850,
-      "RAE ": 425,
+      "RAE": 425,
       "tiamina": 0.04,
       "piridoxina": 0.03,
       "niacina": 0.6
@@ -2623,7 +2623,7 @@
       "cobre": 0.04,
       "zinco": 0.3,
       "RE": 134,
-      "RAE ": 67,
+      "RAE": 67,
       "tiamina": 0.03,
       "riboflavina": 0.04,
       "piridoxina": 0.08,
@@ -2649,7 +2649,7 @@
       "cobre": 0.02,
       "zinco": 0.2,
       "RE": 612,
-      "RAE ": 306,
+      "RAE": 306,
       "tiamina": 0.07,
       "piridoxina": 0.06,
       "niacina": 2.68
@@ -2673,7 +2673,7 @@
       "cobre": 0.05,
       "zinco": 0.2,
       "RE": 1326,
-      "RAE ": 663,
+      "RAE": 663,
       "piridoxina": 0.05,
       "vitaminaC": 5.1
     },
@@ -2737,7 +2737,7 @@
       "cobre": 0.03,
       "zinco": 0.1,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "vitaminaC": 10.6
     },
     {
@@ -2784,7 +2784,7 @@
       "cobre": 0.06,
       "zinco": 0.4,
       "RE": 496,
-      "RAE ": 248,
+      "RAE": 248,
       "tiamina": 0.2,
       "riboflavina": 0.31,
       "piridoxina": 0.06,
@@ -2813,7 +2813,7 @@
       "cobre": 0.02,
       "zinco": 0.2,
       "RE": 384,
-      "RAE ": 192,
+      "RAE": 192,
       "riboflavina": 0.05,
       "piridoxina": 0.07,
       "vitaminaC": 76.9
@@ -2837,7 +2837,7 @@
       "cobre": 0.03,
       "zinco": 0.3,
       "RE": 2,
-      "RAE ": 1,
+      "RAE": 1,
       "tiamina": 0.03,
       "riboflavina": 0.09,
       "piridoxina": 0.1,
@@ -2884,7 +2884,7 @@
       "cobre": 0.06,
       "zinco": 0.3,
       "RE": 484,
-      "RAE ": 242,
+      "RAE": 242,
       "tiamina": 0.1,
       "riboflavina": 0.21,
       "piridoxina": 0.06,
@@ -2912,7 +2912,7 @@
       "cobre": 0.04,
       "zinco": 0.6,
       "RE": 624,
-      "RAE ": 312,
+      "RAE": 312,
       "tiamina": 0.08,
       "riboflavina": 0.13,
       "piridoxina": 0.13,
@@ -3066,7 +3066,7 @@
       "cobre": 0.07,
       "zinco": 0.1,
       "RE": 13,
-      "RAE ": 6,
+      "RAE": 6,
       "tiamina": 0.07,
       "riboflavina": 0.04,
       "vitaminaC": 6.8
@@ -3213,7 +3213,7 @@
       "cobre": 0.16,
       "zinco": 0.5,
       "RE": 1035,
-      "RAE ": 517,
+      "RAE": 517,
       "tiamina": 0.06,
       "riboflavina": 0.21,
       "piridoxina": 0.06,
@@ -3239,7 +3239,7 @@
       "cobre": 0.02,
       "zinco": 0.2,
       "RE": 6,
-      "RAE ": 3,
+      "RAE": 3,
       "tiamina": 0.06,
       "riboflavina": 0.02,
       "piridoxina": 0.04,
@@ -3290,7 +3290,7 @@
       "potassio": 164,
       "cobre": 0.1,
       "zinco": 0.5,
-      "Retinol": 15,
+      "retinol": 15,
       "tiamina": 0.08,
       "piridoxina": 0.04
     },
@@ -3380,7 +3380,7 @@
       "potassio": 93,
       "cobre": 0.01,
       "zinco": 0.6,
-      "Retinol": 61,
+      "retinol": 61,
       "tiamina": 0.04,
       "riboflavina": 0.1,
       "piridoxina": 0.04,
@@ -3406,7 +3406,7 @@
       "sodio": 405,
       "potassio": 58,
       "zinco": 0.4,
-      "Retinol": 48,
+      "retinol": 48,
       "riboflavina": 0.08,
       "vitaminaC": " "
     },
@@ -3427,7 +3427,7 @@
       "cobre": 0.04,
       "zinco": 0.1,
       "RE": 4,
-      "RAE ": 2,
+      "RAE": 2,
       "riboflavina": 0.03,
       "vitaminaC": 5
     },
@@ -3449,7 +3449,7 @@
       "cobre": 0.04,
       "zinco": 0.2,
       "RE": 40,
-      "RAE ": 20,
+      "RAE": 20,
       "tiamina": 0.04,
       "riboflavina": 0.03,
       "piridoxina": 0.06,
@@ -3473,7 +3473,7 @@
       "cobre": 0.07,
       "zinco": 0.1,
       "RE": 46,
-      "RAE ": 23,
+      "RAE": 23,
       "vitaminaC": 100.2
     },
     {
@@ -3494,7 +3494,7 @@
       "cobre": 0.04,
       "zinco": 0.2,
       "RE": 86,
-      "RAE ": 43,
+      "RAE": 43,
       "tiamina": 0.05,
       "riboflavina": 0.06,
       "piridoxina": 0.02,
@@ -3535,7 +3535,7 @@
       "cobre": 0.17,
       "zinco": 0.6,
       "RE": 49,
-      "RAE ": 25,
+      "RAE": 25,
       "tiamina": 0.1,
       "piridoxina": 0.03,
       "vitaminaC": 5.6
@@ -3582,7 +3582,7 @@
       "cobre": 0.02,
       "zinco": 0.2,
       "RE": 6,
-      "RAE ": 3,
+      "RAE": 3,
       "riboflavina": 0.03,
       "piridoxina": 0.06,
       "vitaminaC": 18.7
@@ -3654,7 +3654,7 @@
       "cobre": 0.04,
       "zinco": 0.2,
       "RE": 533,
-      "RAE ": 266,
+      "RAE": 266,
       "tiamina": 0.04,
       "niacina": 0.35,
       "vitaminaC": 46.3
@@ -3680,7 +3680,7 @@
       "cobre": 0.2,
       "zinco": 1.3,
       "RE": 1743,
-      "RAE ": 872,
+      "RAE": 872,
       "tiamina": 0.12,
       "riboflavina": 0.15,
       "piridoxina": 0.47,
@@ -3709,7 +3709,7 @@
       "cobre": 0.08,
       "zinco": 0.5,
       "RE": 244,
-      "RAE ": 122,
+      "RAE": 122,
       "tiamina": 0.03,
       "niacina": 3.72
     },
@@ -3735,7 +3735,7 @@
       "cobre": 0.2,
       "zinco": 1.3,
       "RE": 1134,
-      "RAE ": 567,
+      "RAE": 567,
       "riboflavina": 0.11,
       "piridoxina": 0.08,
       "vitaminaC": 1.5
@@ -3762,7 +3762,7 @@
       "cobre": 0.16,
       "zinco": 0.6,
       "RE": 1160,
-      "RAE ": 580,
+      "RAE": 580,
       "riboflavina": 0.1,
       "piridoxina": 0.1,
       "vitaminaC": 17.9
@@ -3786,7 +3786,7 @@
       "cobre": 0.04,
       "zinco": 0.1,
       "RE": 54,
-      "RAE ": 27,
+      "RAE": 27,
       "tiamina": 0.12,
       "piridoxina": 0.02,
       "vitaminaC": 21.2
@@ -3810,7 +3810,7 @@
       "cobre": 0.2,
       "zinco": 0.4,
       "RE": 166,
-      "RAE ": 83,
+      "RAE": 83,
       "piridoxina": 0.11,
       "niacina": 2.42,
       "vitaminaC": 18
@@ -3837,7 +3837,7 @@
       "cobre": 0.08,
       "zinco": 0.1,
       "RE": 76,
-      "RAE ": 38,
+      "RAE": 38,
       "piridoxina": 0.06,
       "vitaminaC": 2.7
     },
@@ -3859,7 +3859,7 @@
       "cobre": 0.09,
       "zinco": 0.3,
       "RE": 90,
-      "RAE ": 45,
+      "RAE": 45,
       "piridoxina": 0.07,
       "niacina": 1.18,
       "vitaminaC": 5.4
@@ -3904,7 +3904,7 @@
       "cobre": 0.06,
       "zinco": 0.3,
       "RE": 32,
-      "RAE ": 16,
+      "RAE": 16,
       "riboflavina": 0.08,
       "vitaminaC": 1.2
     },
@@ -3971,7 +3971,7 @@
       "cobre": 0.04,
       "zinco": 0.1,
       "RE": 2,
-      "RAE ": 1,
+      "RAE": 1,
       "tiamina": 0.05,
       "vitaminaC": 1.2
     },
@@ -4065,7 +4065,7 @@
       "cobre": 0.07,
       "zinco": 0.1,
       "RE": 247,
-      "RAE ": 124,
+      "RAE": 124,
       "riboflavina": 0.04,
       "niacina": 1.38,
       "vitaminaC": 941.4
@@ -4088,7 +4088,7 @@
       "cobre": 0.04,
       "zinco": 0.1,
       "RE": 192,
-      "RAE ": 96,
+      "RAE": 96,
       "riboflavina": 0.1,
       "vitaminaC": 623.2
     },
@@ -4130,7 +4130,7 @@
       "cobre": 0.06,
       "zinco": 0.1,
       "RE": 27,
-      "RAE ": 14,
+      "RAE": 14,
       "tiamina": 0.07,
       "piridoxina": 0.03,
       "vitaminaC": 7.6
@@ -4203,7 +4203,7 @@
       "cobre": 0.05,
       "zinco": 0.2,
       "RE": 239,
-      "RAE ": 119,
+      "RAE": 119,
       "tiamina": 0.03,
       "riboflavina": 0.02,
       "piridoxina": 0.14,
@@ -4228,7 +4228,7 @@
       "cobre": 0.16,
       "zinco": 0.3,
       "RE": 27,
-      "RAE ": 14,
+      "RAE": 14,
       "tiamina": 0.03,
       "piridoxina": 0.06,
       "niacina": 1.41
@@ -4272,7 +4272,7 @@
       "cobre": 0.11,
       "zinco": 0.1,
       "RE": 6,
-      "RAE ": 3,
+      "RAE": 3,
       "piridoxina": 0.14,
       "vitaminaC": 10.5
     },
@@ -4294,7 +4294,7 @@
       "cobre": 0.1,
       "zinco": 0.2,
       "RE": 14,
-      "RAE ": 7,
+      "RAE": 7,
       "riboflavina": 0.02,
       "piridoxina": 0.14,
       "vitaminaC": 5.9
@@ -4317,7 +4317,7 @@
       "cobre": 0.08,
       "zinco": 0.3,
       "RE": 50,
-      "RAE ": 25,
+      "RAE": 25,
       "piridoxina": 0.14,
       "vitaminaC": 7.6
     },
@@ -4361,7 +4361,7 @@
       "cobre": 0.05,
       "zinco": 0.1,
       "RE": 32,
-      "RAE ": 16,
+      "RAE": 16,
       "riboflavina": 0.02,
       "piridoxina": 0.1,
       "vitaminaC": 21.6
@@ -4428,7 +4428,7 @@
       "cobre": 0.1,
       "zinco": 0.1,
       "RE": 106,
-      "RAE ": 53,
+      "RAE": 53,
       "tiamina": 0.04
     },
     {
@@ -4450,7 +4450,7 @@
       "cobre": 0.07,
       "zinco": 0.1,
       "RE": 15,
-      "RAE ": 7,
+      "RAE": 7,
       "vitaminaC": 219.3
     },
     {
@@ -4472,7 +4472,7 @@
       "cobre": 0.07,
       "zinco": 0.1,
       "RE": 22,
-      "RAE ": 11,
+      "RAE": 11,
       "riboflavina": 0.02,
       "niacina": 2.25,
       "vitaminaC": 119.7
@@ -4496,7 +4496,7 @@
       "cobre": 0.04,
       "zinco": 0.1,
       "RE": 10,
-      "RAE ": 5,
+      "RAE": 5,
       "riboflavina": 0.03,
       "vitaminaC": 138.7
     },
@@ -4719,7 +4719,7 @@
       "cobre": 0.06,
       "zinco": 0.1,
       "RE": 136,
-      "RAE ": 68,
+      "RAE": 68,
       "tiamina": 0.07,
       "vitaminaC": 23.1
     },
@@ -4742,7 +4742,7 @@
       "cobre": 0.08,
       "zinco": 0.1,
       "RE": 50,
-      "RAE ": 25,
+      "RAE": 25,
       "niacina": 1.41,
       "vitaminaC": 34.3
     },
@@ -4766,7 +4766,7 @@
       "cobre": 0.04,
       "zinco": 0.1,
       "RE": 38,
-      "RAE ": 19,
+      "RAE": 19,
       "piridoxina": 0.03,
       "vitaminaC": 80.6
     },
@@ -4900,7 +4900,7 @@
       "cobre": 0.03,
       "zinco": 0,
       "RE": 8,
-      "RAE ": 4,
+      "RAE": 4,
       "tiamina": 0.17,
       "piridoxina": 0.12,
       "vitaminaC": 27.1
@@ -4926,7 +4926,7 @@
       "cobre": 0.15,
       "zinco": 0.1,
       "RE": 5,
-      "RAE ": 3,
+      "RAE": 3,
       "piridoxina": 0.06,
       "vitaminaC": 70.8
     },
@@ -4948,7 +4948,7 @@
       "cobre": 0.04,
       "zinco": 0.1,
       "RE": 4,
-      "RAE ": 2,
+      "RAE": 2,
       "tiamina": 0.06,
       "riboflavina": 0.02,
       "vitaminaC": 56.9
@@ -4968,7 +4968,7 @@
       "potassio": 173,
       "cobre": 0.02,
       "RE": 4,
-      "RAE ": 2,
+      "RAE": 2,
       "tiamina": 0.03,
       "piridoxina": 0.02,
       "vitaminaC": 94.5
@@ -5014,7 +5014,7 @@
       "cobre": 0.02,
       "zinco": 0.1,
       "RE": 4,
-      "RAE ": 2,
+      "RAE": 2,
       "tiamina": 0.04,
       "piridoxina": 0.04,
       "vitaminaC": 44.3
@@ -5081,7 +5081,7 @@
       "cobre": 0.03,
       "zinco": 0.1,
       "RE": 1,
-      "RAE ": 0,
+      "RAE": 0,
       "tiamina": 0.07,
       "riboflavina": 0.02,
       "piridoxina": 0.02,
@@ -5102,7 +5102,7 @@
       "potassio": 149,
       "cobre": 0.01,
       "RE": 1,
-      "RAE ": 1,
+      "RAE": 1,
       "vitaminaC": 73.3
     },
     {
@@ -5144,7 +5144,7 @@
       "potassio": 143,
       "cobre": 0.02,
       "RE": 2,
-      "RAE ": 1,
+      "RAE": 1,
       "piridoxina": 0.03
     },
     {
@@ -5162,7 +5162,7 @@
       "potassio": 120,
       "cobre": 0.03,
       "RE": 31,
-      "RAE ": 16,
+      "RAE": 16,
       "vitaminaC": 32.8
     },
     {
@@ -5243,7 +5243,7 @@
       "potassio": 75,
       "cobre": 0.06,
       "RE": 4,
-      "RAE ": 2,
+      "RAE": 2,
       "piridoxina": 0.03,
       "vitaminaC": 2.4
     },
@@ -5269,7 +5269,7 @@
       "cobre": 0.35,
       "zinco": 0.7,
       "RE": 1020,
-      "RAE ": 510,
+      "RAE": 510,
       "tiamina": 0.11,
       "riboflavina": 0.11,
       "piridoxina": 0.03,
@@ -5315,7 +5315,7 @@
       "cobre": 1.36,
       "zinco": 0.1,
       "RE": 148,
-      "RAE ": 74,
+      "RAE": 74,
       "tiamina": 0.03,
       "riboflavina": 0.03,
       "vitaminaC": 78.5
@@ -5339,7 +5339,7 @@
       "cobre": 0.02,
       "zinco": 0.1,
       "RE": 118,
-      "RAE ": 59,
+      "RAE": 59,
       "tiamina": 0.03,
       "riboflavina": 0.04,
       "niacina": 1.03,
@@ -5385,7 +5385,7 @@
       "cobre": 0.1,
       "zinco": 0.1,
       "RE": 162,
-      "RAE ": 81,
+      "RAE": 81,
       "tiamina": 0.02,
       "riboflavina": 0.06,
       "piridoxina": 0.05,
@@ -5410,7 +5410,7 @@
       "cobre": 0.09,
       "zinco": 0.1,
       "RE": 787,
-      "RAE ": 393,
+      "RAE": 393,
       "tiamina": 0.09,
       "riboflavina": 0.03,
       "vitaminaC": 65.5
@@ -5459,7 +5459,7 @@
       "cobre": 0.06,
       "zinco": 0.1,
       "RE": 118,
-      "RAE ": 59,
+      "RAE": 59,
       "riboflavina": 0.04,
       "piridoxina": 0.03,
       "vitaminaC": 7.9
@@ -5486,7 +5486,7 @@
       "cobre": 0.19,
       "zinco": 0.4,
       "RE": 114,
-      "RAE ": 57,
+      "RAE": 57,
       "riboflavina": 0.05,
       "piridoxina": 0.05,
       "vitaminaC": 19.8
@@ -5553,7 +5553,7 @@
       "cobre": 0.04,
       "zinco": 0.1,
       "RE": 61,
-      "RAE ": 31,
+      "RAE": 31,
       "vitaminaC": 6.1
     },
     {
@@ -5574,7 +5574,7 @@
       "cobre": 0.04,
       "zinco": 0.1,
       "RE": 2,
-      "RAE ": 1,
+      "RAE": 1,
       "piridoxina": 0.02,
       "vitaminaC": 8.7
     },
@@ -5660,7 +5660,7 @@
       "cobre": 0.12,
       "zinco": 0.1,
       "RE": 170,
-      "RAE ": 85,
+      "RAE": 85,
       "vitaminaC": 3.2
     },
     {
@@ -5681,7 +5681,7 @@
       "cobre": 0.21,
       "zinco": 1,
       "RE": 60,
-      "RAE ": 30,
+      "RAE": 30,
       "tiamina": 0.17,
       "riboflavina": 0.48,
       "piridoxina": 0.06,
@@ -5729,7 +5729,7 @@
       "cobre": 0.07,
       "zinco": 0.1,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "vitaminaC": 2.8
     },
     {
@@ -5769,7 +5769,7 @@
       "cobre": 0.04,
       "zinco": 0.1,
       "RE": 48,
-      "RAE ": 24
+      "RAE": 24
     },
     {
       "id": 245,
@@ -5815,7 +5815,7 @@
       "cobre": 0.08,
       "zinco": 0.4,
       "RE": 154,
-      "RAE ": 77,
+      "RAE": 77,
       "tiamina": 0.03,
       "riboflavina": 0.1,
       "vitaminaC": 24.9
@@ -5839,7 +5839,7 @@
       "cobre": 0.06,
       "zinco": 0.1,
       "RE": 146,
-      "RAE ": 73
+      "RAE": 73
     },
     {
       "id": 248,
@@ -5904,7 +5904,7 @@
       "potassio": 131,
       "cobre": 0.03,
       "RE": 47,
-      "RAE ": 24,
+      "RAE": 24,
       "tiamina": 0.06,
       "riboflavina": 0.02,
       "piridoxina": 0.02,
@@ -5924,7 +5924,7 @@
       "potassio": 119,
       "cobre": 0.02,
       "RE": 51,
-      "RAE ": 26,
+      "RAE": 26,
       "tiamina": 0.06,
       "piridoxina": 0.03,
       "vitaminaC": 41.8
@@ -5951,7 +5951,7 @@
       "cobre": 0.39,
       "zinco": 0.9,
       "RE": 2363,
-      "RAE ": 1181,
+      "RAE": 1181,
       "tiamina": 0.04,
       "piridoxina": 0.11,
       "vitaminaC": 18
@@ -6015,7 +6015,7 @@
       "potassio": 162,
       "cobre": 0.11,
       "RE": 5,
-      "RAE ": 3,
+      "RAE": 3,
       "piridoxina": 0.03,
       "vitaminaC": 3.3
     },
@@ -6097,7 +6097,7 @@
       "ferro": 0.2,
       "sodio": 579,
       "potassio": 15,
-      "Retinol": 924
+      "retinol": 924
     },
     {
       "id": 261,
@@ -6117,7 +6117,7 @@
       "sodio": 4,
       "potassio": 5,
       "cobre": 0.04,
-      "Retinol": 1013
+      "retinol": 1013
     },
     {
       "id": 262,
@@ -6135,7 +6135,7 @@
       "ferro": 0.1,
       "sodio": 894,
       "potassio": 21,
-      "Retinol": 462
+      "retinol": 462
     },
     {
       "id": 263,
@@ -6150,7 +6150,7 @@
       "ferro": 0.1,
       "sodio": 78,
       "potassio": 2,
-      "Retinol": 534
+      "retinol": 534
     },
     {
       "id": 264,
@@ -6167,7 +6167,7 @@
       "fosforo": 6,
       "sodio": 561,
       "potassio": 15,
-      "Retinol": 385
+      "retinol": 385
     },
     {
       "id": 265,
@@ -6185,7 +6185,7 @@
       "ferro": 0.1,
       "sodio": 33,
       "potassio": 5,
-      "Retinol": 245
+      "retinol": 245
     },
     {
       "id": 266,
@@ -6326,9 +6326,9 @@
       "sodio": 305,
       "potassio": 279,
       "zinco": 0.4,
-      "Retinol": 6,
+      "retinol": 6,
       "RE": 6,
-      "RAE ": 6,
+      "RAE": 6,
       "tiamina": 0.03,
       "niacina": 0.44
     },
@@ -6375,9 +6375,9 @@
       "potassio": 308,
       "cobre": 0.09,
       "zinco": 0.4,
-      "Retinol": 20,
+      "retinol": 20,
       "RE": 20,
-      "RAE ": 20,
+      "RAE": 20,
       "riboflavina": 0.04,
       "niacina": 5.94
     },
@@ -6449,9 +6449,9 @@
       "sodio": 160,
       "potassio": 420,
       "zinco": 0.6,
-      "Retinol": 17,
+      "retinol": 17,
       "RE": 17,
-      "RAE ": 17,
+      "RAE": 17,
       "niacina": 0.77
     },
     {
@@ -6474,9 +6474,9 @@
       "potassio": 249,
       "cobre": 0.03,
       "zinco": 0.6,
-      "Retinol": 12,
+      "retinol": 12,
       "RE": 12,
-      "RAE ": 12,
+      "RAE": 12,
       "riboflavina": 0.04,
       "niacina": 9.77
     },
@@ -6501,9 +6501,9 @@
       "potassio": 299,
       "cobre": 0.13,
       "zinco": 0.3,
-      "Retinol": 6,
+      "retinol": 6,
       "RE": 6,
-      "RAE ": 6,
+      "RAE": 6,
       "tiamina": 0.04,
       "niacina": 1.31
     },
@@ -6551,9 +6551,9 @@
       "potassio": 72,
       "cobre": 0.11,
       "zinco": 0.7,
-      "Retinol": 20,
+      "retinol": 20,
       "RE": 20,
-      "RAE ": 20
+      "RAE": 20
     },
     {
       "id": 285,
@@ -6695,9 +6695,9 @@
       "potassio": 293,
       "cobre": 0.02,
       "zinco": 0.4,
-      "Retinol": 8,
+      "retinol": 8,
       "RE": 8,
-      "RAE ": 8,
+      "RAE": 8,
       "riboflavina": 0.08
     },
     {
@@ -6720,9 +6720,9 @@
       "potassio": 339,
       "cobre": 0.03,
       "zinco": 0.4,
-      "Retinol": 65,
+      "retinol": 65,
       "RE": 65,
-      "RAE ": 65,
+      "RAE": 65,
       "tiamina": 0.12,
       "riboflavina": 0.05,
       "niacina": 2.62
@@ -6773,9 +6773,9 @@
       "potassio": 194,
       "cobre": 0.03,
       "zinco": 0.7,
-      "Retinol": 6,
+      "retinol": 6,
       "RE": 6,
-      "RAE ": 6,
+      "RAE": 6,
       "riboflavina": 0.03,
       "niacina": 0.77
     },
@@ -6823,9 +6823,9 @@
       "potassio": 244,
       "cobre": 0.09,
       "zinco": 3.3,
-      "Retinol": 4,
+      "retinol": 4,
       "RE": 4,
-      "RAE ": 4,
+      "RAE": 4,
       "tiamina": 0.05,
       "niacina": 3.3
     },
@@ -6850,9 +6850,9 @@
       "potassio": 331,
       "cobre": 0.31,
       "zinco": 5.6,
-      "Retinol": 9,
+      "retinol": 9,
       "RE": 9,
-      "RAE ": 9,
+      "RAE": 9,
       "tiamina": 0.25,
       "riboflavina": 0.03,
       "piridoxina": 0.04,
@@ -6905,9 +6905,9 @@
       "potassio": 319,
       "cobre": 0.15,
       "zinco": 3.8,
-      "Retinol": 30,
+      "retinol": 30,
       "RE": 30,
-      "RAE ": 30,
+      "RAE": 30,
       "tiamina": 0.05,
       "riboflavina": 0.07,
       "niacina": 0.79
@@ -6933,9 +6933,9 @@
       "potassio": 318,
       "cobre": 0.14,
       "zinco": 3.2,
-      "Retinol": 12,
+      "retinol": 12,
       "RE": 12,
-      "RAE ": 12,
+      "RAE": 12,
       "tiamina": 0.03,
       "riboflavina": 0.03,
       "niacina": 7.27
@@ -7030,9 +7030,9 @@
       "sodio": 76,
       "potassio": 261,
       "zinco": 0.3,
-      "Retinol": 3,
+      "retinol": 3,
       "RE": 3,
-      "RAE ": 3,
+      "RAE": 3,
       "riboflavina": 0.04,
       "niacina": 0.6
     },
@@ -7057,9 +7057,9 @@
       "potassio": 355,
       "cobre": 0.08,
       "zinco": 1.1,
-      "Retinol": 39,
+      "retinol": 39,
       "RE": 39,
-      "RAE ": 39,
+      "RAE": 39,
       "tiamina": 0.08,
       "riboflavina": 0.11,
       "niacina": 8.07
@@ -7085,9 +7085,9 @@
       "potassio": 216,
       "cobre": 0.03,
       "zinco": 0.4,
-      "Retinol": 18,
+      "retinol": 18,
       "RE": 18,
-      "RAE ": 18,
+      "RAE": 18,
       "riboflavina": 0.03,
       "niacina": 0.6
     },
@@ -7111,9 +7111,9 @@
       "sodio": 77,
       "potassio": 253,
       "zinco": 0.3,
-      "Retinol": 48,
+      "retinol": 48,
       "RE": 48,
-      "RAE ": 48,
+      "RAE": 48,
       "riboflavina": 0.05,
       "niacina": 3.1
     },
@@ -7137,9 +7137,9 @@
       "potassio": 249,
       "cobre": 0.03,
       "zinco": 0.6,
-      "Retinol": 4,
+      "retinol": 4,
       "RE": 4,
-      "RAE ": 4,
+      "RAE": 4,
       "tiamina": 0.14,
       "niacina": 8.87
     },
@@ -7165,7 +7165,7 @@
       "potassio": 208,
       "cobre": 0.36,
       "zinco": 0.3,
-      "Retinol": 19,
+      "retinol": 19,
       "riboflavina": 0.03,
       "niacina": 1.1,
       "vitaminaC": 6.9
@@ -7215,9 +7215,9 @@
       "potassio": 527,
       "cobre": 0.04,
       "zinco": 2.1,
-      "Retinol": 7,
+      "retinol": 7,
       "RE": 7,
-      "RAE ": 7,
+      "RAE": 7,
       "tiamina": 0.03,
       "niacina": 6.63
     },
@@ -7265,9 +7265,9 @@
       "potassio": 360,
       "cobre": 0.04,
       "zinco": 0.8,
-      "Retinol": 5,
+      "retinol": 5,
       "RE": 5,
-      "RAE ": 5,
+      "RAE": 5,
       "tiamina": 0.03,
       "niacina": 2.87
     },
@@ -7291,9 +7291,9 @@
       "potassio": 313,
       "cobre": 0.04,
       "zinco": 0.7,
-      "Retinol": 5,
+      "retinol": 5,
       "RE": 5,
-      "RAE ": 5,
+      "RAE": 5,
       "niacina": 1.19
     },
     {
@@ -7561,7 +7561,7 @@
       "potassio": 68,
       "zinco": 0.3,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.05,
       "riboflavina": 0.04
     },
@@ -7609,9 +7609,9 @@
       "potassio": 237,
       "cobre": 0.08,
       "zinco": 6.3,
-      "Retinol": 2,
+      "retinol": 2,
       "RE": 2,
-      "RAE ": 2,
+      "RAE": 2,
       "tiamina": 0.15,
       "riboflavina": 0.21,
       "piridoxina": 0.03,
@@ -7661,9 +7661,9 @@
       "potassio": 234,
       "cobre": 0.04,
       "zinco": 5.2,
-      "Retinol": 2,
+      "retinol": 2,
       "RE": 2,
-      "RAE ": 2,
+      "RAE": 2,
       "tiamina": 0.12,
       "riboflavina": 0.12,
       "niacina": 2.33
@@ -7690,7 +7690,7 @@
       "cobre": 0.15,
       "zinco": 2.3,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.11,
       "riboflavina": 0.04,
       "niacina": 2.2,
@@ -7718,7 +7718,7 @@
       "cobre": 0.19,
       "zinco": 2.6,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.13,
       "riboflavina": 0.07,
       "niacina": 6.6
@@ -7790,9 +7790,9 @@
       "potassio": 267,
       "cobre": 0.06,
       "zinco": 3.5,
-      "Retinol": 4,
+      "retinol": 4,
       "RE": 4,
-      "RAE ": 4,
+      "RAE": 4,
       "tiamina": 0.09,
       "riboflavina": 0.09,
       "piridoxina": 0.12,
@@ -7940,7 +7940,7 @@
       "potassio": 271,
       "cobre": 0.1,
       "zinco": 2.9,
-      "Retinol": 15,
+      "retinol": 15,
       "tiamina": 0.07,
       "riboflavina": 0.04,
       "niacina": 3.02
@@ -7965,9 +7965,9 @@
       "potassio": 245,
       "cobre": 0.04,
       "zinco": 4.4,
-      "Retinol": 3,
+      "retinol": 3,
       "RE": 3,
-      "RAE ": 3,
+      "RAE": 3,
       "tiamina": 0.14,
       "riboflavina": 0.08,
       "niacina": 2.68
@@ -8018,9 +8018,9 @@
       "potassio": 285,
       "cobre": 0.04,
       "zinco": 2.8,
-      "Retinol": 4,
+      "retinol": 4,
       "RE": 4,
-      "RAE ": 4,
+      "RAE": 4,
       "tiamina": 0.11,
       "riboflavina": 0.08,
       "piridoxina": 0.03,
@@ -8139,9 +8139,9 @@
       "sodio": 70,
       "potassio": 151,
       "zinco": 2.7,
-      "Retinol": 5,
+      "retinol": 5,
       "RE": 5,
-      "RAE ": 5,
+      "RAE": 5,
       "tiamina": 0.12,
       "riboflavina": 0.11,
       "niacina": 5.99
@@ -8166,9 +8166,9 @@
       "potassio": 252,
       "cobre": 0.07,
       "zinco": 5,
-      "Retinol": 2,
+      "retinol": 2,
       "RE": 2,
-      "RAE ": 2,
+      "RAE": 2,
       "niacina": 3.26
     },
     {
@@ -8191,9 +8191,9 @@
       "potassio": 358,
       "cobre": 0.05,
       "zinco": 2.8,
-      "Retinol": 2,
+      "retinol": 2,
       "RE": 2,
-      "RAE ": 2,
+      "RAE": 2,
       "tiamina": 0.12,
       "riboflavina": 0.2,
       "niacina": 4.38
@@ -8218,9 +8218,9 @@
       "potassio": 239,
       "cobre": 0.11,
       "zinco": 4.7,
-      "Retinol": 2,
+      "retinol": 2,
       "RE": 2,
-      "RAE ": 2,
+      "RAE": 2,
       "niacina": 4.09
     },
     {
@@ -8243,9 +8243,9 @@
       "potassio": 335,
       "cobre": 0.05,
       "zinco": 2.6,
-      "Retinol": 3,
+      "retinol": 3,
       "RE": 3,
-      "RAE ": 3,
+      "RAE": 3,
       "tiamina": 0.12,
       "riboflavina": 0.19,
       "niacina": 2.32
@@ -8294,9 +8294,9 @@
       "potassio": 151,
       "cobre": 0.03,
       "zinco": 2.4,
-      "Retinol": 3,
+      "retinol": 3,
       "RE": 3,
-      "RAE ": 3,
+      "RAE": 3,
       "tiamina": 0.11,
       "riboflavina": 0.05,
       "piridoxina": 0.03,
@@ -8323,9 +8323,9 @@
       "potassio": 265,
       "cobre": 9.01,
       "zinco": 3.5,
-      "Retinol": 7937,
+      "retinol": 7937,
       "RE": 7937,
-      "RAE ": 7937,
+      "RAE": 7937,
       "tiamina": 0.14,
       "riboflavina": 0.9,
       "niacina": 10.66
@@ -8351,9 +8351,9 @@
       "potassio": 309,
       "cobre": 12.58,
       "zinco": 4,
-      "Retinol": 14574,
+      "retinol": 14574,
       "RE": 14574,
-      "RAE ": 14574,
+      "RAE": 14574,
       "tiamina": 0.21,
       "riboflavina": 2.69,
       "niacina": 11.92
@@ -8379,9 +8379,9 @@
       "potassio": 322,
       "cobre": 0.08,
       "zinco": 2.8,
-      "Retinol": 4,
+      "retinol": 4,
       "RE": 4,
-      "RAE ": 4,
+      "RAE": 4,
       "tiamina": 0.12,
       "riboflavina": 0.1,
       "piridoxina": 0.04,
@@ -8433,9 +8433,9 @@
       "potassio": 249,
       "cobre": 0.07,
       "zinco": 5.6,
-      "Retinol": 2,
+      "retinol": 2,
       "RE": 2,
-      "RAE ": 2,
+      "RAE": 2,
       "niacina": 2.32
     },
     {
@@ -8458,9 +8458,9 @@
       "potassio": 324,
       "cobre": 0.05,
       "zinco": 4.5,
-      "Retinol": 2,
+      "retinol": 2,
       "RE": 2,
-      "RAE ": 2,
+      "RAE": 2,
       "tiamina": 0.11,
       "riboflavina": 0.16,
       "niacina": 3.28
@@ -8510,9 +8510,9 @@
       "potassio": 274,
       "cobre": 0.04,
       "zinco": 4.2,
-      "Retinol": 5,
+      "retinol": 5,
       "RE": 5,
-      "RAE ": 5,
+      "RAE": 5,
       "tiamina": 0.08,
       "riboflavina": 0.07,
       "piridoxina": 0.03,
@@ -8538,9 +8538,9 @@
       "potassio": 254,
       "cobre": 0.05,
       "zinco": 7,
-      "Retinol": 3,
+      "retinol": 3,
       "RE": 3,
-      "RAE ": 3,
+      "RAE": 3,
       "niacina": 2.55
     },
     {
@@ -8563,9 +8563,9 @@
       "potassio": 362,
       "cobre": 0.05,
       "zinco": 2.4,
-      "Retinol": 2,
+      "retinol": 2,
       "RE": 2,
-      "RAE ": 2,
+      "RAE": 2,
       "tiamina": 0.1,
       "riboflavina": 0.14,
       "piridoxina": 0.03,
@@ -8640,9 +8640,9 @@
       "potassio": 274,
       "cobre": 0.03,
       "zinco": 3.5,
-      "Retinol": 3,
+      "retinol": 3,
       "RE": 3,
-      "RAE ": 3,
+      "RAE": 3,
       "tiamina": 0.12,
       "riboflavina": 0.08,
       "piridoxina": 0.03,
@@ -8693,9 +8693,9 @@
       "potassio": 299,
       "cobre": 0.06,
       "zinco": 3,
-      "Retinol": 4,
+      "retinol": 4,
       "RE": 4,
-      "RAE ": 4,
+      "RAE": 4,
       "tiamina": 0.12,
       "riboflavina": 0.07,
       "niacina": 3.59
@@ -8746,9 +8746,9 @@
       "potassio": 253,
       "cobre": 0.08,
       "zinco": 6.4,
-      "Retinol": 2,
+      "retinol": 2,
       "RE": 2,
-      "RAE ": 2,
+      "RAE": 2,
       "niacina": 1.97
     },
     {
@@ -8771,9 +8771,9 @@
       "potassio": 296,
       "cobre": 0.05,
       "zinco": 3.7,
-      "Retinol": 2,
+      "retinol": 2,
       "RE": 2,
-      "RAE ": 2,
+      "RAE": 2,
       "tiamina": 0.09,
       "riboflavina": 0.19,
       "piridoxina": 0.04,
@@ -8847,9 +8847,9 @@
       "potassio": 319,
       "cobre": 0.05,
       "zinco": 3.3,
-      "Retinol": 3,
+      "retinol": 3,
       "RE": 3,
-      "RAE ": 3,
+      "RAE": 3,
       "tiamina": 0.13,
       "riboflavina": 0.21,
       "niacina": 2.67
@@ -8875,9 +8875,9 @@
       "potassio": 318,
       "cobre": 0.05,
       "zinco": 4.5,
-      "Retinol": 2,
+      "retinol": 2,
       "RE": 2,
-      "RAE ": 2,
+      "RAE": 2,
       "tiamina": 0.11,
       "riboflavina": 0.08,
       "niacina": 3.61
@@ -8950,9 +8950,9 @@
       "potassio": 241,
       "cobre": 0.06,
       "zinco": 2.6,
-      "Retinol": 4,
+      "retinol": 4,
       "RE": 4,
-      "RAE ": 4,
+      "RAE": 4,
       "tiamina": 0.11,
       "riboflavina": 0.07,
       "piridoxina": 0.03,
@@ -8978,9 +8978,9 @@
       "potassio": 232,
       "cobre": 0.06,
       "zinco": 3.8,
-      "Retinol": 3,
+      "retinol": 3,
       "RE": 3,
-      "RAE ": 3,
+      "RAE": 3,
       "tiamina": 0.13,
       "riboflavina": 0.16,
       "niacina": 4.77
@@ -9246,9 +9246,9 @@
       "potassio": 211,
       "cobre": 0.02,
       "zinco": 1.2,
-      "Retinol": 10,
+      "retinol": 10,
       "RE": 10,
-      "RAE ": 10,
+      "RAE": 10,
       "tiamina": 0.11,
       "riboflavina": 0.04,
       "niacina": 2.58
@@ -9274,9 +9274,9 @@
       "potassio": 210,
       "cobre": 0.08,
       "zinco": 1.7,
-      "Retinol": 16,
+      "retinol": 16,
       "RE": 16,
-      "RAE ": 16,
+      "RAE": 16,
       "tiamina": 0.03,
       "niacina": 6.33
     },
@@ -9301,9 +9301,9 @@
       "potassio": 224,
       "cobre": 0.15,
       "zinco": 2.7,
-      "Retinol": 6,
+      "retinol": 6,
       "RE": 6,
-      "RAE ": 6,
+      "RAE": 6,
       "tiamina": 0.03,
       "riboflavina": 0.03,
       "niacina": 9.2
@@ -9329,9 +9329,9 @@
       "potassio": 220,
       "cobre": 0.2,
       "zinco": 2,
-      "Retinol": 9,
+      "retinol": 9,
       "RE": 9,
-      "RAE ": 9,
+      "RAE": 9,
       "tiamina": 0.23,
       "riboflavina": 0.35,
       "niacina": 3.39
@@ -9381,9 +9381,9 @@
       "potassio": 318,
       "cobre": 0.05,
       "zinco": 2.6,
-      "Retinol": 6,
+      "retinol": 6,
       "RE": 6,
-      "RAE ": 6,
+      "RAE": 6,
       "tiamina": 0.05,
       "riboflavina": 0.05,
       "niacina": 10.4
@@ -9409,9 +9409,9 @@
       "potassio": 275,
       "cobre": 0.03,
       "zinco": 2,
-      "Retinol": 10,
+      "retinol": 10,
       "RE": 10,
-      "RAE ": 10,
+      "RAE": 10,
       "tiamina": 0.16,
       "riboflavina": 0.05,
       "niacina": 2.04
@@ -9460,9 +9460,9 @@
       "potassio": 291,
       "cobre": 0.03,
       "zinco": 2.2,
-      "Retinol": 12,
+      "retinol": 12,
       "RE": 12,
-      "RAE ": 12,
+      "RAE": 12,
       "tiamina": 0.17,
       "riboflavina": 0.05,
       "niacina": 3.53
@@ -9488,9 +9488,9 @@
       "potassio": 281,
       "cobre": 0.26,
       "zinco": 3.7,
-      "Retinol": 3863,
+      "retinol": 3863,
       "RE": 3863,
-      "RAE ": 3863,
+      "RAE": 3863,
       "tiamina": 0.62,
       "riboflavina": 0.56,
       "niacina": 6.36
@@ -9517,9 +9517,9 @@
       "potassio": 408,
       "cobre": 0.05,
       "zinco": 0.8,
-      "Retinol": 7,
+      "retinol": 7,
       "RE": 7,
-      "RAE ": 7,
+      "RAE": 7,
       "tiamina": 0.05,
       "riboflavina": 0.04,
       "piridoxina": 0.52,
@@ -9546,9 +9546,9 @@
       "potassio": 217,
       "cobre": 0.04,
       "zinco": 1.1,
-      "Retinol": 7,
+      "retinol": 7,
       "RE": 7,
-      "RAE ": 7,
+      "RAE": 7,
       "tiamina": 0.08,
       "riboflavina": 0.03,
       "niacina": 3.28
@@ -9620,9 +9620,9 @@
       "potassio": 238,
       "cobre": 0.03,
       "zinco": 1.2,
-      "Retinol": 4,
+      "retinol": 4,
       "RE": 4,
-      "RAE ": 4,
+      "RAE": 4,
       "tiamina": 0.12,
       "riboflavina": 0.03,
       "niacina": 3.28
@@ -9648,9 +9648,9 @@
       "potassio": 380,
       "cobre": 0.01,
       "zinco": 1,
-      "Retinol": 6,
+      "retinol": 6,
       "RE": 6,
-      "RAE ": 6,
+      "RAE": 6,
       "tiamina": 0.12,
       "niacina": 15.8
     },
@@ -9675,9 +9675,9 @@
       "potassio": 252,
       "cobre": 0.05,
       "zinco": 0.6,
-      "Retinol": 4,
+      "retinol": 4,
       "RE": 4,
-      "RAE ": 4,
+      "RAE": 4,
       "tiamina": 0.09,
       "niacina": 2.58
     },
@@ -9724,9 +9724,9 @@
       "potassio": 267,
       "cobre": 0.03,
       "zinco": 0.7,
-      "Retinol": 2,
+      "retinol": 2,
       "RE": 2,
-      "RAE ": 2,
+      "RAE": 2,
       "tiamina": 0.1,
       "niacina": 5.86
     },
@@ -9773,9 +9773,9 @@
       "potassio": 323,
       "cobre": 0.06,
       "zinco": 2.2,
-      "Retinol": 8,
+      "retinol": 8,
       "RE": 8,
-      "RAE ": 8,
+      "RAE": 8,
       "tiamina": 0.1,
       "riboflavina": 0.05,
       "niacina": 11.2
@@ -9801,9 +9801,9 @@
       "potassio": 190,
       "cobre": 0.05,
       "zinco": 1.3,
-      "Retinol": 7,
+      "retinol": 7,
       "RE": 7,
-      "RAE ": 7,
+      "RAE": 7,
       "tiamina": 0.09,
       "riboflavina": 0.06,
       "niacina": 3.4
@@ -9828,9 +9828,9 @@
       "potassio": 382,
       "cobre": 0.07,
       "zinco": 2.2,
-      "Retinol": 11,
+      "retinol": 11,
       "RE": 11,
-      "RAE ": 11,
+      "RAE": 11,
       "tiamina": 0.1,
       "riboflavina": 0.05,
       "niacina": 10.2
@@ -9856,9 +9856,9 @@
       "potassio": 241,
       "cobre": 0.06,
       "zinco": 1.7,
-      "Retinol": 4,
+      "retinol": 4,
       "RE": 4,
-      "RAE ": 4,
+      "RAE": 4,
       "tiamina": 0.12,
       "riboflavina": 0.06,
       "niacina": 4.06
@@ -10110,7 +10110,7 @@
       "potassio": 247,
       "cobre": 0.08,
       "zinco": 1,
-      "Retinol": 25,
+      "retinol": 25,
       "tiamina": 0.14,
       "riboflavina": 0.06,
       "niacina": 3
@@ -10206,9 +10206,9 @@
       "potassio": 404,
       "cobre": 0.07,
       "zinco": 2.2,
-      "Retinol": 10,
+      "retinol": 10,
       "RE": 10,
-      "RAE ": 10,
+      "RAE": 10,
       "tiamina": 0.34,
       "niacina": 3.25
     },
@@ -10452,7 +10452,7 @@
       "cobre": 0.04,
       "zinco": 1.3,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.62,
       "riboflavina": 0.03,
       "niacina": 3.78
@@ -10479,7 +10479,7 @@
       "cobre": 0.04,
       "zinco": 1.5,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.5,
       "riboflavina": 0.03,
       "niacina": 4
@@ -10676,7 +10676,7 @@
       "potassio": 119,
       "cobre": 0.02,
       "zinco": 0.3,
-      "Retinol": 128,
+      "retinol": 128,
       "riboflavina": 0.1,
       "niacina": 0
     },
@@ -10699,7 +10699,7 @@
       "potassio": 71,
       "cobre": 0.02,
       "zinco": 0.4,
-      "Retinol": 23,
+      "retinol": 23,
       "tiamina": 0.04,
       "riboflavina": 0.22,
       "vitaminaC": 0.9
@@ -10747,7 +10747,7 @@
       "potassio": 52,
       "cobre": 0.02,
       "zinco": 0.3,
-      "Retinol": 27,
+      "retinol": 27,
       "tiamina": 0.03,
       "riboflavina": 0.12,
       "piridoxina": 0.02
@@ -10773,7 +10773,7 @@
       "potassio": 52,
       "cobre": 0.02,
       "zinco": 0.3,
-      "Retinol": 21,
+      "retinol": 21,
       "tiamina": 0.02,
       "riboflavina": 0.1,
       "niacina": 0.38
@@ -10798,7 +10798,7 @@
       "potassio": 329,
       "cobre": 0.03,
       "zinco": 0.9,
-      "Retinol": 53,
+      "retinol": 53,
       "tiamina": 0.06,
       "riboflavina": 0.33,
       "piridoxina": 0.57,
@@ -10824,7 +10824,7 @@
       "potassio": 140,
       "cobre": 0.04,
       "zinco": 0.4,
-      "Retinol": 35,
+      "retinol": 35,
       "riboflavina": 0.14
     },
     {
@@ -10849,7 +10849,7 @@
       "potassio": 155,
       "cobre": 0.04,
       "zinco": 0.3,
-      "Retinol": 39,
+      "retinol": 39,
       "tiamina": 0.07,
       "riboflavina": 0.29,
       "piridoxina": 0.14,
@@ -10875,7 +10875,7 @@
       "potassio": 1556,
       "cobre": 0.16,
       "zinco": 3.8,
-      "Retinol": 299,
+      "retinol": 299,
       "tiamina": 0.32,
       "riboflavina": 1.2,
       "niacina": 0.81
@@ -10911,7 +10911,7 @@
       "potassio": 133,
       "cobre": 0.02,
       "zinco": 0.4,
-      "Retinol": 21,
+      "retinol": 21,
       "tiamina": 0.04,
       "riboflavina": 0.24,
       "niacina": 1.52
@@ -10936,7 +10936,7 @@
       "potassio": 1132,
       "cobre": 0.11,
       "zinco": 2.7,
-      "Retinol": 361,
+      "retinol": 361,
       "tiamina": 0.24,
       "riboflavina": 1.03
     },
@@ -10981,7 +10981,7 @@
       "sodio": 31,
       "potassio": 105,
       "zinco": 0.3,
-      "Retinol": 161,
+      "retinol": 161,
       "riboflavina": 0.25
     },
     {
@@ -11005,7 +11005,7 @@
       "potassio": 120,
       "cobre": 0.07,
       "zinco": 2.7,
-      "Retinol": 111,
+      "retinol": 111,
       "tiamina": 0.03,
       "riboflavina": 0.32
     },
@@ -11030,7 +11030,7 @@
       "potassio": 62,
       "cobre": 0.08,
       "zinco": 3.5,
-      "Retinol": 109,
+      "retinol": 109,
       "riboflavina": 0.2
     },
     {
@@ -11054,7 +11054,7 @@
       "potassio": 96,
       "cobre": 0.17,
       "zinco": 4.4,
-      "Retinol": 66,
+      "retinol": 66,
       "riboflavina": 0.44,
       "piridoxina": 0.23
     },
@@ -11079,7 +11079,7 @@
       "potassio": 194,
       "cobre": 0.05,
       "zinco": 1.3,
-      "Retinol": 57,
+      "retinol": 57,
       "riboflavina": 0.2
     },
     {
@@ -11102,7 +11102,7 @@
       "potassio": 121,
       "cobre": 0.01,
       "zinco": 2.7,
-      "Retinol": 273,
+      "retinol": 273,
       "tiamina": 0.22,
       "riboflavina": 0.27,
       "piridoxina": 0.21,
@@ -11129,7 +11129,7 @@
       "potassio": 73,
       "cobre": 0.1,
       "zinco": 3.5,
-      "Retinol": 123,
+      "retinol": 123,
       "riboflavina": 0.22
     },
     {
@@ -11153,7 +11153,7 @@
       "potassio": 93,
       "cobre": 0.05,
       "zinco": 1.3,
-      "Retinol": 195,
+      "retinol": 195,
       "riboflavina": 0.19
     },
     {
@@ -11175,7 +11175,7 @@
       "sodio": 283,
       "potassio": 112,
       "zinco": 0.5,
-      "Retinol": 53,
+      "retinol": 53,
       "riboflavina": 0.15
     },
     {
@@ -11410,7 +11410,7 @@
       "potassio": 127,
       "cobre": 0.03,
       "zinco": 1.4,
-      "Retinol": 59,
+      "retinol": 59,
       "tiamina": 0.03,
       "riboflavina": 0.24
     },
@@ -11434,7 +11434,7 @@
       "potassio": 79,
       "cobre": 0.04,
       "zinco": 2.1,
-      "Retinol": 305,
+      "retinol": 305,
       "tiamina": 0.11,
       "riboflavina": 0.12,
       "niacina": 0.97,
@@ -11478,7 +11478,7 @@
       "sodio": 45,
       "potassio": 87,
       "zinco": 2.9,
-      "Retinol": 148,
+      "retinol": 148,
       "tiamina": 0.18,
       "riboflavina": 0.22,
       "vitaminaC": " "
@@ -11504,7 +11504,7 @@
       "potassio": 139,
       "cobre": 0.04,
       "zinco": 1.2,
-      "Retinol": 32,
+      "retinol": 32,
       "tiamina": 0.08,
       "riboflavina": 0.3,
       "vitaminaC": " "
@@ -11529,7 +11529,7 @@
       "potassio": 150,
       "cobre": 0.06,
       "zinco": 1.1,
-      "Retinol": 79,
+      "retinol": 79,
       "tiamina": 0.07,
       "riboflavina": 0.58,
       "niacina": 0.75,
@@ -11556,7 +11556,7 @@
       "potassio": 184,
       "cobre": 0.04,
       "zinco": 1.5,
-      "Retinol": 94,
+      "retinol": 94,
       "tiamina": 0.06,
       "riboflavina": 0.32
     },
@@ -11581,7 +11581,7 @@
       "potassio": 496,
       "cobre": 0.56,
       "zinco": 1,
-      "Retinol": 796,
+      "retinol": 796,
       "tiamina": 1.38,
       "riboflavina": 1.02,
       "piridoxina": 1.52,
@@ -11656,7 +11656,7 @@
       "cobre": 0.31,
       "zinco": 1.1,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.05,
       "riboflavina": 0.22,
       "piridoxina": 0.59,
@@ -11684,7 +11684,7 @@
       "potassio": 431,
       "cobre": 0.45,
       "zinco": 1.3,
-      "Retinol": 36,
+      "retinol": 36,
       "tiamina": 0.04,
       "riboflavina": 0.24,
       "niacina": 1.37,
@@ -11712,7 +11712,7 @@
       "potassio": 458,
       "cobre": 0.43,
       "zinco": 1.1,
-      "Retinol": 7,
+      "retinol": 7,
       "tiamina": 0.31,
       "riboflavina": 0.25,
       "niacina": 0.79,
@@ -11809,9 +11809,9 @@
       "potassio": 259,
       "cobre": 0.02,
       "zinco": 0.5,
-      "Retinol": 36,
+      "retinol": 36,
       "RE": 36,
-      "RAE ": 36,
+      "RAE": 36,
       "tiamina": 0.05,
       "riboflavina": 0.26
     },
@@ -11829,7 +11829,7 @@
       "sodio": 43,
       "potassio": 2,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.19,
       "piridoxina": 0.22
     },
@@ -11973,7 +11973,7 @@
       "potassio": 111,
       "cobre": 0.1,
       "zinco": 1.1,
-      "Retinol": 76,
+      "retinol": 76,
       "riboflavina": 0.04,
       "piridoxina": 0.04,
       "niacina": 1.14
@@ -12041,7 +12041,7 @@
       "sodio": 382,
       "potassio": 886,
       "zinco": 1.1,
-      "Retinol": 52,
+      "retinol": 52,
       "riboflavina": 1.41
     },
     {
@@ -12208,7 +12208,7 @@
       "cobre": 0.01,
       "zinco": 0.1,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.07
     },
     {
@@ -12252,7 +12252,7 @@
       "sodio": 787,
       "potassio": 16,
       "zinco": 0.1,
-      "Retinol": 8,
+      "retinol": 8,
       "riboflavina": 0.05
     },
     {
@@ -12379,7 +12379,7 @@
       "potassio": 272,
       "cobre": 0.06,
       "zinco": 3.2,
-      "Retinol": 37,
+      "retinol": 37,
       "tiamina": 0.05,
       "riboflavina": 0.1,
       "niacina": 2.92
@@ -12529,7 +12529,7 @@
       "cobre": 0.17,
       "zinco": 0.6,
       "RE": 33,
-      "RAE ": 16,
+      "RAE": 16,
       "tiamina": 0.04,
       "piridoxina": 0.03,
       "niacina": 1.1,
@@ -12580,7 +12580,7 @@
       "potassio": 322,
       "cobre": 0.14,
       "zinco": 2,
-      "Retinol": 28,
+      "retinol": 28,
       "tiamina": 0.06,
       "riboflavina": 0.05,
       "niacina": 3.25
@@ -12606,7 +12606,7 @@
       "potassio": 307,
       "cobre": 0.12,
       "zinco": 0.6,
-      "Retinol": 28,
+      "retinol": 28,
       "tiamina": 0.07,
       "riboflavina": 0.04,
       "piridoxina": 0.03,
@@ -12634,7 +12634,7 @@
       "potassio": 349,
       "cobre": 0.22,
       "zinco": 1.4,
-      "Retinol": 9,
+      "retinol": 9,
       "niacina": 1.44
     },
     {
@@ -12660,7 +12660,7 @@
       "cobre": 0.15,
       "zinco": 0.8,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.08,
       "riboflavina": 0.03,
       "niacina": 0.93
@@ -12687,7 +12687,7 @@
       "potassio": 256,
       "cobre": 0.02,
       "zinco": 0.5,
-      "Retinol": 8,
+      "retinol": 8,
       "tiamina": 0.03,
       "niacina": 1.64,
       "vitaminaC": 5.3
@@ -12740,7 +12740,7 @@
       "cobre": 0.16,
       "zinco": 2,
       "RE": 222,
-      "RAE ": 111,
+      "RAE": 111,
       "tiamina": 0.04,
       "riboflavina": 0.07,
       "piridoxina": 0.05,
@@ -12768,7 +12768,7 @@
       "cobre": 0.61,
       "zinco": 1.6,
       "RE": 105,
-      "RAE ": 52,
+      "RAE": 52,
       "riboflavina": 0.03,
       "piridoxina": 0.04
     },
@@ -12795,7 +12795,7 @@
       "cobre": 0.04,
       "zinco": 0.2,
       "RE": 283,
-      "RAE ": 141,
+      "RAE": 141,
       "tiamina": 0.04,
       "piridoxina": 0.04
     },
@@ -12820,7 +12820,7 @@
       "cobre": 0.17,
       "zinco": 0.3,
       "RE": 510,
-      "RAE ": 255,
+      "RAE": 255,
       "tiamina": 0.05,
       "riboflavina": 0.03,
       "piridoxina": 0.03,
@@ -12849,7 +12849,7 @@
       "cobre": 0.08,
       "zinco": 0.4,
       "RE": 15,
-      "RAE ": 7,
+      "RAE": 7,
       "tiamina": 0.05,
       "niacina": 1.48,
       "vitaminaC": 9.3
@@ -12875,7 +12875,7 @@
       "potassio": 199,
       "cobre": 1.48,
       "zinco": 1.8,
-      "Retinol": 1464,
+      "retinol": 1464,
       "riboflavina": 0.11,
       "niacina": 3.84
     },
@@ -12926,7 +12926,7 @@
       "cobre": 0.22,
       "zinco": 0.8,
       "RE": 35,
-      "RAE ": 18,
+      "RAE": 18,
       "tiamina": 0.05
     },
     {
@@ -12950,7 +12950,7 @@
       "potassio": 19,
       "cobre": 0.01,
       "zinco": 0,
-      "Retinol": 75
+      "retinol": 75
     },
     {
       "id": 551,
@@ -12973,7 +12973,7 @@
       "cobre": 0.12,
       "zinco": 0.9,
       "RE": 51,
-      "RAE ": 25,
+      "RAE": 25,
       "piridoxina": 0.05,
       "vitaminaC": 46.4
     },
@@ -13047,7 +13047,7 @@
       "potassio": 237,
       "cobre": 0.07,
       "zinco": 1,
-      "Retinol": 10,
+      "retinol": 10,
       "tiamina": 0.14,
       "riboflavina": 0.05,
       "niacina": 2.6
@@ -13074,7 +13074,7 @@
       "cobre": 0.06,
       "zinco": 0.7,
       "RE": 62,
-      "RAE ": 31,
+      "RAE": 31,
       "tiamina": 0.16,
       "niacina": 2.09
     },
@@ -13174,7 +13174,7 @@
       "cobre": 0.14,
       "zinco": 0.9,
       "RE": 9,
-      "RAE ": 5,
+      "RAE": 5,
       "tiamina": 0.07,
       "riboflavina": 0.03,
       "vitaminaC": " "
@@ -13609,7 +13609,7 @@
       "cobre": 0.83,
       "zinco": 3.5,
       "RE": " ",
-      "RAE ": " ",
+      "RAE": " ",
       "tiamina": 0.11,
       "piridoxina": 0.42,
       "niacina": 5.07,
@@ -14013,7 +14013,7 @@
       "cobre": 0.28,
       "zinco": 0.3,
       "RE": 875,
-      "RAE ": 438,
+      "RAE": 438,
       "riboflavina": 0.09,
       "piridoxina": 0.03,
       "vitaminaC": 2.2

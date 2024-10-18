@@ -19,7 +19,7 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
-  const [isLogged, setIsLogged] = useState<boolean>(false);
+  const [ isLogged, setIsLogged ] = useState<boolean>(false);
 
   useEffect(() => { 
     onAuthStateChanged(auth, (user) => {

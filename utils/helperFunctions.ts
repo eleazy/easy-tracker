@@ -1,3 +1,4 @@
+import { detailedFood, Measure } from "@/types/general";
 import { User } from "firebase/auth";
 
 // Utility function to get today's date as a string
@@ -42,8 +43,9 @@ export const monthName = (month: number) => {
 // Utility function to fix number precision
 export const fixN = (n: Number) => parseFloat(n.toFixed(2));
 
-export const getPercentual = (value: number, factor: number, dailyValue: number) => {
-    return fixN(((value * factor) / dailyValue) * 100);
+export const getPercentual = (value: number | string | undefined, factor: number, dailyValue: number) => {
+    if (Number.isNaN(value) || value === undefined) return '**';
+    return fixN(((Number(value) * factor) / dailyValue) * 100);
 };
 
 // Logged user
@@ -64,7 +66,7 @@ export const singularPluralMatch = (str: string) => {
     return [str, `${str}s`]; // Add 's' for plural
 };
 
-export const emptyDetailedFood = {
+export const emptyDetailedFood: detailedFood = {
     id: '',
     idMeal: '',
     calories: 0,
@@ -102,3 +104,98 @@ export const emptyDetailedFood = {
     title: '',
     isCustom: true,    
 };
+
+export const microsMeasure: Measure = {
+    saturatedFats: {
+      measure: "g",
+      dailyRecomended: 20,
+    },
+    monounsaturatedFats: {
+      measure: "g",
+      dailyRecomended: 44,
+    },
+    polyunsaturatedFats: {
+      measure: "g",
+      dailyRecomended: 11,
+    },
+    dietaryFiber: {
+      measure: "g",
+      dailyRecomended: 25,
+    },
+    cholesterol: {
+      measure: "mg",
+      dailyRecomended: 300,
+    },
+    sodium: {
+      measure: "mg",
+      dailyRecomended: 2300,
+    }, // from here above, the daily values are relative
+    ash: {
+      measure: "g",
+      dailyRecomended: 100,
+    },
+    calcium: {
+      measure: "mg",
+      dailyRecomended: 1000,
+    },
+    magnesium: {
+      measure: "mg",
+      dailyRecomended: 400,
+    },
+    manganese: {
+      measure: "mg",
+      dailyRecomended: 2.3,
+    },
+    phosphorus: {
+      measure: "mg",
+      dailyRecomended: 700,
+    },
+    iron: {
+      measure: "mg",
+      dailyRecomended: 18,
+    },
+    potassium: {
+      measure: "mg",
+      dailyRecomended: 4700,
+    },
+    copper: {
+      measure: "mg",
+      dailyRecomended: 0.9,
+    },
+    zinc: {
+      measure: "mg",
+      dailyRecomended: 11,
+    },
+    thiamine: {
+      measure: "mg",
+      dailyRecomended: 1.2,
+    },
+    pyridoxine: {
+      measure: "mg",
+      dailyRecomended: 1.3,
+    },
+    niacin: {
+      measure: "mg",
+      dailyRecomended: 16,
+    },
+    riboflavin: {
+      measure: "mg",
+      dailyRecomended: 1.3,
+    },
+    vitaminC: {
+      measure: "mg",
+      dailyRecomended: 90,
+    },
+    RE: {
+      measure: "mcg",
+      dailyRecomended: 600,
+    },
+    RAE: {
+      measure: "mcg",
+      dailyRecomended: 600,
+    },
+    retinol: {
+      measure: "mcg",
+      dailyRecomended: 600,
+    },
+  };

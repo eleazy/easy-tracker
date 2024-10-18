@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, FlatList } from 'react-native';
+import { View, Text, ScrollView, TextInput, StyleSheet, useColorScheme, Dimensions, BackHandler } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { macrosDisplay, microsDisplay, FoodInfoProps, MacroInput, MacroInputsObj, Food, detailedFood } from "@/types/general";
 import { getDetailedFood, getCustomFoods } from '@/firebase/dataHandling';
-import { removeAccents, singularPluralMatch, getPercentual, emptyDetailedFood, fixN } from '@/utils/helperFunctions';
+import { microsMeasure, getPercentual, emptyDetailedFood, fixN } from '@/utils/helperFunctions';
 
 const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
     const colorScheme = useColorScheme() ?? 'dark';
 
-    const [food, setFood] = useState<detailedFood>();
-    const [portionSize, setPortionSize] = useState<number>(100);
-    const [dailyCalorieTarget, setDailyCalorieTarget] = useState<number>(2000);
+    const [ food, setFood ] = useState<detailedFood>();
+    const [ portionSize, setPortionSize ] = useState<number>( food?.quantity ?? 100);
+    const [ portionInputValue, setPortionInputValue ] = useState<string>( portionSize.toString() );
+    const [ dailyCalorieTarget, setDailyCalorieTarget ] = useState<number>(2000);
+
     const dailyMacroTarget = {
         carbs: 50,
         fats: 30,
@@ -19,153 +21,225 @@ const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
 
     useEffect(() => {
         getDetailedFood(foodId).then((data: detailedFood) => { setFood(data); });
+
+        // Override the back button to close the food info
+        const backAction = () => {
+          setShowFoodInfo(false);
+          return true;
+        };
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            backAction
+        );
+        return () => backHandler.remove();
     }, [foodId]);
+
+    const changeQuantity = (value: string) => {
+      // modify the Food object quantity and recalculate the macros
+      // very similar to the changeQuantity function in MealCard.tsx      
+      if (value === '') { inputPress(); }
+      
+      const newQuantity = parseInt(value);      
+      if (isNaN(newQuantity) || newQuantity < 0) return;
+      
+      // Update food in state      
+      setFood((prevFood) => {
+        if (!prevFood) return prevFood;
+
+        const newFood = { ...prevFood };
+        const oldQuantity = portionSize;
+        const fM = newFood.macroNutrients;
+
+        newFood.quantity = newQuantity;
+
+        newFood.macroNutrients.carbs = fixN((fM.carbs / oldQuantity) * newQuantity);
+        newFood.macroNutrients.fats = fixN((fM.fats / oldQuantity) * newQuantity);
+        newFood.macroNutrients.protein = fixN((fM.protein / oldQuantity) * newQuantity);
+
+        // Update micro nutrients
+        Object.keys(microsDisplay).map((micro) => { 
+          const microKey = micro as keyof typeof microsDisplay;
+          newFood.microNutrients[microKey] = fixN((newFood.microNutrients[microKey] as number / oldQuantity) * newQuantity);
+        });
+        
+        // carbs and protein = 4 kcal per gram, fats = 9 kcal per gram 
+        newFood.calories = fixN(
+          newFood.macroNutrients.carbs * 4 +
+          newFood.macroNutrients.protein * 4 +
+          newFood.macroNutrients.fats * 9
+        );        
+
+        setPortionInputValue(newQuantity.toString());
+        setPortionSize(newQuantity);
+        return newFood;
+      });
+    };
+
+    const inputPress = () => {
+      // When the input is focused, clear the current value in the input field
+      setPortionInputValue(() => '' );
+    };
+  
+    const handleBlur = () => {
+      // Restore the old portion if the input is left empty
+      if (portionInputValue === '') {
+        setPortionInputValue((prevValue) => prevValue === '' ? portionSize.toString() : prevValue );
+      }
+    };
 
     return (
       <View style={styles.foodDetailOuter}>        
   
         <View style={styles.row}>
           <Text style={[{ color: Colors[colorScheme].text }, styles.label]}>Valor Diário para referência</Text>
-          <Text>2000</Text>
-          <Text style={[{ color: Colors[colorScheme].text }, styles.label]}>kcal</Text>
-        </View>
-       
-        <View style={styles.nutritionalContainer}>
-          <Text style={[{ color: Colors[colorScheme].text }, styles.header]}>Fatores Nutricionais</Text>
-          <Text style={[{ color: Colors[colorScheme].text }, styles.subHeader, styles.thickBorder]}>{`Porção de ${portionSize}g`}</Text>
-  
-          {/* CALORIES */}
-          <View style={styles.row}>
-            <View style={styles.rowLabel}>
-              <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>Calorias</Text>
-              <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>{food?.calories}</Text>
-            </View>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
-              {`${getPercentual(food?.calories as number, 1, dailyCalorieTarget)}%`}
-            </Text>
+          <View style={styles.rowLabel}>
+
+            <Text style={[{ color: Colors[colorScheme].text }, styles.label]}>kcal</Text>
           </View>
-  
-          {/* FATS */}
-          <View style={styles.subMacroOuter}>
-            <View style={styles.subRow}>
+        </View>
+
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.nutritionalContainer}>
+            <Text style={[{ color: Colors[colorScheme].text }, styles.header]}>Fatores Nutricionais</Text>
+            <Text style={[{ color: Colors[colorScheme].text }, styles.headerTitle]}>{food?.title}</Text>
+            
+            <View style={[styles.rowLabel, styles.thickBorder]}>
+              <Text style={[{ color: Colors[colorScheme].text }, styles.subHeader]}>{`Porção de`}</Text>
+              <TextInput
+                style={[{ color: Colors[colorScheme].text }, styles.quantityInput]}
+                inputMode="numeric"
+                value={portionInputValue ?? ''}
+                onChangeText={(text) => changeQuantity( text)}
+                onFocus={() => inputPress()}
+                onBlur={() => handleBlur()}
+              />
+              <Text style={[{ color: Colors[colorScheme].text }, styles.subHeader]}>g</Text>
+            </View>
+    
+            {/* CALORIES */}
+            <View style={styles.row}>
               <View style={styles.rowLabel}>
-                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>Gorduras Totais</Text>
-                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
-                  {food?.macroNutrients.fats ? `${food?.macroNutrients.fats}g` : '**'}
-                </Text>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>Calorias</Text>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>{food?.calories}</Text>
               </View>
               <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
-                {food?.macroNutrients.fats
-                  ? `${getPercentual(food?.macroNutrients.fats, 9, (dailyCalorieTarget * dailyMacroTarget.fats) / 100)}%`
-                  : '**'}
+                {`${getPercentual(food?.calories, 1, dailyCalorieTarget)}%`}
               </Text>
             </View>
+    
+            {/* FATS */}
+            <View style={styles.subMacroOuter}>
+              <View style={styles.subRow}>
+                <View style={styles.rowLabel}>
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>Gorduras Totais</Text>
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
+                    {food?.macroNutrients.fats ? `${food?.macroNutrients.fats}g` : '**'}
+                  </Text>
+                </View>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
+                  { `${getPercentual(food?.macroNutrients.fats, 9, (dailyCalorieTarget * dailyMacroTarget.fats) / 100)}%`}
+                </Text>
+              </View>
 
-            {[ 'saturatedFats', 'monounsaturatedFats', 'polyunsaturatedFats' ].map((fatType) => {
-                const fatKey = fatType as keyof typeof microsDisplay;
-                return (
-                <View key={fatType} style={[styles.subRow, styles.subMacroRow]}>
-                  <View style={styles.rowLabel}>
-                    <Text style={[{ color: Colors[colorScheme].text }, styles.label, styles.subMacroLabel]}>{microsDisplay[fatKey]}</Text>
-                    <Text style={[{ color: Colors[colorScheme].text }, styles.label, styles.subMacroLabel]}>
-                      {food?.microNutrients[fatKey] ? `${food?.microNutrients[fatKey]}g` : '**'}
+              {[ 'saturatedFats', 'monounsaturatedFats', 'polyunsaturatedFats' ].map((fatType) => {
+                  const fatKey = fatType as keyof typeof microsDisplay;
+                  return (
+                  <View key={fatType} style={[styles.subRow, styles.subMacroRow]}>
+                    <View style={styles.rowLabel}>
+                      <Text style={[{ color: Colors[colorScheme].text }, styles.label, styles.subMacroLabel]}>{microsDisplay[fatKey]}</Text>
+                      <Text style={[{ color: Colors[colorScheme].text }, styles.label, styles.subMacroLabel]}>
+                        {food?.microNutrients[fatKey] ? `${food?.microNutrients[fatKey]}g` : '**'}
+                      </Text>
+                    </View>
+                    <Text style={[{ color: Colors[colorScheme].text }, styles.label]}>
+                      {food?.microNutrients[fatKey]
+                        ? `${getPercentual(food?.microNutrients[fatKey] as number, 9, (dailyCalorieTarget * dailyMacroTarget.fats) / 100)}%`
+                        : '**'}
                     </Text>
                   </View>
-                  <Text style={[{ color: Colors[colorScheme].text }, styles.label]}>
-                    {food?.microNutrients[fatKey]
-                      ? `${getPercentual(food?.microNutrients[fatKey] as number, 9, (dailyCalorieTarget * dailyMacroTarget.fats) / 100)}%`
-                      : '**'}
-                  </Text>
-                </View>
-                )
-              } 
-            )}
-          </View>
-  
-          {/* PROTEIN */}
-          <View style={[styles.row, styles.borderUp]}>
-            <View style={styles.rowLabel}>
-              <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>Proteínas</Text>
-              <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>{food?.macroNutrients.protein}</Text>
+                  )
+                } 
+              )}
             </View>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
-              {`${getPercentual(food?.macroNutrients.protein as number, 4, (dailyCalorieTarget * dailyMacroTarget.protein) / 100)}%`}
-            </Text>
-          </View>
-
-          {/* CARBS */}
-          <View style={styles.subMacroOuter}>
-            <View style={styles.subRow}>
+    
+            {/* PROTEIN */}
+            <View style={[styles.row, styles.borderUp]}>
               <View style={styles.rowLabel}>
-                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>Carboidratos</Text>
-                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
-                  {food?.macroNutrients.carbs ? `${food?.macroNutrients.carbs}g` : '**'}
-                </Text>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>Proteínas</Text>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>{food?.macroNutrients.protein}</Text>
               </View>
               <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
-                {food?.macroNutrients.carbs
-                  ? `${getPercentual(food?.macroNutrients.carbs, 9, (dailyCalorieTarget * dailyMacroTarget.carbs) / 100)}%`
-                  : '**'}
+                {`${getPercentual(food?.macroNutrients.protein, 4, (dailyCalorieTarget * dailyMacroTarget.protein) / 100)}%`}
               </Text>
             </View>
-            
-            <View style={[styles.subRow, styles.subMacroRow]}>
-              <View style={styles.rowLabel}>
-                <Text style={[{ color: Colors[colorScheme].text }, styles.label, styles.subMacroLabel]}>{microsDisplay.dietaryFiber}</Text>
-                <Text style={[{ color: Colors[colorScheme].text }, styles.label, styles.subMacroLabel]}>
-                  {food?.microNutrients.dietaryFiber ? `${food?.microNutrients.dietaryFiber}g` : '**'}
-                </Text>
-              </View>
-              <Text style={[{ color: Colors[colorScheme].text }, styles.label]}>
-                {food?.microNutrients.dietaryFiber
-                  ? `${getPercentual(food?.microNutrients.dietaryFiber as number, 9, (dailyCalorieTarget * 1234) / 100)}%`
-                  : '**'}
-              </Text>
-            </View>
-          </View>
 
-          {/* COLESTEROL */}
-          <View style={styles.row}>
-            <View style={styles.rowLabel}>
-              <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>Colesterol</Text>
-              <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>{food?.microNutrients.cholesterol}</Text>
-            </View>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
-              {`${getPercentual(food?.microNutrients.cholesterol as number, 4, (dailyCalorieTarget * 1234) / 100)}%`}
-            </Text>
-          </View>
-
-          {/* SODIUM */}
-          <View style={[styles.row, styles.thickBorder]}>
-            <View style={styles.rowLabel}>
-              <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>Sódio</Text>
-              <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>{food?.microNutrients.sodium}</Text>
-            </View>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
-              {`${getPercentual(food?.microNutrients.sodium as number, 4, (dailyCalorieTarget * 1234) / 100)}%`}
-            </Text>
-          </View>
-
-          {/* MICRO NUTRIENTS */}
-          {
-            Object.keys(microsDisplay).slice(6).map((micro) => { 
-              const microKey = micro as keyof typeof microsDisplay;
-              return (
-                <View style={[styles.row, styles.microRow]}>
-                  <View style={styles.rowLabel}>
-                    <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>{microsDisplay[microKey]}</Text>
-                    <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>{food?.microNutrients[microKey]}</Text>
-                  </View>
+            {/* CARBS */}
+            <View style={styles.subMacroOuter}>
+              <View style={styles.subRow}>
+                <View style={styles.rowLabel}>
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>Carboidratos</Text>
                   <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
-                    {`${getPercentual(food?.microNutrients[microKey] as number, 4, (dailyCalorieTarget * 1234) / 100)}%`}
+                    {food?.macroNutrients.carbs ? `${food?.macroNutrients.carbs}g` : '**'}
                   </Text>
                 </View>
-              )
-            })
-          }
+                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
+                  {`${getPercentual(food?.macroNutrients.carbs, 4, (dailyCalorieTarget * dailyMacroTarget.carbs) / 100)}%`}
+                </Text>
+              </View>
+              
+              <View style={[styles.subRow, styles.subMacroRow]}>
+                <View style={styles.rowLabel}>
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.label, styles.subMacroLabel]}>{microsDisplay.dietaryFiber}</Text>
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.label, styles.subMacroLabel]}>
+                    {food?.microNutrients.dietaryFiber ? `${food?.microNutrients.dietaryFiber}g` : '**'}
+                  </Text>
+                </View>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.label]}>
+                  {`${ getPercentual(food?.microNutrients.dietaryFiber, 1, 28 )}%`}
+                </Text>
+              </View>
+            </View>
 
-          
-        </View>
+            {/* COLESTEROL */}
+            <View style={styles.row}>
+              <View style={styles.rowLabel}>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>Colesterol</Text>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>{food?.microNutrients.cholesterol}mg</Text>
+              </View>
+              <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
+                {`${ getPercentual(food?.microNutrients.cholesterol, 1, 300 )}%`}
+              </Text>
+            </View>
+
+            {/* SODIUM */}
+            <View style={[styles.row, styles.thickBorder]}>
+              <View style={styles.rowLabel}>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>Sódio</Text>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>{food?.microNutrients.sodium}mg</Text>
+              </View>
+              <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
+                {`${ getPercentual(food?.microNutrients.sodium, 1, 2300 )}%`}
+              </Text>
+            </View>
+
+            {/* MICRO NUTRIENTS */}
+            {Object.keys(microsDisplay).slice(6).map((micro) => { 
+                const microKey = micro as keyof typeof microsDisplay;
+                return (
+                  <View key={microKey} style={[styles.row, styles.microRow]}>
+                    <View style={styles.rowLabel}>
+                      <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>{microsDisplay[microKey]}</Text>
+                      <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>{food?.microNutrients[microKey]}{microsMeasure[microKey].measure}</Text>
+                    </View>
+                    <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>
+                      {`${ getPercentual(food?.microNutrients[microKey], 1, microsMeasure[microKey].dailyRecomended )}%`}
+                    </Text>
+                  </View>
+                )
+            })}
+            
+          </View>
+        </ScrollView>
       </View>
     );
 }
@@ -176,13 +250,20 @@ const styles = StyleSheet.create({
   foodDetailOuter: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',      
-    height: vh,
-    width: '100%',
-    backgroundColor: Colors.dark.background,    
+    alignItems: 'center',
+    height: vh - 65,
+    marginTop: 20,
+    width: '95%',
+    backgroundColor: Colors.dark.background,
+  },
+  quantityInput: {
+    width: 50,
+    fontSize: vh * 0.018,
+    textAlign: 'center',
+    color: Colors.dark.mealTitleC,
   },
   row: {
-    width: '95%',
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',        
@@ -204,9 +285,15 @@ const styles = StyleSheet.create({
   },
   nutritionalContainer: {
     marginTop: 20,        
+    //flex: 1,
   },
   header: {
     fontSize: vh * 0.032,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  headerTitle: {
+    fontSize: vh * 0.024,
     fontWeight: 'bold',
     marginBottom: 10,
   },
@@ -219,7 +306,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   thickBorder: {
-    borderBottomWidth: 9,
+    borderBottomWidth: 11,
     borderBottomColor: Colors.dark.borderBottomFoodDetail,
   },
   borderUp: {
@@ -244,6 +331,9 @@ const styles = StyleSheet.create({
     fontSize: vh * 0.018,
     opacity: 0.9,
   },  
+  scrollView: {
+    //flex: 1,    
+  },
 });
 
 export default FoodInfo;

@@ -7,10 +7,10 @@ import { loadInitialData } from '@/firebase/dataHandling';
 
 export default function Login(): JSX.Element {
 
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [signUp, setSignUp] = useState<boolean>(true);
-    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [ email, setEmail ] = useState<string>('');
+    const [ password, setPassword ] = useState<string>('');
+    const [ signUp, setSignUp ] = useState<boolean>(true);
+    const [ showPassword, setShowPassword ] = useState<boolean>(false);
 
     const fixMessage = (message: string): string => message.slice(5).split('-').join(' ');
 

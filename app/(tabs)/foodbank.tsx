@@ -11,13 +11,13 @@ const FoodBank = () => {
   const colorScheme = useColorScheme() ?? 'dark';
 
     const tacoTableFoods: Food[] = getTacoTableFoods();
-    const [customFoods, setCustomFoods] = useState<Food[]>([]);
-    const [combinedFoods, setCombinedFoods] = useState<Food[]>([...tacoTableFoods, ...customFoods]);
-    const [searchQuery, setSearchQuery] = useState<string>("");
-    const [visibleItems, setVisibleItems] = useState<number>(10);
-    const [showCreateFood, setShowCreateFood] = useState<boolean>(false);
-    const [showFoodInfo, setShowFoodInfo] = useState<boolean>(true); /////
-    const [foodId, setFoodId] = useState<string>('24'); /////
+    const [ customFoods, setCustomFoods ] = useState<Food[]>([]);
+    const [ combinedFoods, setCombinedFoods ] = useState<Food[]>([...tacoTableFoods, ...customFoods]);
+    const [ searchQuery, setSearchQuery ] = useState<string>("");
+    const [ visibleItems, setVisibleItems ] = useState<number>(10);
+    const [ showCreateFood, setShowCreateFood ] = useState<boolean>(false);
+    const [ showFoodInfo, setShowFoodInfo ] = useState<boolean>(false); /////
+    const [ foodId, setFoodId ] = useState<string>(''); /////
 
     useEffect(() => {
         getCustomFoods().then((data: Food[]) => { setCustomFoods(data); });

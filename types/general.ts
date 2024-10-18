@@ -100,6 +100,11 @@ export interface FoodInfoProps {
   foodId: string;
 };
 
+interface NutrientMeasure {
+  measure: MeasureUnit;
+  dailyRecomended: number;
+}
+
 // REPLACES
 
 export const macrosDisplay = {
@@ -146,35 +151,8 @@ export type MacroInputsObj = {
   [key in 'carbs' | 'fats' | 'protein']: MacroInput;
 };
 
-// [
-//   "id",
-//   "alimento",
-//   "energia",
-//   "proteinas",
-//   "carboidratos",
-//   "gorduras",
-//   "gordurasSaturadas",
-//   "gordurasMonoinsaturadas",
-//   "gordurasPoliinsaturadas",
-//   "fibrasAlimentares",
-//   "cinzas",
-//   "calcio",
-//   "magnesio",
-//   "manganes",
-//   "fosforo",
-//   "ferro",
-//   "sodio",
-//   "potassio",
-//   "cobre",
-//   "zinco",
-//   "tiamina",
-//   "piridoxina",
-//   "niacina",
-//   "riboflavina",
-//   "vitaminaC",
-//   "RE",
-//   "RAE ",
-//   "colesterol",
-//   "Retinol",
-//   "Colesterol"
-// ]
+type MeasureUnit = 'g' | 'mg' | 'mcg';
+
+export type Measure = {
+  [key in keyof typeof microsDisplay]: NutrientMeasure;
+};

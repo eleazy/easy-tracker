@@ -4,7 +4,7 @@ import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {  getTotalCaloriesOfMonth } from "@/firebase/dataHandling";
-import { CalendarViewProps } from "@/types/general";
+import { CalendarViewProps } from "@/types/typesAndInterfaces";
 import { AddOrSubDay, getDaysOfMonth, monthName } from "@/utils/helperFunctions";
 
 const CalendarView = ({ setShowCalendar, foodDiaryDay, setFoodDiaryDay }: CalendarViewProps) => {

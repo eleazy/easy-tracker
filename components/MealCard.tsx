@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, BackHandler} from 'react-native';
 import { Colors } from '@/constants/Colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Food, MealCardProps, macrosDisplayShort } from '@/types/general';
+import { Food, MealCardProps, macrosDisplayShort } from '@/types/typesAndInterfaces';
 import { fixN } from '@/utils/helperFunctions';
 import FoodSelection from "@/components/FoodSelection";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';

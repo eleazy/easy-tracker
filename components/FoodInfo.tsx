@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, TextInput, StyleSheet, useColorScheme, Dimensions, BackHandler } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { macrosDisplay, microsDisplay, FoodInfoProps, MacroInput, MacroInputsObj, Food, detailedFood } from "@/types/general";
-import { getDetailedFood, getCustomFoods } from '@/firebase/dataHandling';
-import { microsMeasure, getPercentual, emptyDetailedFood, fixN } from '@/utils/helperFunctions';
+import { microsDisplay, FoodInfoProps, detailedFood } from "@/types/typesAndInterfaces";
+import { getDetailedFood } from '@/firebase/dataHandling';
+import { microsMeasure, getPercentual, fixN } from '@/utils/helperFunctions';
 
 const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
     const colorScheme = useColorScheme() ?? 'dark';
@@ -37,7 +37,7 @@ const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
     const changeQuantity = (value: string) => {
       // modify the Food object quantity and recalculate the macros
       // very similar to the changeQuantity function in MealCard.tsx      
-      if (value === '') { inputPress(); }
+      if (value === '') { setPortionInputValue(''); }
       
       const newQuantity = parseInt(value);      
       if (isNaN(newQuantity) || newQuantity < 0) return;
@@ -74,11 +74,6 @@ const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
         return newFood;
       });
     };
-
-    const inputPress = () => {
-      // When the input is focused, clear the current value in the input field
-      setPortionInputValue(() => '' );
-    };
   
     const handleBlur = () => {
       // Restore the old portion if the input is left empty
@@ -110,7 +105,7 @@ const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
                 inputMode="numeric"
                 value={portionInputValue ?? ''}
                 onChangeText={(text) => changeQuantity( text)}
-                onFocus={() => inputPress()}
+                onFocus={() => setPortionInputValue('')}
                 onBlur={() => handleBlur()}
               />
               <Text style={[{ color: Colors[colorScheme].text }, styles.subHeader]}>g</Text>

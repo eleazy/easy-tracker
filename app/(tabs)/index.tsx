@@ -6,7 +6,7 @@ import CalendarView from "@/components/CalendarView";
 import { Colors } from "@/constants/Colors";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { getMealsOfDay, addNewBlankMeal } from "@/firebase/dataHandling";
-import { Meal, mealMacroTotals, macrosDisplayShort } from "@/types/general";
+import { Meal, mealMacroTotals, macrosDisplayShort } from "@/types/typesAndInterfaces";
 import { saveFoodDiary } from "@/firebase/dataHandling";
 import { getTodayString, fixN, AddOrSubDay } from "@/utils/helperFunctions";
 import AntDesign from '@expo/vector-icons/AntDesign';

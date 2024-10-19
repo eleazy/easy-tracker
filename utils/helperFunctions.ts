@@ -1,4 +1,4 @@
-import { detailedFood, Measure } from "@/types/general";
+import { detailedFood, Measure } from "@/types/typesAndInterfaces";
 import { User } from "firebase/auth";
 
 // Utility function to get today's date as a string

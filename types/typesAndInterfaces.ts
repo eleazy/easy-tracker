@@ -156,3 +156,10 @@ type MeasureUnit = 'g' | 'mg' | 'mcg';
 export type Measure = {
   [key in keyof typeof microsDisplay]: NutrientMeasure;
 };
+
+export type dailyGoals = {
+  calories: number;
+  carbs: number;
+  fats: number;
+  protein: number;
+};

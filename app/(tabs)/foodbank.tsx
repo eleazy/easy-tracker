@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, FlatList } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { Food, macrosDisplay } from '@/types/general';
+import { Food, macrosDisplay } from '@/types/typesAndInterfaces';
 import { getTacoTableFoods, getCustomFoods } from '@/firebase/dataHandling';
 import { removeAccents, singularPluralMatch } from '@/utils/helperFunctions';
 import CreateFood from '@/components/CreateFood';

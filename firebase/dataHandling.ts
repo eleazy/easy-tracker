@@ -2,7 +2,7 @@ import { db } from "./firebaseConfig";
 import { collection, getDocs, query, where, setDoc, doc, deleteDoc, updateDoc, arrayUnion, DocumentReference, getDoc, DocumentData } from "firebase/firestore";
 import { User } from "firebase/auth";
 import tabelaTaco from './tabelaTaco.json';
-import { Food, Meal, detailedFood, mealMacroTotals } from "@/types/general";
+import { Food, Meal, detailedFood, dailyGoals } from "@/types/typesAndInterfaces";
 import { getLoggedUser, fixN, getTodayString, emptyDetailedFood } from "@/utils/helperFunctions";
 
 // PRIVATE FUNCTIONS
@@ -404,6 +404,31 @@ export const getTotalCaloriesOfMonth = async (year: number, month: number): Prom
     }
 };
 
+export const getDailyGoals = async (): Promise<[dailyGoals, boolean]> => {
+    const loggedUser = getLoggedUser();
+    const user = loggedUser.uid;
+    try {
+        const userDoc = doc(db, "users", user);
+        const userSnapshot = await getDoc(userDoc);
+        const userData = userSnapshot.data();
+        return [ userData?.dailyGoals, userData?.gramsGoalSetting ];
+    } catch (error) {
+        console.error("Error fetching daily goals:", error);
+        return [{ calories: 0, carbs: 0, fats: 0, protein: 0 }, true];
+    }
+};
+
+export const setDailyGoals = async (dailyGoals: dailyGoals): Promise<void> => {
+    const loggedUser = getLoggedUser();
+    const user = loggedUser.uid;
+    try {
+        const userDoc = doc(db, "users", user);
+        await updateDoc(userDoc, { dailyGoals });
+    } catch (error) {
+        console.error("Error setting daily goals:", error);
+    }    
+};
+
 // Add a new meal to the food diary in a given day
 export const addNewBlankMeal = async (date: string, mealTitle: string = '', mealPosition: number = 0) => {
     const loggedUser = getLoggedUser();
@@ -449,8 +474,20 @@ export const addCustomFood = async (food: Food): Promise<void> => {
 
 // INITIAL DATABASE LOAD
 export const loadInitialData = async ( user: User ) => {
+    const defaultGoals: dailyGoals = {
+        calories: 2000,
+        carbs: 250,
+        fats: 60,
+        protein: 100,
+    };
+
     // Create a new document in the users collection with the user's UID and email
-    setDoc(doc(db, "users", user.uid), { uid: user.uid, email: user.email });
+    // Set the default daily goals for the user
+     await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email: user.email,
+        dailyGoals: defaultGoals,
+    });
 
     // Create collection foodDiary for the user and add a document with today's date
     setDoc(doc(db, "users", user.uid, "foodDiary", getTodayString()), { date: getTodayString() });
@@ -459,4 +496,6 @@ export const loadInitialData = async ( user: User ) => {
     ['Café da Manhã', 'Almoço', 'Lanche', 'Jantar'].forEach(async (mealTitle, i) => {
         addNewBlankMeal(getTodayString(), mealTitle);
     });
+
+ 
 };

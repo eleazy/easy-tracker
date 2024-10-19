@@ -3,7 +3,7 @@ import { StyleSheet, View, TextInput, Pressable, Text, Dimensions, Alert, BackHa
 import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { macrosDisplay, CreateFoodProps, MacroInput, MacroInputsObj, Food } from "@/types/general";
+import { macrosDisplay, CreateFoodProps, MacroInput, MacroInputsObj, Food } from "@/types/typesAndInterfaces";
 import { addCustomFood } from "@/firebase/dataHandling";
 
 const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFoodProps) => {

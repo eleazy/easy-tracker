@@ -5,10 +5,10 @@ import MealCard from "@/components/MealCard";
 import CalendarView from "@/components/CalendarView";
 import { Colors } from "@/constants/Colors";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { getMealsOfDay, addNewBlankMeal } from "@/firebase/dataHandling";
+import { getMealsOfDay, addNewBlankMeal, getDailyGoals } from "@/firebase/dataHandling";
 import { Meal, mealMacroTotals, macrosDisplayShort } from "@/types/typesAndInterfaces";
 import { saveFoodDiary } from "@/firebase/dataHandling";
-import { getTodayString, fixN, AddOrSubDay } from "@/utils/helperFunctions";
+import { getTodayString, fixN, AddOrSubDay, ydmDate } from "@/utils/helperFunctions";
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 export default function HomeScreen() {
@@ -23,10 +23,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     getMealsOfDay(foodDiaryDay)
-      .then( async (meals) => { 
-        setMeals(meals);
-      })
-      .catch((error) => { console.error(error); });
+      .then( async (meals) => setMeals(meals)).catch((error) => console.error(error));
   }, [foodDiaryDay]);
 
   useEffect(() => {
@@ -68,7 +65,7 @@ export default function HomeScreen() {
             <Ionicons name="arrow-back" size={24} color={Colors[colorScheme].text} />
           </Pressable>
 
-          <Text style={[{ color: Colors[colorScheme].text }, styles.diaryTitle]}>{foodDiaryDay}</Text>
+          <Text style={[{ color: Colors[colorScheme].text }, styles.diaryTitle]}>{ydmDate(foodDiaryDay)}</Text>
 
           <Pressable onPress={() => changeDate(1)}>
             <Ionicons name="arrow-forward" size={24} color={Colors[colorScheme].text} />
@@ -83,15 +80,17 @@ export default function HomeScreen() {
         <View style={styles.diaryHeader}>
 
           <View style={styles.diaryTitleOuter}>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.diaryCalories]}>{macroTotals.calories} kcal </Text>
+            <Text style={[{ color: Colors[colorScheme].text }, styles.diaryCalories]}>{macroTotals.calories}</Text>
+            <Text style={[{ color: Colors[colorScheme].text }, styles.diaryCaloriesKcal]}>kcal</Text>
           </View>
           
           <View style={styles.diaryTotalsOuter}>
             {['carbs', 'fats', 'protein'].map((macro, i) => (
               <View key={macro} style={styles.diaryMacros}>
-                <Text style={[{ color: Colors[colorScheme].text }, styles.diaryMacroValue]}>
-                  {macroTotals[macro as keyof typeof macroTotals]} g
-                </Text>            
+                <View style={styles.diaryMacrosGram}>
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.diaryMacroValue]}>{macroTotals[macro as keyof typeof macroTotals]}</Text>            
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.diaryMacroType]}>g</Text>
+                </View>
 
                 <Text style={[{ color: Colors[colorScheme].text }, styles.diaryMacroType]}>
                   {macrosDisplayShort[macro as keyof typeof macrosDisplayShort]}
@@ -137,7 +136,6 @@ export default function HomeScreen() {
 }
 
 const vh = Dimensions.get('window').height;
-const vw = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   outerView: {
@@ -173,10 +171,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    gap: 10,
     alignItems: 'center', 
   },
   diaryTitle: {
-    fontSize: vh * 0.023,
+    fontSize: vh * 0.022,
     fontWeight: 'bold',
     color: Colors.dark.mealTitleC,
   },
@@ -184,12 +183,22 @@ const styles = StyleSheet.create({
     fontSize: vh * 0.024,
     fontWeight: 'bold',
   },
+  diaryCaloriesKcal: {
+    fontSize: vh * 0.023,
+    color: 'gray'
+  },
   diaryTotalsOuter: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 10,    
     backgroundColor: Colors.dark.diaryTotalsBG,
+  },
+  diaryMacrosGram: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 2,    
+    alignItems: 'baseline',
   },
   diaryMacros: {
     display: 'flex',

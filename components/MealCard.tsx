@@ -58,7 +58,8 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
         newFoods[i].macroNutrients.carbs * 4 +
         newFoods[i].macroNutrients.protein * 4 +
         newFoods[i].macroNutrients.fats * 9
-      );        
+      );     
+      newFoods[i].calories = Math.round(newFoods[i].calories);
 
       // Update totals in state
       let newTotals = {calories: 0, carbs: 0, fats: 0, protein: 0};
@@ -161,18 +162,18 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
           <View key={i} style={styles.foodOuter}>
   
             <View style={styles.foodTitleOuter}>
-              {showAddFood && <MaterialIcons name="playlist-remove" size={26} color={Colors.dark.mealTitleC}   onPress={() => changeQuantity(i, "0")}/> }
-              <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}> {food.title} </Text>
+              {showAddFood && <MaterialIcons name="playlist-remove" size={26} color={Colors.dark.mealTitleC} onPress={() => changeQuantity(i, "0")}/> }
+              <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}>{food.title}</Text>
             </View> 
   
             <View style={styles.foodMacrosOuter}>
               {['carbs', 'fats', 'protein'].map((macro) => (
                 <View key={macro} style={styles.foodMacros}>
                   <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroValue]}>
-                    {food.macroNutrients[macro as keyof typeof food.macroNutrients]} g
+                    {food.macroNutrients[macro as keyof typeof food.macroNutrients]}
                   </Text>
   
-                  <Text style={[{ color: Colors[colorScheme].text }, styles.mealMacroType]}>
+                  <Text style={[{ color: Colors.dark.mealTitleC }, styles.mealMacroType]}>
                     {macrosDisplayShort[macro as keyof typeof macrosDisplayShort]}
                   </Text>            
                 </View>
@@ -212,9 +213,9 @@ const styles = StyleSheet.create({
   mealCardOuter: {    
     padding: 10,
     marginBottom: 10,
-    borderRadius: 10,
+    borderRadius: 12,
     backgroundColor: 'rgba(0,0,0,0.1)',
-    borderColor: 'white',
+    borderColor: '#d6d6d6',
     borderWidth: 1,
     display: 'flex',    
     alignItems: 'center',
@@ -257,12 +258,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   mealMacroType: {
-    fontSize: vh * 0.015,
+    fontSize: vh * 0.015,    
+    fontWeight: 'bold',
   },
   foodOuter: {  
     borderBottomColor: 'gray',
     borderBottomWidth: 1,
-    marginVertical: 3,    
+    marginVertical: 2,    
     width: '100%',
   },
   foodTitleOuter: {    
@@ -273,8 +275,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   foodTitle: {
-    fontSize: vh * 0.019,    
-    marginBottom: 3,
+    fontSize: vh * 0.019,        
   },
   quantityInput: {
     width: 50,

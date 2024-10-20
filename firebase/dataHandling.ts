@@ -47,7 +47,7 @@ const editMealFood = async (date: string, idMealsFoods: string, quantity: number
         const newProtein = fM.protein * quantity / foodData.quantity;
         const newCalories = (newCarbs + newProtein) * 4 + newFats * 9;
 
-        const newFoodData = {
+        let newFoodData = {
             ...foodData,
             quantity: quantity,
             macroNutrients: {
@@ -58,6 +58,7 @@ const editMealFood = async (date: string, idMealsFoods: string, quantity: number
             },
             calories: fixN(newCalories),
         };
+        newFoodData.calories = Math.round(newFoodData.calories);
 
         await setDoc(mealFoodRef, newFoodData);
 
@@ -404,26 +405,27 @@ export const getTotalCaloriesOfMonth = async (year: number, month: number): Prom
     }
 };
 
-export const getDailyGoals = async (): Promise<[dailyGoals, boolean]> => {
+export const getDailyGoals = async (): Promise<dailyGoals> => {
     const loggedUser = getLoggedUser();
     const user = loggedUser.uid;
     try {
         const userDoc = doc(db, "users", user);
         const userSnapshot = await getDoc(userDoc);
         const userData = userSnapshot.data();
-        return [ userData?.dailyGoals, userData?.gramsGoalSetting ];
+        return userData?.dailyGoals;
     } catch (error) {
         console.error("Error fetching daily goals:", error);
-        return [{ calories: 0, carbs: 0, fats: 0, protein: 0 }, true];
+        return { calories: 0, carbs: 0, fats: 0, protein: 0 };
     }
 };
 
-export const setDailyGoals = async (dailyGoals: dailyGoals): Promise<void> => {
+export const saveDailyGoals = async (dailyGoals: dailyGoals): Promise<void> => {
     const loggedUser = getLoggedUser();
     const user = loggedUser.uid;
     try {
         const userDoc = doc(db, "users", user);
         await updateDoc(userDoc, { dailyGoals });
+        console.log(userDoc, dailyGoals );
     } catch (error) {
         console.error("Error setting daily goals:", error);
     }    
@@ -475,10 +477,10 @@ export const addCustomFood = async (food: Food): Promise<void> => {
 // INITIAL DATABASE LOAD
 export const loadInitialData = async ( user: User ) => {
     const defaultGoals: dailyGoals = {
-        calories: 2000,
-        carbs: 250,
+        calories: 2380,
+        carbs: 300,
         fats: 60,
-        protein: 100,
+        protein: 160,
     };
 
     // Create a new document in the users collection with the user's UID and email
@@ -496,6 +498,4 @@ export const loadInitialData = async ( user: User ) => {
     ['Café da Manhã', 'Almoço', 'Lanche', 'Jantar'].forEach(async (mealTitle, i) => {
         addNewBlankMeal(getTodayString(), mealTitle);
     });
-
- 
 };

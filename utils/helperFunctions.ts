@@ -43,6 +43,12 @@ export const monthName = (month: number) => {
 // Utility function to fix number precision
 export const fixN = (n: Number) => parseFloat(n.toFixed(2));
 
+// Date to day/month/year
+export const ydmDate = (date: string) => {
+    const [year, month, day] = date.split('-');
+    return `${day} de ${monthName(Number(month) - 1)} de ${year}`;
+};
+
 export const getPercentual = (value: number | string | undefined, factor: number, dailyValue: number) => {
     if (Number.isNaN(value) || value === undefined) return '**';
     return fixN(((Number(value) * factor) / dailyValue) * 100);

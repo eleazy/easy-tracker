@@ -16,11 +16,12 @@ const FoodBank = () => {
     const [ searchQuery, setSearchQuery ] = useState<string>("");
     const [ visibleItems, setVisibleItems ] = useState<number>(10);
     const [ showCreateFood, setShowCreateFood ] = useState<boolean>(false);
-    const [ showFoodInfo, setShowFoodInfo ] = useState<boolean>(false); /////
-    const [ foodId, setFoodId ] = useState<string>(''); /////
+    const [ showFoodInfo, setShowFoodInfo ] = useState<boolean>(false);
+    const [ foodId, setFoodId ] = useState<string>('');
+    const [ activeFilter, setActiveFilter ] = useState<string>('all');
 
     useEffect(() => {
-        getCustomFoods().then((data: Food[]) => { setCustomFoods(data); });
+        getCustomFoods().then((data: Food[]) => setCustomFoods(data));
     }, []);
 
     useEffect(() => {
@@ -44,7 +45,21 @@ const FoodBank = () => {
       setVisibleItems(10);
     };
 
-    const loadMoreItems = () => { setVisibleItems((prev) => prev + 10); };
+    const filterFoods = (filter: string) => {
+      if (filter === 'taco' && activeFilter !== 'taco') {
+        setCombinedFoods(tacoTableFoods);
+        setActiveFilter('taco');
+      } else if (filter === 'custom' && activeFilter !== 'custom') {
+        setCombinedFoods(customFoods);
+        setActiveFilter('custom');
+      } else {
+        setCombinedFoods([...tacoTableFoods, ...customFoods]);
+        setActiveFilter('all');
+      }
+      setVisibleItems(10);
+    };
+
+    const loadMoreItems = () => setVisibleItems((prev) => prev + 10);
 
     return (
       <View style={styles.foodBankOuter}>
@@ -57,13 +72,15 @@ const FoodBank = () => {
 
         {/* Filter session */}
         <View style={styles.filterOuter}>
-          <Pressable style={styles.filterButton}>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.filterText]}>Tabela Taco</Text>
-          </Pressable>
+          <View style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
+            <Pressable style={[styles.filterButton, activeFilter == 'taco' && styles.activeFilterBtn]} onPress={()=> filterFoods('taco')}>
+              <Text style={[{ color: Colors[colorScheme].text }, styles.filterText]}>Tabela Taco</Text>
+            </Pressable>
 
-          <Pressable style={styles.filterButton}>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.filterText]}>Meus Alimentos</Text>
-          </Pressable>
+            <Pressable style={[styles.filterButton, activeFilter == 'custom' && styles.activeFilterBtn]} onPress={()=> filterFoods('custom')}>
+              <Text style={[{ color: Colors[colorScheme].text }, styles.filterText]}>Meus Alimentos</Text>
+            </Pressable>
+          </View>
 
           <Pressable style={styles.filterButton} onPress={() => setShowCreateFood(true)}>
             <Text style={[{ color: Colors[colorScheme].text }, styles.filterText]}>Adicionar Alimento</Text>
@@ -147,6 +164,10 @@ const styles = StyleSheet.create({
       borderRadius: 99,      
       borderColor: 'gray',
       borderWidth: 1,
+    },
+    activeFilterBtn: {
+      backgroundColor: Colors.dark.saveBtnBG,
+      borderColor: Colors.dark.saveBtnBG,
     },
     filterText: {
       fontSize: vh * 0.015,

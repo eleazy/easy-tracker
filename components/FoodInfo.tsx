@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, TextInput, StyleSheet, useColorScheme, Dimensions, BackHandler } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { microsDisplay, FoodInfoProps, detailedFood } from "@/types/typesAndInterfaces";
+import { microsDisplay, FoodInfoProps, detailedFood, mealMacroTotals } from "@/types/typesAndInterfaces";
 import { getDetailedFood, getDailyGoals } from '@/firebase/dataHandling';
 import { microsMeasure, getPercentual, fixN } from '@/utils/helperFunctions';
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
     const colorScheme = useColorScheme() ?? 'dark';
@@ -11,17 +12,11 @@ const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
     const [ food, setFood ] = useState<detailedFood>();
     const [ portionSize, setPortionSize ] = useState<number>( food?.quantity ?? 100);
     const [ portionInputValue, setPortionInputValue ] = useState<string>( portionSize.toString() );
-    const [ dailyCalorieTarget, setDailyCalorieTarget ] = useState<number>(0);
-
-    const dailyMacroTarget = {
-        carbs: 50,
-        fats: 30,
-        protein: 20,
-    };
+    const [ dailyGoals, setDailyGoals ] = useState<mealMacroTotals>({calories: 0, carbs: 0, fats: 0, protein: 0});
 
     useEffect(() => {
         getDetailedFood(foodId).then((data: detailedFood) => { setFood(data); });
-        getDailyGoals().then((data) => { setDailyCalorieTarget(data.calories); });
+        getDailyGoals().then((data) => { setDailyGoals(data); });
 
         // Override the back button to close the food info
         const backAction = () => {
@@ -87,10 +82,10 @@ const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
       <View style={styles.foodDetailOuter}>        
   
         <View style={styles.row}>
-          <Text style={[{ color: Colors[colorScheme].text }, styles.label]}>Valor Diário para referência</Text>
+          <Text style={[{ color: Colors[colorScheme].text, opacity: 0.8 }, styles.label]}>Valor Diário para referência</Text>
           <View style={styles.rowLabel}>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.label]}>{dailyCalorieTarget}</Text>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.label]}>calorias</Text>
+            <Text style={[{ color: Colors.dark.mealTitleC }, styles.label]}>{dailyGoals.calories}</Text>
+            <Text style={[{ color: Colors[colorScheme].text, opacity: 0.8 }, styles.label]}>calorias</Text>
           </View>
         </View>
 
@@ -119,7 +114,7 @@ const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
                 <Text style={[{ color: Colors.dark.mealTitleC }, styles.boldLabel]}>{food?.calories}</Text>
               </View>
               <Text style={[{ color: Colors.dark.mealTitleC }, styles.boldLabel]}>
-                {`${getPercentual(food?.calories, 1, dailyCalorieTarget)}%`}
+                {`${getPercentual(food?.calories, 1, dailyGoals.calories)}%`}
               </Text>
             </View>
     
@@ -136,7 +131,7 @@ const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
                   </View>
                 </View>
                 <Text style={[{ color: Colors.dark.mealTitleC }, styles.boldLabel]}>
-                  { `${getPercentual(food?.macroNutrients.fats, 9, (dailyCalorieTarget * dailyMacroTarget.fats) / 100)}%`}
+                  { `${getPercentual(food?.macroNutrients.fats, 9, (dailyGoals.calories * dailyGoals.fats) / 100)}%`}
                 </Text>
               </View>
 
@@ -155,7 +150,7 @@ const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
                     </View>
                     <Text style={[{ color: Colors.dark.mealTitleC }, styles.subMacroLabel]}>
                       {food?.microNutrients[fatKey]
-                        ? `${getPercentual(food?.microNutrients[fatKey] as number, 9, (dailyCalorieTarget * dailyMacroTarget.fats) / 100)}%`
+                        ? `${getPercentual(food?.microNutrients[fatKey] as number, 9, (dailyGoals.calories * dailyGoals.fats) / 100)}%`
                         : '**'}
                     </Text>
                   </View>
@@ -174,7 +169,7 @@ const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
                 </View>
               </View>
               <Text style={[{ color: Colors.dark.mealTitleC }, styles.boldLabel]}>
-                {`${getPercentual(food?.macroNutrients.protein, 4, (dailyCalorieTarget * dailyMacroTarget.protein) / 100)}%`}
+                {`${getPercentual(food?.macroNutrients.protein, 4, (dailyGoals.calories * dailyGoals.protein) / 100)}%`}
               </Text>
             </View>
 
@@ -191,7 +186,7 @@ const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
                   </View>
                 </View>
                 <Text style={[{ color: Colors.dark.mealTitleC }, styles.boldLabel]}>
-                  {`${getPercentual(food?.macroNutrients.carbs, 4, (dailyCalorieTarget * dailyMacroTarget.carbs) / 100)}%`}
+                  {`${getPercentual(food?.macroNutrients.carbs, 4, (dailyGoals.calories * dailyGoals.carbs) / 100)}%`}
                 </Text>
               </View>
               
@@ -212,7 +207,7 @@ const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
             </View>
 
             {/* COLESTEROL */}
-            <View style={styles.row}>
+            <View style={[styles.row, styles.borderUp]}>
               <View style={styles.rowLabel}>
                 <Text style={[{ color: Colors[colorScheme].text }, styles.boldLabel]}>Colesterol</Text>
                 <View style={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
@@ -289,7 +284,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',        
     marginBottom: 10,
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderBottomColor: Colors.dark.borderBottomFoodDetail,
   },
   microRow: {
@@ -331,12 +326,12 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   thickBorder: {
-    borderBottomWidth: 11,
+    borderBottomWidth: 9,
     borderBottomColor: Colors.dark.borderBottomFoodDetail,
   },
   borderUp: {
     paddingTop: 10,
-    borderTopWidth: 2,
+    borderTopWidth: 1,
     borderTopColor: Colors.dark.borderBottomFoodDetail,
   },
   subMacroOuter: {
@@ -349,7 +344,7 @@ const styles = StyleSheet.create({
   }, 
   subMacroRow: {    
     marginLeft: 30,
-    borderTopWidth: 2,
+    borderTopWidth: 1,
     borderTopColor: Colors.dark.borderBottomFoodDetail,
   },
   subMacroLabel: {

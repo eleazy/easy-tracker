@@ -1,7 +1,7 @@
 import { View, Text, Pressable, StyleSheet, useColorScheme, Dimensions, TextInput } from 'react-native';
 import React, { useEffect, useState } from "react";
 import { Colors } from '@/constants/Colors';
-import { macrosDisplay, FoodInfoProps, dailyGoals, MacroInputsObj } from "@/types/typesAndInterfaces";
+import { macrosDisplay, FoodInfoProps, mealMacroTotals, MacroInputsObj } from "@/types/typesAndInterfaces";
 import { saveDailyGoals, getDailyGoals } from '@/firebase/dataHandling';
 import { microsMeasure, getPercentual, fixN, getLoggedUser } from '@/utils/helperFunctions';
 import { signOut } from 'firebase/auth';
@@ -13,12 +13,12 @@ export default function Account() {
   const loggedUser = getLoggedUser();
   const userEmail = loggedUser.email;
 
-  const [ dailyGoals, setDailyGoals ] = useState<dailyGoals>({calories: 0, carbs: 0, fats: 0, protein: 0});
+  const [ dailyGoals, setDailyGoals ] = useState<mealMacroTotals>({calories: 0, carbs: 0, fats: 0, protein: 0});
   const [ dailyGoalsInput, setDailyGoalsInput ] = useState<{[key: string]: string;}>({calories: "0", carbs: "0", fats: "0", protein: "0"});
 
   useEffect(() => {
     // get daily goals from the database
-    getDailyGoals().then((data: dailyGoals) => { 
+    getDailyGoals().then((data: mealMacroTotals) => { 
       setDailyGoals(data); 
       setDailyGoalsInput({
         calories: data.calories.toString(),
@@ -66,7 +66,7 @@ export default function Account() {
   const handleBlur = (goal: string) => {
     // Restore the old value if the input is left empty
     if (dailyGoalsInput[goal] === "") {
-      setDailyGoalsInput((prev) => ({ ...prev, [goal]: dailyGoals[goal as keyof dailyGoals].toString() }));
+      setDailyGoalsInput((prev) => ({ ...prev, [goal]: dailyGoals[goal as keyof mealMacroTotals].toString() }));
     }
   };
 
@@ -87,7 +87,7 @@ export default function Account() {
 
           <View style={styles.macrosInnerSession}>
             {['carbs', 'fats', 'protein'].map((goal, i) => {            
-              const goalKey = goal as keyof dailyGoals;
+              const goalKey = goal as keyof mealMacroTotals;
               const mult = i == 1 ? 9 : 4;
               return (
                 <View key={goalKey} style={styles.innerSession}>         

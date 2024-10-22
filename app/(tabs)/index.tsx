@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
-import { StyleSheet, View, ScrollView, Pressable, Text, FlatList, Dimensions } from "react-native";
-import { useColorScheme } from "react-native";
+import React, { useEffect, useState } from "react";
+import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { StyleSheet, View, Pressable, Text, Dimensions, useColorScheme } from "react-native";
 import MealCard from "@/components/MealCard";
 import CalendarView from "@/components/CalendarView";
 import { Colors } from "@/constants/Colors";
@@ -8,8 +9,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { getMealsOfDay, addNewBlankMeal, getDailyGoals } from "@/firebase/dataHandling";
 import { Meal, mealMacroTotals, macrosDisplayShort } from "@/types/typesAndInterfaces";
 import { saveFoodDiary } from "@/firebase/dataHandling";
-import { getTodayString, fixN, AddOrSubDay, ydmDate } from "@/utils/helperFunctions";
+import { getTodayString, fixN, AddOrSubDay, ydmDate, getPercentual } from "@/utils/helperFunctions";
 import AntDesign from '@expo/vector-icons/AntDesign';
+import Foundation from '@expo/vector-icons/Foundation';
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 export default function HomeScreen() {
   
@@ -19,12 +22,23 @@ export default function HomeScreen() {
   const [ macroTotals, setMacroTotals ] = useState<mealMacroTotals>({calories: 0, carbs: 0, fats: 0, protein: 0});
   const [ hasChanges, setHasChanges ] = useState<boolean>(false);
   const [ showCalendar, setShowCalendar ] = useState<boolean>(false);
+  const [ showGoalProgress, setShowGoalProgress ] = useState<boolean>(false);
+  const [ dailyGoals, setDailyGoals ] = useState<mealMacroTotals>({calories: 0, carbs: 0, fats: 0, protein: 0});
   //console.log('index loaded');
 
   useEffect(() => {
     getMealsOfDay(foodDiaryDay)
-      .then( async (meals) => setMeals(meals)).catch((error) => console.error(error));
+      .then((meals) => {
+        const sortedMeals = meals.sort((a, b) => a.mealPosition - b.mealPosition);
+        setMeals(sortedMeals);
+      })
+      .catch((error) => console.error(error));
+
+    getDailyGoals()
+      .then((goals) => setDailyGoals(goals))
+      .catch((error) => console.error(error));
   }, [foodDiaryDay]);
+  
 
   useEffect(() => {
     // Update totals in state when a MealCard sets meals
@@ -52,86 +66,146 @@ export default function HomeScreen() {
     const newStringDate = AddOrSubDay(foodDiaryDay, offset);
     setFoodDiaryDay(newStringDate);
   };
-  
-  return (
-    <View style={styles.outerView}>
 
-      { showCalendar && <CalendarView setShowCalendar={setShowCalendar} foodDiaryDay={foodDiaryDay} setFoodDiaryDay={setFoodDiaryDay} /> }
-
-      {/* One day back or forth */}
-      <View style={styles.calendarOuter}>
-        <View style={styles.datePickerOuter}>
-          <Pressable onPress={() => changeDate(-1)}>
-            <Ionicons name="arrow-back" size={24} color={Colors[colorScheme].text} />
-          </Pressable>
-
-          <Text style={[{ color: Colors[colorScheme].text }, styles.diaryTitle]}>{ydmDate(foodDiaryDay)}</Text>
-
-          <Pressable onPress={() => changeDate(1)}>
-            <Ionicons name="arrow-forward" size={24} color={Colors[colorScheme].text} />
-          </Pressable>
-        </View>
-
-        <AntDesign name="calendar" size={24} color="white" onPress={() => setShowCalendar(true)}/>
-      </View>
-
-      <View style={styles.indexOuter} >
-        {/* Macro Totals */}
-        <View style={styles.diaryHeader}>
-
-          <View style={styles.diaryTitleOuter}>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.diaryCalories]}>{macroTotals.calories}</Text>
-            <Text style={[{ color: Colors[colorScheme].text }, styles.diaryCaloriesKcal]}>kcal</Text>
-          </View>
-          
-          <View style={styles.diaryTotalsOuter}>
-            {['carbs', 'fats', 'protein'].map((macro, i) => (
-              <View key={macro} style={styles.diaryMacros}>
-                <View style={styles.diaryMacrosGram}>
-                  <Text style={[{ color: Colors[colorScheme].text }, styles.diaryMacroValue]}>{macroTotals[macro as keyof typeof macroTotals]}</Text>            
-                  <Text style={[{ color: Colors[colorScheme].text }, styles.diaryMacroType]}>g</Text>
-                </View>
-
-                <Text style={[{ color: Colors[colorScheme].text }, styles.diaryMacroType]}>
-                  {macrosDisplayShort[macro as keyof typeof macrosDisplayShort]}
-                </Text>            
-              </View>
-            ))}
-          </View>
-
-        </View>
-
-        <FlatList
-          data={meals}
-          keyExtractor={(meal) => meal.id.toString()}
-          contentContainerStyle={{ paddingBottom: 125 }}
-          renderItem={({ item, index }) => (
-            <MealCard key={item.id} meal={item} mealIndex={index} meals={meals} setMeals={setMeals} setHasChanges={setHasChanges} />
-          )}
-
-          ListFooterComponent={() => (            
-            <Pressable 
-              // Add More Meals icon 
-              onPress={ async () => {
-                await addNewBlankMeal(foodDiaryDay);
-                const updatedMeals = await getMealsOfDay(foodDiaryDay);
-                setMeals(updatedMeals);
-              }}
-              style={styles.addMealBtn}
-            >
-              <Ionicons name="add-circle" size={30} color={Colors.dark.mealTitleC}/>
-            </Pressable>
-          )}
-        />
-
-      </View>
-      
-      {hasChanges && (
-        <Pressable style={styles.saveBtn} onPress={() => saveAll()}>
-          <Text style={[{ color: Colors[colorScheme].text }, styles.saveText]}>Salvar</Text>
+  const renderMealCard = ({ item, drag, isActive }: { item: Meal, drag: () => void, isActive: boolean }) => {
+    return (
+      <ScaleDecorator>
+        <Pressable
+          onLongPress={drag}
+          disabled={isActive}
+          style={{ opacity: 1 }}
+        >
+          <MealCard
+            meal={item}
+            mealIndex={meals.findIndex((m) => m.id === item.id)}
+            meals={meals}
+            setMeals={setMeals}
+            setHasChanges={setHasChanges}
+          />
         </Pressable>
-      )}
-    </View>
+      </ScaleDecorator>
+    );
+  };
+  
+  const calorieGoalPercentual = getPercentual(macroTotals.calories, 1, dailyGoals.calories);
+  const calorieGoalTextColor = Number(calorieGoalPercentual) > 100 ? '#ff8080' : Colors.dark.mealTitleC;
+
+  return (
+    <GestureHandlerRootView>
+      <View style={styles.outerView}>
+
+        { showCalendar && <CalendarView setShowCalendar={setShowCalendar} foodDiaryDay={foodDiaryDay} setFoodDiaryDay={setFoodDiaryDay} /> }
+
+        {/* One day back or forth */}
+        <View style={styles.calendarOuter}>
+          <View style={styles.datePickerOuter}>
+            <Pressable onPress={() => changeDate(-1)}>
+              <Ionicons name="arrow-back" size={24} color={Colors[colorScheme].text} />
+            </Pressable>
+
+            <Text style={[{ color: Colors[colorScheme].text }, styles.diaryTitle]}>{ydmDate(foodDiaryDay)}</Text>
+
+            <Pressable onPress={() => changeDate(1)}>
+              <Ionicons name="arrow-forward" size={24} color={Colors[colorScheme].text} />
+            </Pressable>
+          </View>
+
+          <AntDesign name="calendar" size={24} color="white" onPress={() => setShowCalendar(true)}/>
+        </View>
+
+        <View style={styles.indexOuter} >
+          {/* Macro Totals */}
+          <View style={styles.diaryHeader}>
+
+            <View style={styles.diaryTitleOuter}>
+              <Foundation
+                name="graph-pie"
+                size={22}
+                color={!showGoalProgress ? Colors[colorScheme].text : Colors.dark.mealTitleC}
+                style={{ opacity: 0.8 }}
+                onPress={() => setShowGoalProgress(!showGoalProgress)}
+              />
+              <Text style={[{ color: Colors[colorScheme].text, marginLeft: 4 }, styles.diaryCalories]}>{macroTotals.calories}</Text>
+              <Text style={[{ color: Colors[colorScheme].text, marginLeft: 2 }, styles.diaryCaloriesKcal]}>kcal</Text>
+              { showGoalProgress &&                
+                <View style={styles.diaryTitleOuter}>
+                  <Text style={[{ color: calorieGoalTextColor }, styles.calorieGoalPerc]}>{calorieGoalPercentual}</Text>
+                  <Text style={[{ color: Colors[colorScheme].text, opacity: 0.7 }, styles.calorieGoalMiddle]}>% de</Text>
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.calorieGoalValue]}>{dailyGoals.calories}</Text>
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.calorieGoalKcal]}>kcal</Text>
+                </View>
+              }
+            </View>
+            
+            <View style={styles.diaryTotalsOuter}>
+              {['carbs', 'fats', 'protein'].map((macro, i) => (
+                <View key={macro} style={styles.diaryMacros}>
+                  <View style={styles.diaryMacrosGram}>
+                    <Text style={[{ color: Colors[colorScheme].text }, styles.diaryMacroValue]}>{macroTotals[macro as keyof typeof macroTotals]}</Text>            
+                    <Text style={[{ color: Colors[colorScheme].text, opacity: 0.9 }, styles.diaryMacroType]}>g</Text>
+                  </View>                                     
+
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.diaryMacroType]}>
+                    {macrosDisplayShort[macro as keyof typeof macrosDisplayShort]}
+                  </Text>            
+                </View>
+              ))}
+            </View>
+
+            { showGoalProgress && 
+              <View style={styles.progressOuter}>
+                {['carbs', 'fats', 'protein'].map((macro, i) => {
+                  const percentual = getPercentual(macroTotals[macro as keyof typeof macroTotals], 1, dailyGoals[macro as keyof typeof dailyGoals]);
+                  const percTextColor = Number(percentual) > 100 ? '#ff8080' : Colors.dark.mealTitleC;
+                  return (
+                    <View key={macro} style={styles.diaryMacros}>
+
+                      <View style={styles.diaryMacrosGram}>
+                        <Text style={[{ color: percTextColor }, styles.diaryGoalPerc]}>{percentual}</Text>
+                        <Text style={[{ color: Colors[colorScheme].text, opacity: 0.9 }, styles.diaryGoalMiddle]}>% de</Text>
+                        <Text style={[{ color: Colors.dark.mealTitleC }, styles.diaryGoalValue]}>{dailyGoals[macro as keyof typeof macroTotals]}</Text>            
+                      </View>                                     
+                      
+                    </View>
+                  )
+                })}
+              </View>
+            }
+
+          </View>
+
+          <DraggableFlatList
+            data={meals}
+            keyExtractor={(item) => item.id.toString()}
+            onDragEnd={({ data }) => {
+              setMeals(data);
+              setHasChanges(true);
+            }}
+            renderItem={renderMealCard}
+            contentContainerStyle={{ paddingBottom: 125 }}
+            ListFooterComponent={() => (
+              <Pressable
+                onPress={async () => {
+                  await addNewBlankMeal(foodDiaryDay);
+                  const updatedMeals = await getMealsOfDay(foodDiaryDay);
+                  setMeals(updatedMeals);
+                }}
+                style={styles.addMealBtn}
+              >
+                <Ionicons name="add-circle" size={30} color={Colors.dark.mealTitleC} />
+              </Pressable>
+            )}
+          />
+
+        </View>
+        
+        {hasChanges && (
+          <Pressable style={styles.saveBtn} onPress={() => saveAll()}>
+            <Text style={[{ color: Colors[colorScheme].text }, styles.saveText]}>Salvar</Text>
+          </Pressable>
+        )}
+      </View>
+    </GestureHandlerRootView>
   );
 }
 
@@ -171,9 +245,9 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    gap: 10,
-    alignItems: 'center', 
-  },
+    gap: 4,
+    alignItems: 'flex-end', 
+  },  
   diaryTitle: {
     fontSize: vh * 0.022,
     fontWeight: 'bold',
@@ -187,12 +261,35 @@ const styles = StyleSheet.create({
     fontSize: vh * 0.023,
     color: 'gray'
   },
+  calorieGoalPerc: {
+    fontSize: vh * 0.021,
+    fontWeight: 'bold',
+  },
+  calorieGoalMiddle: {
+    fontSize: vh * 0.018,
+  },
+  calorieGoalValue: {
+    fontSize: vh * 0.021,
+    fontWeight: 'bold',
+  },
+  calorieGoalKcal: {
+    fontSize: vh * 0.018,
+    color: 'gray'
+  },  
   diaryTotalsOuter: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 10,    
     backgroundColor: Colors.dark.diaryTotalsBG,
+  },
+  progressOuter: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 6,    
+    borderWidth: 2,
+    borderColor: Colors.dark.diaryTotalsBG,
   },
   diaryMacrosGram: {
     display: 'flex',
@@ -207,11 +304,22 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
   },
   diaryMacroValue: {
-    fontSize: vh * 0.022,
+    fontSize: vh * 0.023,
     fontWeight: 'bold',
   },
   diaryMacroType: {
     fontSize: vh * 0.019,
+  },
+  diaryGoalPerc: {
+    fontSize: vh * 0.021,
+    fontWeight: 'bold',
+  },
+  diaryGoalMiddle: {
+    fontSize: vh * 0.018,
+  },
+  diaryGoalValue: {
+    fontSize: vh * 0.021,
+    fontWeight: 'bold',
   },
   addMealBtn: {
     display: 'flex',

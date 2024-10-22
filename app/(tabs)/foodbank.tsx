@@ -33,9 +33,17 @@ const FoodBank = () => {
 
       const queryTokens = search.toLowerCase().split(" ").map(removeAccents);
   
-      const filteredFoods = [...tacoTableFoods, ...customFoods].filter((food) => {
+      let foodsToSearch: Food[] = [];
+      if (activeFilter === 'taco') {
+        foodsToSearch = tacoTableFoods;
+      } else if (activeFilter === 'custom') {
+        foodsToSearch = customFoods;
+      } else {
+        foodsToSearch = [...tacoTableFoods, ...customFoods];
+      }
+    
+      const filteredFoods = foodsToSearch.filter((food) => {
         const foodTitle = removeAccents(food.title.toLowerCase());
-        
         return queryTokens.every((token) => {
           return singularPluralMatch(token).some((variation) => foodTitle.includes(variation));
         });
@@ -175,15 +183,14 @@ const styles = StyleSheet.create({
     foodSelectionOuter: {      
       width: '100%',
       display: 'flex',
-      //flex: 1,
       flexDirection: 'column',  
       alignItems: 'center',
     },
     searchInput: {
       fontSize: 13,      
-      paddingVertical: 6,
+      paddingVertical: 2,
       paddingLeft: 16,
-      marginVertical: 10,
+      marginVertical: 8,
       borderRadius: 99,
       borderColor: 'gray',
       borderWidth: 1,     
@@ -191,7 +198,6 @@ const styles = StyleSheet.create({
     },
     foodSelection: {      
       padding: 10,      
-      //height: vh * 0.60,
       width: '100%',
     },
     foodRow: {

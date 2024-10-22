@@ -26,6 +26,6 @@ export const Colors = {
     mealTitleC: 'rgb(227, 144, 54)',
     saveBtnBG: 'rgba(227, 144, 54, 0.7)',
     basicBG: 'black',
-    borderBottomFoodDetail: 'rgba(255, 255, 255, 0.9)',
+    borderBottomFoodDetail: 'rgba(255, 255, 255, 0.6)',
   },
 };

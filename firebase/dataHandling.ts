@@ -2,7 +2,7 @@ import { db } from "./firebaseConfig";
 import { collection, getDocs, query, where, setDoc, doc, deleteDoc, updateDoc, arrayUnion, DocumentReference, getDoc, DocumentData } from "firebase/firestore";
 import { User } from "firebase/auth";
 import tabelaTaco from './tabelaTaco.json';
-import { Food, Meal, detailedFood, dailyGoals } from "@/types/typesAndInterfaces";
+import { Food, Meal, detailedFood, mealMacroTotals } from "@/types/typesAndInterfaces";
 import { getLoggedUser, fixN, getTodayString, emptyDetailedFood } from "@/utils/helperFunctions";
 
 // PRIVATE FUNCTIONS
@@ -405,7 +405,7 @@ export const getTotalCaloriesOfMonth = async (year: number, month: number): Prom
     }
 };
 
-export const getDailyGoals = async (): Promise<dailyGoals> => {
+export const getDailyGoals = async (): Promise<mealMacroTotals> => {
     const loggedUser = getLoggedUser();
     const user = loggedUser.uid;
     try {
@@ -419,7 +419,7 @@ export const getDailyGoals = async (): Promise<dailyGoals> => {
     }
 };
 
-export const saveDailyGoals = async (dailyGoals: dailyGoals): Promise<void> => {
+export const saveDailyGoals = async (dailyGoals: mealMacroTotals): Promise<void> => {
     const loggedUser = getLoggedUser();
     const user = loggedUser.uid;
     try {
@@ -476,7 +476,7 @@ export const addCustomFood = async (food: Food): Promise<void> => {
 
 // INITIAL DATABASE LOAD
 export const loadInitialData = async ( user: User ) => {
-    const defaultGoals: dailyGoals = {
+    const defaultGoals: mealMacroTotals = {
         calories: 2380,
         carbs: 300,
         fats: 60,

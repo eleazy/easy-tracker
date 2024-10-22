@@ -197,8 +197,8 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
         )
       })} 
 
-      <Pressable style={{ marginTop: 9 }} onPress={() => setShowAddFood(!showAddFood)}>
-        <Ionicons name={showAddFood ? "arrow-up-circle" :  "add-circle-outline"} size={26} color={Colors.dark.mealTitleC}/>
+      <Pressable style={{ marginTop: 5 }} onPress={() => setShowAddFood(!showAddFood)}>
+        <Ionicons name={showAddFood ? "arrow-up-circle" :  "add-circle-outline"} size={24} color={Colors.dark.mealTitleC}/>
       </Pressable>
 
       {showAddFood && <FoodSelection addFoodToMeal={addFoodToMeal} />}
@@ -211,7 +211,9 @@ const vh = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   mealCardOuter: {    
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    paddingBottom: 6,
     marginBottom: 10,
     borderRadius: 12,
     backgroundColor: 'rgba(0,0,0,0.1)',
@@ -264,7 +266,7 @@ const styles = StyleSheet.create({
   foodOuter: {  
     borderBottomColor: 'gray',
     borderBottomWidth: 1,
-    marginVertical: 2,    
+    marginVertical: 1,    
     width: '100%',
   },
   foodTitleOuter: {    

@@ -20,4 +20,3 @@ export const auth = initializeAuth(app, {
 });
 //export const auth = getAuth(app);
 
-// navhut973

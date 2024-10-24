@@ -151,6 +151,10 @@ export type MacroInputsObj = {
   [key in 'carbs' | 'fats' | 'protein']: MacroInput;
 };
 
+export type subFatsInputsObj = {
+  [key in 'saturatedFats' | 'monounsaturatedFats' | 'polyunsaturatedFats']: MacroInput;
+};
+
 type MeasureUnit = 'g' | 'mg' | 'mcg';
 
 export type Measure = {

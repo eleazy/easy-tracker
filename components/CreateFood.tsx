@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef, RefObject } from "react";
-import { View, Text, ScrollView, TextInput, StyleSheet, useColorScheme, Dimensions, BackHandler } from 'react-native';
+import { View, Text, ScrollView, TextInput, StyleSheet, useColorScheme, Dimensions, BackHandler, Alert, Pressable } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { microsDisplay, MacroInputsObj, subFatsInputsObj, detailedFood, mealMacroTotals, CreateFoodProps } from "@/types/typesAndInterfaces";
-import { getDetailedFood, getDailyGoals } from '@/firebase/dataHandling';
+import { microsDisplay, subFatsInputsObj, detailedFood, mealMacroTotals, CreateFoodProps } from "@/types/typesAndInterfaces";
+import { getDailyGoals, addCustomFood } from '@/firebase/dataHandling';
 import { microsMeasure, getPercentual, fixN } from '@/utils/helperFunctions';
 
 const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFoodProps) => {
@@ -11,11 +11,11 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
     const [ dailyGoals, setDailyGoals ] = useState<mealMacroTotals>({calories: 0, carbs: 0, fats: 0, protein: 0});
 
     const [ titleInput, setTitleInput ] = useState<string>('');
+    const [ calories, setCalories ] = useState<number>(0);
     const [ portionInput, setPortionInput ] = useState<string>('0');
     const [ carbInput, setCarbInput ] = useState<string>('0');
     const [ fatInput, setFatInput ] = useState<string>('0');
     const [ protInput, setProtInput ] = useState<string>('0');
-    const [ calories, setCalories ] = useState<number>(0);
 
     const [ saturatedFats, setSaturatedFats ] = useState<string>('');
     const [ monounsaturatedFats, setMonounsaturatedFats ] = useState<string>('');
@@ -61,6 +61,7 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
 
     useEffect(() => {
       // Calculate calories
+      if ([carbInput, protInput, fatInput].some(macro => macro === "")) return;
       const cals = fixN(
         (parseInt(carbInput) * 4) +
         (parseInt(protInput) * 4) +
@@ -69,51 +70,132 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
       setCalories(cals);
     }, [carbInput, protInput, fatInput]);
 
-    // const changeQuantity = (value: string) => {
-    //   // modify the Food object quantity and recalculate the macros
-    //   // very similar to the changeQuantity function in MealCard.tsx      
-    //   if (value === '') { setPortionInputValue(''); }
-      
-    //   const newQuantity = parseInt(value);      
-    //   if (isNaN(newQuantity) || newQuantity < 0) return;
-      
-    //   // Update food in state      
-    //   setFood((prevFood) => {
-    //     if (!prevFood) return prevFood;
+    const addFood = () => {
+      const food: detailedFood = {
+          id: '',
+          idMeal: '',
+          calories,
+          macroNutrients: {
+            carbs: Number(carbInput),
+            fats: Number(fatInput),
+            protein: Number(protInput),              
+          },
+          microNutrients: {
+            saturatedFats: Number(saturatedFats),
+            monounsaturatedFats: Number(monounsaturatedFats),
+            polyunsaturatedFats: Number(polyunsaturatedFats),
+            dietaryFiber: Number(dietaryFiber),
+            ash: Number(micros.ash),
+            calcium: Number(micros.calcium),
+            magnesium: Number(micros.magnesium),
+            manganese: Number(micros.manganese),
+            phosphorus: Number(micros.phosphorus),
+            iron: Number(micros.iron),
+            sodium: Number(micros.sodium),
+            potassium: Number(micros.potassium),
+            copper: Number(micros.copper),
+            zinc: Number(micros.zinc),
+            thiamine: Number(micros.thiamine),
+            pyridoxine: Number(micros.pyridoxine),
+            niacin: Number(micros.niacin),
+            riboflavin: Number(micros.riboflavin),
+            vitaminC: Number(micros.vitaminC),
+            RE: Number(micros.RE),
+            RAE: Number(micros.RAE),
+            cholesterol: Number(micros.cholesterol),
+            retinol: Number(micros.retinol),
+          },
+          quantity: Number(portionInput),
+          title: titleInput,
+          isCustom: true,
+      };
 
-    //     const newFood = { ...prevFood };
-    //     const oldQuantity = portionSize;
-    //     const fM = newFood.macroNutrients;
-
-    //     newFood.quantity = newQuantity;
-
-    //     newFood.macroNutrients.carbs = fixN((fM.carbs / oldQuantity) * newQuantity);
-    //     newFood.macroNutrients.fats = fixN((fM.fats / oldQuantity) * newQuantity);
-    //     newFood.macroNutrients.protein = fixN((fM.protein / oldQuantity) * newQuantity);
-
-    //     // Update micro nutrients
-    //     Object.keys(microsDisplay).map((micro) => { 
-    //       const microKey = micro as keyof typeof microsDisplay;
-    //       newFood.microNutrients[microKey] = fixN((newFood.microNutrients[microKey] as number / oldQuantity) * newQuantity);
-    //     });
-        
-    //     // carbs and protein = 4 kcal per gram, fats = 9 kcal per gram 
-    //     newFood.calories = fixN(
-    //       newFood.macroNutrients.carbs * 4 +
-    //       newFood.macroNutrients.protein * 4 +
-    //       newFood.macroNutrients.fats * 9
-    //     );        
-
-    //     setPortionInputValue(newQuantity.toString());
-    //     setPortionSize(newQuantity);
-    //     return newFood;
-    //   });
-    // };
+      addCustomFood(food)
+          .then(() => {
+              setShowCreateFood(false);     
+              setCustomFoods([...customFoods, food]);
+          })
+          .catch((error) => {
+              console.error('Error adding food:', error);
+              Alert.alert('Erro', 'Erro ao adicionar alimento. Tente novamente.');
+          });
+    };
   
-    const handleBlur = () => {
-      // Restore the old portion if the input is left empty
-      if (portionInput === '') {
-        setPortionInput((prevValue) => prevValue === '' ? portionInput.toString() : prevValue );
+    const inputPress = (input: string ) => {
+      // When the input is focused, clear the current value in the input field
+      switch (input) {
+        case 'portion':
+          setPortionInput('');
+          break;
+        case 'carb':
+          setCarbInput('');
+          break;
+        case 'prot':
+          setProtInput('');
+          break;
+        case 'fat':
+          setFatInput('');
+          break;
+        case 'saturatedFats':
+          setSaturatedFats('');
+          break;
+        case 'monounsaturatedFats':
+          setMonounsaturatedFats('');
+          break;
+        case 'polyunsaturatedFats':
+          setPolyunsaturatedFats('');
+          break;
+        case 'dietaryFiber':
+          setDietaryFiber('');
+          break;
+        case 'cholesterol':
+          setMicros((p) => ({ ...p, cholesterol: '' }));
+          break;
+        case 'sodium':
+          setMicros((p) => ({ ...p, sodium: '' }));
+          break;
+        default:
+          setMicros((p) => ({ ...p, [input]: '' }));
+          break;
+      }
+    };
+    
+    const handleBlur = (input: string ) => {
+      // Restore the old value if the input is left empty
+      switch (input) {
+        case 'portion':
+          if (portionInput === '') setPortionInput('0');
+          break;
+        case 'carb':
+          if (carbInput === '') setCarbInput('0');
+          break;
+        case 'prot':
+          if (protInput === '') setProtInput('0');
+          break;
+        case 'fat':
+          if (fatInput === '') setFatInput('0');
+          break;
+        case 'saturatedFats':
+          if (saturatedFats === '') setSaturatedFats('0');
+          break;
+        case 'monounsaturatedFats':
+          if (monounsaturatedFats === '') setMonounsaturatedFats('0');
+          break;
+        case 'polyunsaturatedFats':
+          if (polyunsaturatedFats === '') setPolyunsaturatedFats('0');
+          break;
+        case 'dietaryFiber':
+          if (dietaryFiber === '') setDietaryFiber('0');
+          break;
+        case 'cholesterol':
+          if (micros.cholesterol === '') setMicros((p) => ({ ...p, cholesterol: 0 }));
+          break;
+        case 'sodium':
+          if (micros.sodium === '') setMicros((p) => ({ ...p, sodium: 0 }));
+          break;
+        default:
+          if (micros[input as keyof typeof micros] === '') setMicros((p) => ({ ...p, [input]: 0 }));
+          break;
       }
     };
 
@@ -127,14 +209,14 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
       <View style={styles.foodDetailOuter}>        
   
         <View style={styles.row}>
-          <Text style={[{ color: Colors[colorScheme].text, opacity: 0.8 }, styles.label]}>Valor Diário para referência</Text>
+          <Text style={[{ color: Colors[colorScheme].text, opacity: 0.8 }, styles.label]}>Valor diário para referência</Text>
           <View style={styles.rowLabel}>
             <Text style={[{ color: Colors.dark.mealTitleC }, styles.label]}>{dailyGoals.calories}</Text>
             <Text style={[{ color: Colors[colorScheme].text, opacity: 0.8 }, styles.label]}>calorias</Text>
           </View>
         </View>
 
-        <ScrollView style={styles.scrollView}>
+        <ScrollView>
           <View style={styles.nutritionalContainer}>
             <Text style={[{ color: Colors[colorScheme].text }, styles.header]}>Fatores Nutricionais</Text>
             <TextInput
@@ -157,8 +239,8 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
                 placeholder="Porção"
                 placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
                 onChangeText={(text) => setPortionInput(text)}
-                onFocus={() => setPortionInput('')}
-                onBlur={() => handleBlur()}
+                onFocus={() => inputPress('portion')}
+                onBlur={() => handleBlur('portion')}
                 onSubmitEditing={() => handleSubmitEditing(carbRef)}
                 returnKeyType="next"
                 ref={portionRef}
@@ -185,8 +267,11 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
                   <View style={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                     <TextInput
                       style={[{ color: Colors.dark.mealTitleC }, styles.boldLabel]}
+                      inputMode="numeric"
                       value={fatInput}                      
                       onChangeText={setFatInput}
+                      onBlur={() => handleBlur('fat')}
+                      onPress={() => inputPress('fat')}
                       onSubmitEditing={() => handleSubmitEditing(saturatedFatsRef)}
                       returnKeyType="next"
                       ref={fatRef}
@@ -210,8 +295,11 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
                       <View style={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                         <TextInput
                           style={[{ color: Colors.dark.mealTitleC }, styles.label, styles.subMacroLabel]}
+                          inputMode="numeric"
                           value={value}
                           onChangeText={(text) => setValue(text)}
+                          onBlur={() => handleBlur(fatType)}
+                          onPress={() => inputPress(fatType)}
                           onSubmitEditing={() => {
                               if (i < Object.keys(subFatsInputsObj).length - 1) {
                                   handleSubmitEditing(Object.values(subFatsInputsObj)[i + 1].ref);
@@ -243,8 +331,11 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
                 <View style={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                   <TextInput
                     style={[{ color: Colors.dark.mealTitleC }, styles.boldLabel]}
+                    inputMode="numeric"
                     value={protInput}
                     onChangeText={setProtInput}
+                    onBlur={() => handleBlur('prot')}
+                    onPress={() => inputPress('prot')}
                     onSubmitEditing={() => handleSubmitEditing(carbRef)}
                     returnKeyType="next"
                     ref={protRef}                    
@@ -265,8 +356,11 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
                   <View style={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                     <TextInput
                       style={[{ color: Colors.dark.mealTitleC }, styles.boldLabel]}
+                      inputMode="numeric"
                       value={carbInput}
                       onChangeText={setCarbInput}
+                      onBlur={() => handleBlur('carb')}
+                      onPress={() => inputPress('carb')}
                       onSubmitEditing={() => handleSubmitEditing(dietaryFiberRef)}
                       returnKeyType="next"
                       ref={carbRef}                      
@@ -285,8 +379,11 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
                   <View style={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                     <TextInput
                       style={[{ color: Colors.dark.mealTitleC }, styles.label, styles.subMacroLabel]}
+                      inputMode="numeric"
                       value={dietaryFiber}
                       onChangeText={setDietaryFiber}
+                      onBlur={() => handleBlur('dietaryFiber')}
+                      onPress={() => inputPress('dietaryFiber')}
                       onSubmitEditing={() => handleSubmitEditing(cholestRef)}
                       returnKeyType="next"
                       ref={dietaryFiberRef}
@@ -307,8 +404,11 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
                 <View style={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                   <TextInput
                     style={[{ color: Colors.dark.mealTitleC }, styles.boldLabel]}
+                    inputMode="numeric"
                     value={micros.cholesterol.toString()}
                     onChangeText={(text) => setMicros((p) => ({ ...p, cholesterol: text }))}
+                    onBlur={() => handleBlur('cholesterol')}
+                    onPress={() => inputPress('cholesterol')}
                     onSubmitEditing={() => handleSubmitEditing(sodiumRef)}
                     returnKeyType="next"
                     ref={cholestRef}
@@ -328,8 +428,11 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
                 <View style={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                   <TextInput
                     style={[{ color: Colors.dark.mealTitleC }, styles.boldLabel]}
+                    inputMode="numeric"
                     value={micros.sodium.toString()}
                     onChangeText={(text) => setMicros((p) => ({ ...p, sodium: text }))}
+                    onBlur={() => handleBlur('sodium')}
+                    onPress={() => inputPress('sodium')}
                     onSubmitEditing={() => handleSubmitEditing(saturatedFatsRef)}
                     returnKeyType="next"
                     ref={sodiumRef}
@@ -353,11 +456,13 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
                       <View style={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                         <TextInput
                           style={[{ color: Colors.dark.mealTitleC }, styles.boldLabel]}
+                          inputMode="numeric"
                           value={micros[microKey].toString()}
                           onChangeText={(text) => setMicros((p) => ({ ...p, [microKey]: text }))}
+                          onBlur={() => handleBlur(microKey)}
+                          onPress={() => inputPress(microKey)}
                           onSubmitEditing={() => {}}  
                           returnKeyType="next"
-
                         />
                         <Text style={[{ color: Colors[colorScheme].text }, styles.weakLabel]}>{microsMeasure[microKey].measure}</Text>
                       </View>
@@ -371,9 +476,13 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
             
           </View>
         </ScrollView>
+
+        <Pressable style={styles.saveBtn} onPress={() => addFood()}>
+            <Text style={[{ color: Colors[colorScheme].text }, styles.saveText]}>Salvar</Text>
+        </Pressable>
       </View>
     );
-}
+  }
 
 const vh = Dimensions.get('window').height;
 
@@ -466,8 +575,18 @@ const styles = StyleSheet.create({
     fontSize: vh * 0.018,
     opacity: 0.9,
   },  
-  scrollView: {
-    //flex: 1,    
+  saveText: {
+    color: 'white',
+    fontSize: vh * 0.024,
+    paddingVertical: vh * 0.016,
+    fontWeight: 'bold',
+  },
+  saveBtn: {
+    width: '100%',
+    backgroundColor: Colors.dark.saveBtnBG,
+    display: 'flex',    
+    alignItems: 'center',  
+    marginBottom: 30,
   },
 });
 

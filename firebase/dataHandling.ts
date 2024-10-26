@@ -460,7 +460,7 @@ export const addNewBlankMeal = async (date: string, mealTitle: string = '', meal
     }
 };
 
-export const addCustomFood = async (food: Food): Promise<void> => {
+export const addCustomFood = async (food: detailedFood): Promise<void> => {
     // Add a new custom food to the user's customFoods collection
     const loggedUser = getLoggedUser();
     const user = loggedUser.uid;

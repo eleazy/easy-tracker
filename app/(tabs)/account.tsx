@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Colors } from '@/constants/Colors';
 import { macrosDisplay, FoodInfoProps, mealMacroTotals, MacroInputsObj } from "@/types/typesAndInterfaces";
 import { saveDailyGoals, getDailyGoals } from '@/firebase/dataHandling';
-import { microsMeasure, getPercentual, fixN, getLoggedUser } from '@/utils/helperFunctions';
+import { microsMeasure, getPercentual, fixN, getLoggedUser, getTodayString } from '@/utils/helperFunctions';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/firebase/firebaseConfig';
 import { navigate } from '@/components/navigation/RootNavigation';
@@ -18,7 +18,7 @@ export default function Account() {
 
   useEffect(() => {
     // get daily goals from the database
-    getDailyGoals().then((data: mealMacroTotals) => { 
+    getDailyGoals(getTodayString()).then((data: mealMacroTotals) => { 
       setDailyGoals(data); 
       setDailyGoalsInput({
         calories: data.calories.toString(),

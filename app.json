@@ -4,11 +4,11 @@
     "slug": "easy-tracker",
     "version": "0.1.0",
     "orientation": "portrait",
-    "icon": "",
+    "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "",
+      "image": "./assets/images/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#010205"
     },
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#010205"
       },
       "package": "com.liazi.easytracker"
@@ -25,7 +25,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": ""
+      "favicon": "./assets/images/icon.png"
     },
     "plugins": [
       "expo-router"

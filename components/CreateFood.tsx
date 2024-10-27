@@ -3,7 +3,7 @@ import { View, Text, ScrollView, TextInput, StyleSheet, useColorScheme, Dimensio
 import { Colors } from '@/constants/Colors';
 import { microsDisplay, subFatsInputsObj, detailedFood, mealMacroTotals, CreateFoodProps } from "@/types/typesAndInterfaces";
 import { getDailyGoals, addCustomFood } from '@/firebase/dataHandling';
-import { microsMeasure, getPercentual, fixN } from '@/utils/helperFunctions';
+import { microsMeasure, getPercentual, fixN, getTodayString } from '@/utils/helperFunctions';
 
 const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFoodProps) => {
     const colorScheme = useColorScheme() ?? 'dark';
@@ -45,7 +45,7 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
   };
 
     useEffect(() => {        
-        getDailyGoals().then((data) => { setDailyGoals(data); });
+        getDailyGoals(getTodayString()).then((data) => { setDailyGoals(data); });
         
         // Override the back button to close the food info
         const backAction = () => {

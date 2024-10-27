@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, BackHandler} from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, BackHandler, Alert} from 'react-native';
 import { Colors } from '@/constants/Colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Food, MealCardProps, macrosDisplayShort } from '@/types/typesAndInterfaces';
+import { Food, Meal, MealCardProps, macrosDisplayShort } from '@/types/typesAndInterfaces';
 import { fixN } from '@/utils/helperFunctions';
 import FoodSelection from "@/components/FoodSelection";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardProps) => {
   const colorScheme = useColorScheme() ?? 'dark';
@@ -107,6 +108,27 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
     });
   };
 
+  const removeMeal = () => {    
+    Alert.alert(
+      "Remover Refeição",
+      "Tem certeza que deseja remover esta refeição?",
+      [
+        {
+          text: "Cancelar",
+          onPress: () => {},
+          style: "cancel"
+        },
+        { text: "Remover", onPress: () => {          
+            const newMeals = [...meals];
+            newMeals.splice(mealIndex, 1);
+            setHasChanges(true);
+            setMeals(newMeals);
+          }
+        }
+      ]
+    );
+  };
+
   const inputPress = (i: number) => {
     // When the input is focused, clear the current value in the input field
     setQuantityInputValue((prevValues) => {
@@ -133,8 +155,26 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
       <View style={styles.mealHeader}>
 
         <View style={styles.mealTitleOuter}>
-          <Text style={[{ color: Colors[colorScheme].text }, styles.mealTitle]}> {meal.title} </Text>
-          <Text style={[{ color: meal.totals.calories == 0 ? 'gray' : Colors[colorScheme].text }, styles.mealCalories]}>{meal.totals.calories} kcal</Text>
+          <View style={[styles.mealTitleOuter, {gap: 4}]}>
+            <TextInput
+              style={[{ color: Colors[colorScheme].text }, styles.mealTitle]}
+              value={meal.title}
+              placeholder="Refeição"
+              editable={showAddFood}
+              onChangeText={(text) => {
+                const newMeals = [...meals];
+                newMeals[mealIndex].title = text;
+                setMeals(newMeals);
+                setHasChanges(true);
+              }}              
+            />
+            { showAddFood && <AntDesign name="edit" size={20} color="gray" /> }
+          </View>
+
+          <View style={[styles.mealTitleOuter, {gap: 4}]}>
+            <Text style={[{ color: meal.totals.calories == 0 ? 'gray' : Colors[colorScheme].text }, styles.mealCalories]}>{meal.totals.calories}</Text>
+            <Text style={[{ color: 'gray'} , styles.mealCalories]}>kcal</Text>
+          </View>
         </View>
 
         <View style={styles.mealMacrosOuter}>
@@ -201,7 +241,15 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
         <Ionicons name={showAddFood ? "arrow-up-circle" :  "add-circle-outline"} size={24} color={Colors.dark.mealTitleC}/>
       </Pressable>
 
-      {showAddFood && <FoodSelection addFoodToMeal={addFoodToMeal} />}
+      { showAddFood && <FoodSelection addFoodToMeal={addFoodToMeal} /> }
+
+      { showAddFood &&             
+        <Pressable style={styles.removeMealBtn} onPress={() => removeMeal()}>
+          <Text style={styles.removeMealText}>Remover Refeição</Text>
+          <MaterialIcons name="highlight-remove" size={24} color={Colors[colorScheme].text} />
+        </Pressable>
+      }
+
     </View>
   )
 }
@@ -221,6 +269,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     display: 'flex',    
     alignItems: 'center',
+  },
+  removeMealBtn: {
+    width: '100%',    
+    paddingVertical: 7,
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  removeMealText: {
+    color: Colors.dark.mealTitleC,
+    fontSize: vh * 0.018,    
   },
   mealHeader: {
     borderBottomColor: 'gray',

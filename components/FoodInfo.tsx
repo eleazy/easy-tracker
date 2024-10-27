@@ -3,8 +3,7 @@ import { View, Text, ScrollView, TextInput, StyleSheet, useColorScheme, Dimensio
 import { Colors } from '@/constants/Colors';
 import { microsDisplay, FoodInfoProps, detailedFood, mealMacroTotals } from "@/types/typesAndInterfaces";
 import { getDetailedFood, getDailyGoals } from '@/firebase/dataHandling';
-import { microsMeasure, getPercentual, fixN } from '@/utils/helperFunctions';
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { microsMeasure, getPercentual, fixN, getTodayString } from '@/utils/helperFunctions';
 
 const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
     const colorScheme = useColorScheme() ?? 'dark';
@@ -16,7 +15,7 @@ const FoodInfo = ({ setShowFoodInfo, foodId }: FoodInfoProps) => {
 
     useEffect(() => {
         getDetailedFood(foodId).then((data: detailedFood) => { setFood(data); });
-        getDailyGoals().then((data) => { setDailyGoals(data); });
+        getDailyGoals(getTodayString()).then((data) => { setDailyGoals(data); });
 
         // Override the back button to close the food info
         const backAction = () => {

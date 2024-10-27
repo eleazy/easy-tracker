@@ -65,12 +65,28 @@ const editMealFood = async (date: string, idMealsFoods: string, quantity: number
     } catch (error) { console.error("Error editing meal:", error); }
 };
 
+const getCurrentDailyGoals = async (): Promise<mealMacroTotals> => {
+    const loggedUser = getLoggedUser();
+    const user = loggedUser.uid;
+    try {
+        const userDoc = doc(db, "users", user);
+        const userSnapshot = await getDoc(userDoc);
+        const userData = userSnapshot.data();
+        return userData?.dailyGoals;
+    } catch (error) {
+        console.error("Error fetching daily goals:", error);
+        return { calories: 0, carbs: 0, fats: 0, protein: 0 };
+    }
+};
+
 // Load initial data for the food diary
 const setFoodDiaryInitialData = async (date: string) => {
     const loggedUser = getLoggedUser();
     const user = loggedUser.uid;
 
-    setDoc(doc(db, "users", user, "foodDiary", date), { date });
+    const dailyGoalsOfDay = await getCurrentDailyGoals();
+
+    setDoc(doc(db, "users", user, "foodDiary", date), { date, dailyGoalsOfDay });
 
     ['Café da Manhã', 'Almoço', 'Lanche', 'Jantar'].forEach(async (mealTitle, i) => {
         addNewBlankMeal(date, mealTitle, i);
@@ -137,7 +153,7 @@ export const saveFoodDiary = async (date: string, meals: Meal[]) => {
         // in Meal type, foods is an array of type Food, not DocumentReference
         // So it's necessary to update the mealsFoods collection with the new values of the foods
         // And then update the meals collection with the new values of the meals, keeping the DocumentReferences to the foods documents
-
+    
         const updateMealPromises = meals.map(async (meal) => {
             const mealRef = doc(mealsCollectionRef, meal.id);
             const mealDoc = await getDoc(mealRef);
@@ -166,13 +182,34 @@ export const saveFoodDiary = async (date: string, meals: Meal[]) => {
                     await setDoc(newFoodRef, food);                    
                     await updateDoc(mealRef, {
                         foods: arrayUnion(newFoodRef) // add the new food reference to the meals.foods in firebase
-                      });
+                    });
                 }
             });    
             await Promise.all(updateFoodsPromises);
+            await updateDoc(mealRef, { title: meal.title, mealPosition: meal.mealPosition });
         });
-
         await Promise.all(updateMealPromises);
+
+        // Check if any meal in mealsCollectionRef doesn't exist in meals, if so remove it, the meal was deleted
+        const mealsSnapshot = await getDocs(mealsCollectionRef);
+        const mealsRefs = mealsSnapshot.docs;
+        const mealsRefsIds = mealsRefs.map((meal) => meal.id);
+        const mealsIds = meals.map((meal) => meal.id);
+        const mealsToDelete = mealsRefsIds.filter((id) => !mealsIds.includes(id));
+        
+        const mealsToDeletePromises = mealsToDelete.map(async (id) => {
+            const mealRef = doc(mealsCollectionRef, id);
+            const mealDoc = await getDoc(mealRef);
+            const mealData = mealDoc.data();
+            // Delete its foods in the mealsFoods collection as well
+            const foodsRefs = mealData?.foods as DocumentReference[];
+            const deleteFoodsPromises = foodsRefs.map(async (foodRef) => {
+                await deleteDoc(foodRef);
+            });
+            await Promise.all(deleteFoodsPromises);
+            await deleteDoc(mealRef);
+        });
+        await Promise.all(mealsToDeletePromises);   
 
     } catch (error) { console.error("Error saving food diary:", error); }
 };
@@ -220,42 +257,8 @@ export const getDetailedFood = async (foodId: string): Promise<detailedFood> => 
         const customFoodDoc = doc(customFoodsCollectionRef, foodId);
         const customFoodData = await fetchFoodData(customFoodDoc);
 
-        if (customFoodData) {
-            const customFoodShaped: detailedFood = {
-                id: foodId,
-                idMeal: '',
-                calories: customFoodData.calories,
-                macroNutrients: customFoodData.macroNutrients,
-                microNutrients: {
-                    saturatedFats: 0,
-                    monounsaturatedFats: 0,
-                    polyunsaturatedFats: 0,
-                    dietaryFiber: 0,
-                    ash: 0,
-                    calcium: 0,
-                    magnesium: 0,
-                    manganese: 0,
-                    phosphorus: 0,
-                    iron: 0,
-                    sodium: 0,
-                    potassium: 0,
-                    copper: 0,
-                    zinc: 0,
-                    thiamine: 0,
-                    pyridoxine: 0,
-                    niacin: 0,
-                    riboflavin: 0,
-                    vitaminC: 0,
-                    RE: 0,
-                    RAE: 0,
-                    cholesterol: 0,
-                    retinol: 0,
-                },
-                quantity: 100,
-                title: customFoodData.title,
-                isCustom: true,
-            };
-            return customFoodShaped;
+        if (customFoodData) {         
+            return customFoodData as detailedFood;
         }
 
         const tacoFood = Object.values(tabelaTaco).find((food) => food.id === Number(foodId));
@@ -405,14 +408,22 @@ export const getTotalCaloriesOfMonth = async (year: number, month: number): Prom
     }
 };
 
-export const getDailyGoals = async (): Promise<mealMacroTotals> => {
+export const getDailyGoals = async (date: string): Promise<mealMacroTotals> => {
+    // gets what the daily goals was set to in a given day
     const loggedUser = getLoggedUser();
     const user = loggedUser.uid;
     try {
-        const userDoc = doc(db, "users", user);
-        const userSnapshot = await getDoc(userDoc);
-        const userData = userSnapshot.data();
-        return userData?.dailyGoals;
+        const foodDiaryQuery = query(
+            collection(db, "users", user, "foodDiary"),
+            where("date", "==", date)
+        );
+        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
+        const foodDiaryDoc = foodDiarySnapshot.docs[0];
+        const docId = foodDiaryDoc.id;
+        const docRef = doc(db, "users", user, "foodDiary", docId);
+        const docSnap = await getDoc(docRef);
+        const docData = docSnap.data();
+        return docData?.dailyGoalsOfDay;
     } catch (error) {
         console.error("Error fetching daily goals:", error);
         return { calories: 0, carbs: 0, fats: 0, protein: 0 };
@@ -425,14 +436,25 @@ export const saveDailyGoals = async (dailyGoals: mealMacroTotals): Promise<void>
     try {
         const userDoc = doc(db, "users", user);
         await updateDoc(userDoc, { dailyGoals });
-        console.log(userDoc, dailyGoals );
+
+        // set the daily goals for the current day too
+        const today = getTodayString();
+        const foodDiaryQuery = query(
+            collection(db, "users", user, "foodDiary"),
+            where("date", "==", today)
+        );
+        const foodDiarySnapshot = await getDocs(foodDiaryQuery);
+        const foodDiaryDoc = foodDiarySnapshot.docs[0];
+        const docId = foodDiaryDoc.id;
+        const docRef = doc(db, "users", user, "foodDiary", docId);
+        await updateDoc(docRef, { dailyGoalsOfDay: dailyGoals });        
     } catch (error) {
         console.error("Error setting daily goals:", error);
     }    
 };
 
 // Add a new meal to the food diary in a given day
-export const addNewBlankMeal = async (date: string, mealTitle: string = '', mealPosition: number = 0) => {
+export const addNewBlankMeal = async (date: string, mealTitle: string, mealPosition: number = 0) => {
     const loggedUser = getLoggedUser();
     const user = loggedUser.uid;
     try {
@@ -450,7 +472,7 @@ export const addNewBlankMeal = async (date: string, mealTitle: string = '', meal
         const newMeal = {
             id: newMealRef.id,
             mealPosition,
-            title: mealTitle !== '' ? mealTitle : "Refeição",
+            title: mealTitle,
             foods: [],            
         };
         await setDoc(newMealRef, newMeal);

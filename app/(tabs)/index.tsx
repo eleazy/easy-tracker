@@ -12,7 +12,8 @@ import { saveFoodDiary } from "@/firebase/dataHandling";
 import { getTodayString, fixN, AddOrSubDay, ydmDate, getPercentual } from "@/utils/helperFunctions";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+
+const vh = Dimensions.get('window').height;
 
 export default function HomeScreen() {
   
@@ -34,8 +35,8 @@ export default function HomeScreen() {
       })
       .catch((error) => console.error(error));
 
-    getDailyGoals()
-      .then((goals) => setDailyGoals(goals))
+    getDailyGoals(foodDiaryDay)
+      .then((goals) => {console.log(goals); setDailyGoals(goals)})
       .catch((error) => console.error(error));
   }, [foodDiaryDay]);
   
@@ -53,6 +54,9 @@ export default function HomeScreen() {
     (['calories', 'carbs', 'fats', 'protein'] as (keyof typeof newTotals)[]).forEach((key) => {
       newTotals[key] = fixN(newTotals[key]);
     });
+
+    const sortedMeals = meals.sort((a, b) => a.mealPosition - b.mealPosition);
+    setMeals(sortedMeals);
     
     setMacroTotals(newTotals);
   }, [meals]);
@@ -178,15 +182,15 @@ export default function HomeScreen() {
             data={meals}
             keyExtractor={(item) => item.id.toString()}
             onDragEnd={({ data }) => {
-              setMeals(data);
+              setMeals(data.map((meal, i) => ({ ...meal, mealPosition: i })));
               setHasChanges(true);
             }}
             renderItem={renderMealCard}
-            contentContainerStyle={{ paddingBottom: 125 }}
+            contentContainerStyle={{ paddingBottom: vh * 0.3 }}
             ListFooterComponent={() => (
               <Pressable
                 onPress={async () => {
-                  await addNewBlankMeal(foodDiaryDay);
+                  await addNewBlankMeal(foodDiaryDay, "Refeição", meals.length);
                   const updatedMeals = await getMealsOfDay(foodDiaryDay);
                   setMeals(updatedMeals);
                 }}
@@ -208,8 +212,6 @@ export default function HomeScreen() {
     </GestureHandlerRootView>
   );
 }
-
-const vh = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   outerView: {

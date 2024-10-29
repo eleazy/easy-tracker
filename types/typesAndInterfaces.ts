@@ -113,10 +113,16 @@ export const macrosDisplay = {
   protein: 'Proteínas',  
 };
 
-export const macrosDisplayShort = {
+export const macrosDisplayShorter = {
   carbs: 'C',
   fats: 'G',
   protein: 'P',
+};
+
+export const macrosDisplayShort = {
+  carbs: 'Carb',
+  fats: 'Gord',
+  protein: 'Prot',
 };
 
 export const microsDisplay = {

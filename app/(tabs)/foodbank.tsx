@@ -115,9 +115,9 @@ const FoodBank = () => {
                   <View style={styles.foodTitleOuter}>
                     <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}>{food.title}</Text>
                     <View style={styles.foodkcalOuter}>
-                      <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfoSuble]}>por 100g - </Text>
+                      <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfoSuble]}>{`por ${food.quantity} g - `}</Text>
                       <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfo]}>{food.calories}</Text>
-                      <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfoSuble]}> kcal</Text>
+                      <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfoSuble]}>  kcal</Text>
                     </View>
                   </View>
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, BackHandler, Alert} from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, BackHandler, Alert } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Food, Meal, MealCardProps, macrosDisplayShort } from '@/types/typesAndInterfaces';
+import { Food, MealCardProps, macrosDisplayShort, macrosDisplayShorter } from '@/types/typesAndInterfaces';
 import { fixN } from '@/utils/helperFunctions';
 import FoodSelection from "@/components/FoodSelection";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -96,7 +96,11 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
         newTotals.carbs += food.macroNutrients.carbs;
         newTotals.fats += food.macroNutrients.fats;
         newTotals.protein += food.macroNutrients.protein;
-      });      
+      });
+
+      (['calories', 'carbs', 'fats', 'protein'] as (keyof typeof newTotals)[]).forEach((key) => {
+        newTotals[key] = fixN(newTotals[key]);
+      });
 
       // Update meals state in parent component
       const newMeals = [...meals];
@@ -173,7 +177,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
 
           <View style={[styles.mealTitleOuter, {gap: 4}]}>
             <Text style={[{ color: meal.totals.calories == 0 ? 'gray' : Colors[colorScheme].text }, styles.mealCalories]}>{meal.totals.calories}</Text>
-            <Text style={[{ color: 'gray'} , styles.mealCalories]}>kcal</Text>
+            <Text style={[{ color: 'gray'} , styles.mealMacroValue]}>kcal</Text>
           </View>
         </View>
 
@@ -184,7 +188,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
                 {meal.totals[macro as keyof typeof meal.totals]} g
               </Text>            
 
-              <Text style={[{ color: meal.totals.calories == 0 ? 'gray' : Colors[colorScheme].text }, styles.mealMacroType]}>
+              <Text style={[{ color: 'gray' }, styles.mealMacroType]}>
                 {macrosDisplayShort[macro as keyof typeof macrosDisplayShort]}
               </Text>            
             </View>
@@ -214,22 +218,26 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
                   </Text>
   
                   <Text style={[{ color: Colors.dark.mealTitleC }, styles.mealMacroType]}>
-                    {macrosDisplayShort[macro as keyof typeof macrosDisplayShort]}
+                    {macrosDisplayShorter[macro as keyof typeof macrosDisplayShorter]}
                   </Text>            
                 </View>
               ))}
 
               <View style={styles.foodKcalOuter}>
-                <Text style={[{ color: Colors[colorScheme].text }, styles.foodKcalValue]}> {food.calories}</Text>
-                <Text style={[{ color: Colors[colorScheme].text }, styles.foodKcal]}> kcal </Text>
-                <TextInput
-                  style={[{ color: Colors[colorScheme].text }, styles.quantityInput]}
-                  inputMode="numeric"
-                  value={quantityInputValue[i] ?? ''}
-                  onChangeText={(text) => changeQuantity(i, text)}
-                  onFocus={() => inputPress(i)}
-                  onBlur={() => handleBlur(i)}
-                />
+                <Text style={[{ color: Colors[colorScheme].text }, styles.foodKcalValue]}>{food.calories} </Text>
+                <Text style={[{ color: Colors[colorScheme].text }, styles.foodKcal]}>kcal</Text>
+
+                <View style={[{gap: 4}, styles.foodKcalOuter]}>
+                  <TextInput
+                    style={[{ color: Colors[colorScheme].text }, styles.quantityInput]}
+                    inputMode="numeric"
+                    value={quantityInputValue[i] ?? ''}
+                    onChangeText={(text) => changeQuantity(i, text)}
+                    onFocus={() => inputPress(i)}
+                    onBlur={() => handleBlur(i)}
+                  />
+                  <Text style={[{ color: Colors[colorScheme].text }, styles.foodKcal]}>g</Text>
+                </View>
               </View>
             </View>
             
@@ -243,11 +251,11 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
 
       { showAddFood && <FoodSelection addFoodToMeal={addFoodToMeal} /> }
 
-      { showAddFood &&             
+      { showAddFood &&
         <Pressable style={styles.removeMealBtn} onPress={() => removeMeal()}>
           <Text style={styles.removeMealText}>Remover Refeição</Text>
-          <MaterialIcons name="highlight-remove" size={24} color={Colors[colorScheme].text} />
-        </Pressable>
+          <Ionicons name="trash-outline" size={20} color={Colors[colorScheme].text} />
+        </Pressable>        
       }
 
     </View>
@@ -341,9 +349,9 @@ const styles = StyleSheet.create({
     fontSize: vh * 0.019,        
   },
   quantityInput: {
-    width: 50,
+    width: 30,
     fontSize: vh * 0.018,
-    textAlign: 'center',
+    textAlign: 'right',
     color: Colors.dark.mealTitleC,
   },
   foodKcalOuter: {

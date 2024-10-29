@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet, useColorScheme, Dimensions, TextInput } from 'react-native';
+import { View, Text, Pressable, StyleSheet, useColorScheme, Dimensions, TextInput, Alert } from 'react-native';
 import React, { useEffect, useState } from "react";
 import { Colors } from '@/constants/Colors';
 import { macrosDisplay, FoodInfoProps, mealMacroTotals, MacroInputsObj } from "@/types/typesAndInterfaces";
@@ -55,12 +55,14 @@ export default function Account() {
     const updatedGoals = { ...dailyGoals, [goal]: Number(value) };
     updatedGoals.calories = (updatedGoals.carbs + updatedGoals.protein) * 4 + updatedGoals.fats * 9;
 
-    setDailyGoals(updatedGoals);
+    setDailyGoals(updatedGoals);    
   };
 
-  const saveGoalsValuesAndSetting = () => {
-    // save the daily goals and setting to firebase
-    saveDailyGoals(dailyGoals);
+  const saveGoalsValuesAndSettings = () => {
+    // save the daily goals and settings to firebase
+    saveDailyGoals(dailyGoals).then((response) => { 
+      Alert.alert(response ? 'Metas diárias salvas com sucesso!' : 'Erro ao salvar metas diárias.');      
+    });
   };
 
   const handleBlur = (goal: string) => {
@@ -110,7 +112,7 @@ export default function Account() {
           </View>
         </View>
 
-        <Pressable style={styles.logOutBtn} onPress={saveGoalsValuesAndSetting}>
+        <Pressable style={styles.logOutBtn} onPress={saveGoalsValuesAndSettings}>
           <Text style={styles.logOutText}>Salvar</Text>
         </Pressable>        
       </View>

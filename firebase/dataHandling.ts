@@ -3,7 +3,7 @@ import { collection, getDocs, query, where, setDoc, doc, deleteDoc, updateDoc, a
 import { User } from "firebase/auth";
 import tabelaTaco from './tabelaTaco.json';
 import { Food, Meal, detailedFood, mealMacroTotals } from "@/types/typesAndInterfaces";
-import { getLoggedUser, fixN, getTodayString, emptyDetailedFood } from "@/utils/helperFunctions";
+import { getLoggedUser, fixN, getTodayString, emptyDetailedFood, AddOrSubDay } from "@/utils/helperFunctions";
 
 // PRIVATE FUNCTIONS
 
@@ -247,6 +247,62 @@ export const getCustomFoods = async (): Promise<Food[]> => {
     }
 };
 
+// go through the last 4 days and get the most consumed foods
+export const getUserPreferredFoods = async (): Promise<Food[]> => {
+    const loggedUser = getLoggedUser();
+    const user = loggedUser.uid;
+    const today = getTodayString();
+    const days = [today];
+    for (let i = 1; i < 4; i++) {
+        days.push(AddOrSubDay(today, -i));
+    }
+
+    const foods: Food[] = [];
+    try {
+        for (const day of days) {
+            const foodDiaryQuery = query(
+                collection(db, "users", user, "foodDiary"),
+                where("date", "==", day)
+            );
+            const foodDiarySnapshot = await getDocs(foodDiaryQuery);
+            if (foodDiarySnapshot.empty) continue;
+
+            const foodDiaryDoc = foodDiarySnapshot.docs[0];
+            const docId = foodDiaryDoc.id;
+            const mealsFoodsCollectionRef = collection(db, "users", user, "foodDiary", docId, "mealsFoods");
+            const mealsFoodsSnapshot = await getDocs(mealsFoodsCollectionRef);
+            mealsFoodsSnapshot.forEach((mealFoodDoc) => {
+                const mealFoodData = mealFoodDoc.data();
+                const food = {
+                    id: mealFoodDoc.id,
+                    idMeal: '',
+                    calories: mealFoodData.calories,
+                    macroNutrients: mealFoodData.macroNutrients,                    
+                    quantity: mealFoodData.quantity,
+                    title: mealFoodData.title,
+                    isCustom: mealFoodData.isCustom,
+                };
+                if (foods.every((f) => f.title != food.title)) {
+                    foods.push(food);
+                }
+            });
+        }
+        
+        const foodTitles = foods.map((food) => food.title);
+        const uniqueFoodTitles = Array.from(new Set(foodTitles));
+        const topFoods = uniqueFoodTitles.map((title) => {
+            return { title, count: foodTitles.filter((t) => t === title).length };
+        });
+        topFoods.sort((a, b) => b.count - a.count);        
+        const topFoodTitles = topFoods.map((food) => food.title);
+        const topFoodsFiltered = foods.filter((food) => topFoodTitles.includes(food.title));
+        return topFoodsFiltered;        
+    } catch (error) {
+        console.error("Error fetching preferred foods:", error);
+        return [];
+    }
+};
+
 // get food with all atributtes on the database or taco table
 export const getDetailedFood = async (foodId: string): Promise<detailedFood> => {
     const loggedUser = getLoggedUser();
@@ -430,7 +486,7 @@ export const getDailyGoals = async (date: string): Promise<mealMacroTotals> => {
     }
 };
 
-export const saveDailyGoals = async (dailyGoals: mealMacroTotals): Promise<void> => {
+export const saveDailyGoals = async (dailyGoals: mealMacroTotals): Promise<boolean> => {
     const loggedUser = getLoggedUser();
     const user = loggedUser.uid;
     try {
@@ -448,13 +504,15 @@ export const saveDailyGoals = async (dailyGoals: mealMacroTotals): Promise<void>
         const docId = foodDiaryDoc.id;
         const docRef = doc(db, "users", user, "foodDiary", docId);
         await updateDoc(docRef, { dailyGoalsOfDay: dailyGoals });        
+        return true;
     } catch (error) {
         console.error("Error setting daily goals:", error);
+        return false;
     }    
 };
 
 // Add a new meal to the food diary in a given day
-export const addNewBlankMeal = async (date: string, mealTitle: string, mealPosition: number = 0) => {
+export const addNewBlankMeal = async (date: string, mealTitle: string, mealPosition: number) => {
     const loggedUser = getLoggedUser();
     const user = loggedUser.uid;
     try {
@@ -514,10 +572,10 @@ export const loadInitialData = async ( user: User ) => {
     });
 
     // Create collection foodDiary for the user and add a document with today's date
-    setDoc(doc(db, "users", user.uid, "foodDiary", getTodayString()), { date: getTodayString() });
+    setDoc(doc(db, "users", user.uid, "foodDiary", getTodayString()), { date: getTodayString(), dailyGoalsOfDay: defaultGoals });
 
     // Add four default blank meals to the food diary
     ['Café da Manhã', 'Almoço', 'Lanche', 'Jantar'].forEach(async (mealTitle, i) => {
-        addNewBlankMeal(getTodayString(), mealTitle);
+        addNewBlankMeal(getTodayString(), mealTitle, i);
     });
 };

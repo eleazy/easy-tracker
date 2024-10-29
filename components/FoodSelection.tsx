@@ -1,21 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, FlatList, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, Dimensions, FlatList } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { Food, FoodSelectionProps, macrosDisplay } from '@/types/typesAndInterfaces';
-import { getTacoTableFoods, getCustomFoods } from '@/firebase/dataHandling';
-import { removeAccents, singularPluralMatch } from '@/utils/helperFunctions';
+import { getTacoTableFoods, getCustomFoods, getUserPreferredFoods } from '@/firebase/dataHandling';
+import { removeAccents, singularPluralMatch, setUserPreferredFoodsStored, getUserPreferredFoodsStored } from '@/utils/helperFunctions';
 
 const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
     const colorScheme = useColorScheme() ?? 'dark';
 
     const tacoTableFoods: Food[] = getTacoTableFoods();
-    const [customFoods, setCustomFoods] = useState<Food[]>([]);
-    const [combinedFoods, setCombinedFoods] = useState<Food[]>([...tacoTableFoods, ...customFoods]); // maybe not necessary
-    const [searchQuery, setSearchQuery] = useState<string>("");
-    const [visibleItems, setVisibleItems] = useState<number>(10);
+    const [ customFoods, setCustomFoods ] = useState<Food[]>([]);
+    const [ combinedFoods, setCombinedFoods ] = useState<Food[]>([...tacoTableFoods, ...customFoods]);
+    const [ userPreferredFoods, setUserPreferredFoods ] = useState<Food[]>([]);
+    const [ searchQuery, setSearchQuery ] = useState<string>("");
+    const [ visibleItems, setVisibleItems ] = useState<number>(10);
 
     useEffect(() => {
         getCustomFoods().then((data: Food[]) => { setCustomFoods(data); });
+
+        // Load user preferred foods
+        const userPreferredFoods = getUserPreferredFoodsStored();
+        if (userPreferredFoods.length === 0) {
+            getUserPreferredFoods()
+                .then((data: Food[]) => {
+                    setUserPreferredFoodsStored(data);
+                    setUserPreferredFoods(data);
+                })
+                .catch((error) => {
+                    console.error('Error getting user preferred foods:', error);
+                });
+        } else {
+            setUserPreferredFoods(userPreferredFoods);
+        }
     }, []);
 
     useEffect(() => {
@@ -47,7 +63,7 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
         <TextInput
             style={[{ color: Colors[colorScheme].text, backgroundColor: Colors.dark.background }, styles.searchInput]}
             placeholder='Pesquisar...'
-            placeholderTextColor='gray'
+            placeholderTextColor='gray'            
             onChangeText={doSearch}
             value={searchQuery}
             autoFocus
@@ -55,14 +71,14 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
 
         <View style={[ styles.foodSelection , {backgroundColor: Colors.dark.background}]}>
           <FlatList
-            data={combinedFoods.slice(0, visibleItems)}
+            data={ searchQuery === "" ? userPreferredFoods.slice(0, visibleItems) : combinedFoods.slice(0, visibleItems)}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item: food }) => (
               <Pressable style={styles.foodRow} onPress={() => addFoodToMeal(food)}>
                 <View style={styles.foodTitleOuter}>
                   <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitle]}>{food.title}</Text>
                   <View style={styles.foodkcalOuter}>
-                    <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfoSuble]}>por 100g - </Text>
+                    <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfoSuble]}>{`por ${food.quantity} g - `}</Text>
                     <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfo]}>{food.calories}</Text>
                     <Text style={[{ color: Colors[colorScheme].text }, styles.foodTitleInfoSuble]}> kcal</Text>
                   </View>
@@ -94,7 +110,8 @@ const styles = StyleSheet.create({
     },
     searchInput: {
       fontSize: vh * 0.021,
-      padding: 6,
+      paddingHorizontal: 6,
+      paddingVertical: 1,
       paddingLeft: 16,
       marginVertical: 10,
       borderRadius: 99,
@@ -106,7 +123,7 @@ const styles = StyleSheet.create({
       borderRadius: 10,      
       borderColor: 'gray',
       borderWidth: 1,
-      height: vh * 0.35,
+      height: vh * 0.6,
       overflow: 'hidden',
     },
     foodRow: {

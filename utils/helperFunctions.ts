@@ -1,4 +1,4 @@
-import { detailedFood, Measure } from "@/types/typesAndInterfaces";
+import { detailedFood, Measure, Food } from "@/types/typesAndInterfaces";
 import { User } from "firebase/auth";
 
 // Utility function to get today's date as a string
@@ -41,7 +41,7 @@ export const monthName = (month: number) => {
 };
 
 // Utility function to fix number precision
-export const fixN = (n: Number) => parseFloat(n.toFixed(2));
+export const fixN = (n: Number) => parseFloat(n.toFixed(1));
 
 // Date to day/month/year
 export const ydmDate = (date: string) => {
@@ -58,6 +58,11 @@ export const getPercentual = (value: number | string | undefined, factor: number
 let loggedUser: User;
 export const setLoggedUser = (value: User) => loggedUser = value;
 export const getLoggedUser = (): User => loggedUser;
+
+// Store in runtime the user's preferred foods
+let userPreferredFoods: Food[] = [];
+export const setUserPreferredFoodsStored = (value: Food[]) => userPreferredFoods = value;
+export const getUserPreferredFoodsStored = () => userPreferredFoods;
 
 // Utility function to remove accents/diacritics from strings
 export const removeAccents = (str: string) => {

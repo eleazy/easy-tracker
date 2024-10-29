@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { StyleSheet, View, Pressable, Text, Dimensions, useColorScheme } from "react-native";
+import { StyleSheet, View, Pressable, Text, Dimensions, useColorScheme, Keyboard, Animated } from "react-native";
 import MealCard from "@/components/MealCard";
 import CalendarView from "@/components/CalendarView";
 import { Colors } from "@/constants/Colors";
@@ -16,7 +16,7 @@ import Foundation from '@expo/vector-icons/Foundation';
 const vh = Dimensions.get('window').height;
 
 export default function HomeScreen() {
-  
+   
   const colorScheme = useColorScheme() ?? 'dark';
   const [ meals, setMeals ] = useState<Meal[]>([]);
   const [ foodDiaryDay, setFoodDiaryDay ] = useState<string>(getTodayString());
@@ -25,21 +25,37 @@ export default function HomeScreen() {
   const [ showCalendar, setShowCalendar ] = useState<boolean>(false);
   const [ showGoalProgress, setShowGoalProgress ] = useState<boolean>(false);
   const [ dailyGoals, setDailyGoals ] = useState<mealMacroTotals>({calories: 0, carbs: 0, fats: 0, protein: 0});
+  const [ keyboardVisible, setKeyboardVisible ] = useState<boolean>(false);
+
   //console.log('index loaded');
+
+  const calendarOpacity = useRef(new Animated.Value(1)).current;
+  const calendarTranslateY = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(calendarOpacity, { toValue: !keyboardVisible ? 1 : 0, duration: 200, useNativeDriver: true, }),
+      Animated.timing(calendarTranslateY, { toValue: !keyboardVisible ? 0 : -50, duration: 200, useNativeDriver: true, })
+    ]).start();
+  }, [keyboardVisible]);
 
   useEffect(() => {
     getMealsOfDay(foodDiaryDay)
       .then((meals) => {
         const sortedMeals = meals.sort((a, b) => a.mealPosition - b.mealPosition);
         setMeals(sortedMeals);
+
+        getDailyGoals(foodDiaryDay).then((goals) => setDailyGoals(goals)).catch((error) => console.error(error));
       })
       .catch((error) => console.error(error));
 
-    getDailyGoals(foodDiaryDay)
-      .then((goals) => {console.log(goals); setDailyGoals(goals)})
-      .catch((error) => console.error(error));
+    const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => { setKeyboardVisible(true); });
+    const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => { setKeyboardVisible(false); });
+
+    return () => {      
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
   }, [foodDiaryDay]);
-  
 
   useEffect(() => {
     // Update totals in state when a MealCard sets meals
@@ -101,21 +117,23 @@ export default function HomeScreen() {
         { showCalendar && <CalendarView setShowCalendar={setShowCalendar} foodDiaryDay={foodDiaryDay} setFoodDiaryDay={setFoodDiaryDay} /> }
 
         {/* One day back or forth */}
-        <View style={styles.calendarOuter}>
-          <View style={styles.datePickerOuter}>
-            <Pressable onPress={() => changeDate(-1)}>
-              <Ionicons name="arrow-back" size={24} color={Colors[colorScheme].text} />
-            </Pressable>
+        { !keyboardVisible && 
+          <Animated.View style={[ styles.calendarOuter, { opacity: calendarOpacity, transform: [{ translateY: calendarTranslateY }] } ]}>
+            <View style={styles.datePickerOuter}>
+              <Pressable onPress={() => changeDate(-1)}>
+                <Ionicons name="arrow-back" size={24} color={Colors[colorScheme].text} />
+              </Pressable>
 
-            <Text style={[{ color: Colors[colorScheme].text }, styles.diaryTitle]}>{ydmDate(foodDiaryDay)}</Text>
+              <Text style={[{ color: Colors[colorScheme].text }, styles.diaryTitle]}>{ydmDate(foodDiaryDay)}</Text>
 
-            <Pressable onPress={() => changeDate(1)}>
-              <Ionicons name="arrow-forward" size={24} color={Colors[colorScheme].text} />
-            </Pressable>
-          </View>
+              <Pressable onPress={() => changeDate(1)}>
+                <Ionicons name="arrow-forward" size={24} color={Colors[colorScheme].text} />
+              </Pressable>
+            </View>
 
-          <AntDesign name="calendar" size={24} color="white" onPress={() => setShowCalendar(true)}/>
-        </View>
+            <AntDesign name="calendar" size={24} color="white" onPress={() => setShowCalendar(true)}/>
+          </Animated.View>
+        }
 
         <View style={styles.indexOuter} >
           {/* Macro Totals */}
@@ -203,7 +221,7 @@ export default function HomeScreen() {
 
         </View>
         
-        {hasChanges && (
+        {hasChanges && !keyboardVisible && (
           <Pressable style={styles.saveBtn} onPress={() => saveAll()}>
             <Text style={[{ color: Colors[colorScheme].text }, styles.saveText]}>Salvar</Text>
           </Pressable>
@@ -216,7 +234,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   outerView: {
     flex: 1,
-    //position: 'relative',
     backgroundColor: Colors.dark.background,
     marginTop: 27,    
   },
@@ -237,7 +254,6 @@ const styles = StyleSheet.create({
   },
   indexOuter: {
     padding: 6,
-    //display: 'flex',
   },
   diaryHeader: {    
     width: '100%',
@@ -260,8 +276,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   diaryCaloriesKcal: {
-    fontSize: vh * 0.023,
-    color: 'gray'
+    fontSize: vh * 0.022,
+    color: 'gray',
+    fontWeight: 'bold',
   },
   calorieGoalPerc: {
     fontSize: vh * 0.021,
@@ -282,7 +299,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: 10,    
+    padding: 5,
     backgroundColor: Colors.dark.diaryTotalsBG,
   },
   progressOuter: {

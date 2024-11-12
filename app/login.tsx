@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, TextInput, Alert, StyleSheet } from 'react-native';
 import { auth } from "@/firebase/firebaseConfig";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInAnonymously } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { navigate } from '@/components/navigation/RootNavigation';
 import { loadInitialData } from '@/firebase/dataHandling';
 
@@ -16,9 +16,7 @@ export default function Login(): JSX.Element {
 
     const userLogin = () => {
         signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                navigate('index');
-            })
+            .then(() => { navigate('index'); })
             .catch((error) => {
                 if (error.code === 'auth/invalid-login-credentials') {
                     Alert.alert('Email incorreto!');
@@ -86,7 +84,6 @@ export default function Login(): JSX.Element {
     );
 }
 
-// StyleSheet for the component
 const styles = StyleSheet.create({
     container: {
         flex: 1,

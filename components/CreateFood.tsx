@@ -320,8 +320,8 @@ const CreateFood = ({ setShowCreateFood, customFoods, setCustomFoods }: CreateFo
                     </Text>
                   </View>
                   )
-                } 
-              )}
+                })
+              }
             </View>
     
             {/* PROTEIN */}

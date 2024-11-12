@@ -7,7 +7,7 @@ import 'react-native-reanimated';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/firebase/firebaseConfig';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { getLoggedUser, setLoggedUser } from '@/utils/helperFunctions';
+import { setLoggedUser } from '@/utils/helperFunctions';
 import Login from '@/app/login';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -15,7 +15,8 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
+
+  const [ loaded ] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
@@ -24,7 +25,7 @@ export default function RootLayout() {
   useEffect(() => { 
     onAuthStateChanged(auth, (user) => {
       if (user) {        
-        setLoggedUser(user); // Save user data in local storage
+        setLoggedUser(user); // Save user data in runtime storage
         setIsLogged(true);
       } else {
         setIsLogged(false);

@@ -33,11 +33,7 @@ const FoodSelection = ( { addFoodToMeal }: FoodSelectionProps ) => {
             setUserPreferredFoods(userPreferredFoods);
         }
     }, []);
-
-    useEffect(() => {
-      setCombinedFoods([...tacoTableFoods, ...customFoods]);
-    }, [customFoods]);
-     
+         
     const doSearch = (search: string) => {
       setSearchQuery(search);
 

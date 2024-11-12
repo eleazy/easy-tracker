@@ -12,6 +12,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
   const colorScheme = useColorScheme() ?? 'dark';
 
   const [ showAddFood, setShowAddFood ] = useState<boolean>(false);
+  const [ isMealToggled, setIsMealToggled ] = useState<boolean>(false);
   const [ foods, setFoods ] = useState<Food[]>(meal.foods);
   const [ quantityInputValue, setQuantityInputValue ] = useState<string[]>([]);
   
@@ -163,7 +164,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
             <TextInput
               style={[{ color: Colors[colorScheme].text }, styles.mealTitle]}
               value={meal.title}
-              placeholder="Refeição"
+              placeholder="Refeição"              
               editable={showAddFood}
               onChangeText={(text) => {
                 const newMeals = [...meals];
@@ -172,7 +173,15 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
                 setHasChanges(true);
               }}              
             />
-            { showAddFood && <AntDesign name="edit" size={20} color="gray" /> }
+            { showAddFood && <AntDesign name="edit" size={20} color="gray" /> }            
+            { !showAddFood && (
+                isMealToggled ? 
+                  <AntDesign name="downcircleo" size={16} color="gray" onPress={() => setIsMealToggled(!isMealToggled)} /> 
+                  : 
+                  <AntDesign name="upcircleo" size={16} color="gray" onPress={() => setIsMealToggled(!isMealToggled)} /> 
+              ) 
+            }
+
           </View>
 
           <View style={[styles.mealTitleOuter, {gap: 4}]}>
@@ -198,7 +207,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
       </View>
       
       {/* display each food of meal and its macros */}
-      {foods.map(( food, i ) => {
+      {!isMealToggled && foods.map(( food, i ) => {
         if (food.quantity === 0) return;
         // Foods with quantity 0 are not displayed
 
@@ -245,7 +254,7 @@ const MealCard = ({ meal, mealIndex, meals, setMeals, setHasChanges }: MealCardP
         )
       })} 
 
-      <Pressable style={{ marginTop: 5 }} onPress={() => setShowAddFood(!showAddFood)}>
+      <Pressable style={{ marginTop: 5 }} onPress={() => { setShowAddFood(!showAddFood); setIsMealToggled(false) } }>
         <Ionicons name={showAddFood ? "arrow-up-circle" :  "add-circle-outline"} size={24} color={Colors.dark.mealTitleC}/>
       </Pressable>
 
@@ -304,7 +313,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mealTitle: {
-    fontSize: vh * 0.022,
+    fontSize: vh * 0.020,
     fontWeight: 'bold',
     color: Colors.dark.mealTitleC,    
   },

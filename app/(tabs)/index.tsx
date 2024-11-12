@@ -15,9 +15,9 @@ import Foundation from '@expo/vector-icons/Foundation';
 
 const vh = Dimensions.get('window').height;
 
-export default function HomeScreen() {
-   
+export default function HomeScreen() {   
   const colorScheme = useColorScheme() ?? 'dark';
+
   const [ meals, setMeals ] = useState<Meal[]>([]);
   const [ foodDiaryDay, setFoodDiaryDay ] = useState<string>(getTodayString());
   const [ macroTotals, setMacroTotals ] = useState<mealMacroTotals>({calories: 0, carbs: 0, fats: 0, protein: 0});
@@ -26,8 +26,6 @@ export default function HomeScreen() {
   const [ showGoalProgress, setShowGoalProgress ] = useState<boolean>(false);
   const [ dailyGoals, setDailyGoals ] = useState<mealMacroTotals>({calories: 0, carbs: 0, fats: 0, protein: 0});
   const [ keyboardVisible, setKeyboardVisible ] = useState<boolean>(false);
-
-  //console.log('index loaded');
 
   const calendarOpacity = useRef(new Animated.Value(1)).current;
   const calendarTranslateY = useRef(new Animated.Value(0)).current;
@@ -60,7 +58,7 @@ export default function HomeScreen() {
   useEffect(() => {
     // Update totals in state when a MealCard sets meals
     let newTotals = {calories: 0, carbs: 0, fats: 0, protein: 0};
-    meals.forEach((meal) => {        
+    meals.forEach((meal) => {
       newTotals.calories += meal.totals.calories;
       newTotals.carbs += meal.totals.carbs;
       newTotals.fats += meal.totals.fats;
@@ -121,13 +119,13 @@ export default function HomeScreen() {
           <Animated.View style={[ styles.calendarOuter, { opacity: calendarOpacity, transform: [{ translateY: calendarTranslateY }] } ]}>
             <View style={styles.datePickerOuter}>
               <Pressable onPress={() => changeDate(-1)}>
-                <Ionicons name="arrow-back" size={24} color={Colors[colorScheme].text} />
+                <Ionicons name="arrow-back" size={22} color={Colors[colorScheme].text} />
               </Pressable>
 
               <Text style={[{ color: Colors[colorScheme].text }, styles.diaryTitle]}>{ydmDate(foodDiaryDay)}</Text>
 
               <Pressable onPress={() => changeDate(1)}>
-                <Ionicons name="arrow-forward" size={24} color={Colors[colorScheme].text} />
+                <Ionicons name="arrow-forward" size={22} color={Colors[colorScheme].text} />
               </Pressable>
             </View>
 
@@ -267,8 +265,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end', 
   },  
   diaryTitle: {
-    fontSize: vh * 0.022,
-    fontWeight: 'bold',
+    fontSize: vh * 0.020,    
     color: Colors.dark.mealTitleC,
   },
   diaryCalories: {

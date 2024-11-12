@@ -1,5 +1,5 @@
 import { db } from "./firebaseConfig";
-import { collection, getDocs, query, where, setDoc, doc, deleteDoc, updateDoc, arrayUnion, DocumentReference, getDoc, DocumentData } from "firebase/firestore";
+import { collection, getDocs, query, where, setDoc, doc, deleteDoc, updateDoc, arrayUnion, DocumentReference, getDoc, DocumentData, writeBatch } from "firebase/firestore";
 import { User } from "firebase/auth";
 import tabelaTaco from './tabelaTaco.json';
 import { Food, Meal, detailedFood, mealMacroTotals } from "@/types/typesAndInterfaces";
@@ -240,7 +240,17 @@ export const getCustomFoods = async (): Promise<Food[]> => {
         const customFoodsCollectionRef = collection(db, "users", user, "customFoods");
         const customFoodsSnapshot = await getDocs(customFoodsCollectionRef);
         const customFoods = customFoodsSnapshot.docs.map(foodDoc => foodDoc.data());
-        return customFoods as Food[];
+        return customFoods.map((food) => {
+            return {
+                id: food.id,
+                idMeal: '',
+                calories: food.calories,
+                macroNutrients: food.macroNutrients,
+                quantity: food.quantity,
+                title: food.title,
+                isCustom: true,
+            };
+        });
     } catch (error) {
         console.error("Error fetching custom foods:", error);
         return [];
@@ -388,7 +398,7 @@ export const getMealsOfDay = async (date: string): Promise<Meal[]> => {
             const newMealsSnapshot = await getDocs(mealsCollectionRef);
             const newMealsPromises = newMealsSnapshot.docs.map(async (mealDoc) => {
                 const mealData = mealDoc.data();
-                // will replace the DocumentReferences in foods with the actual Food[] data                        
+                // will replace the DocumentReferences in foods with the actual Food[] data 
                 return await getAndSetMealFoods(mealData);
             });
             const newMeals = await Promise.all(newMealsPromises);
@@ -489,21 +499,23 @@ export const getDailyGoals = async (date: string): Promise<mealMacroTotals> => {
 export const saveDailyGoals = async (dailyGoals: mealMacroTotals): Promise<boolean> => {
     const loggedUser = getLoggedUser();
     const user = loggedUser.uid;
+    const today = getTodayString();
+    
     try {
         const userDoc = doc(db, "users", user);
         await updateDoc(userDoc, { dailyGoals });
 
-        // set the daily goals for the current day too
-        const today = getTodayString();
         const foodDiaryQuery = query(
             collection(db, "users", user, "foodDiary"),
-            where("date", "==", today)
+            where("date", ">=", today)
         );
         const foodDiarySnapshot = await getDocs(foodDiaryQuery);
-        const foodDiaryDoc = foodDiarySnapshot.docs[0];
-        const docId = foodDiaryDoc.id;
-        const docRef = doc(db, "users", user, "foodDiary", docId);
-        await updateDoc(docRef, { dailyGoalsOfDay: dailyGoals });        
+
+        const batch = writeBatch(db);
+        foodDiarySnapshot.forEach((doc) => {
+            batch.update(doc.ref, { dailyGoalsOfDay: dailyGoals });
+        });
+        await batch.commit();     
         return true;
     } catch (error) {
         console.error("Error setting daily goals:", error);

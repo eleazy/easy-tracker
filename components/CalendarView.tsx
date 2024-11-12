@@ -10,7 +10,7 @@ import { AddOrSubDay, getDaysOfMonth, monthName } from "@/utils/helperFunctions"
 const CalendarView = ({ setShowCalendar, foodDiaryDay, setFoodDiaryDay }: CalendarViewProps) => {
     const colorScheme = useColorScheme() ?? 'dark';
 
-    const [calorieTotals, setCalorieTotals] = useState<{ [key: string]: string }>({});
+    const [ calorieTotals, setCalorieTotals ] = useState<{ [key: string]: string }>({});
 
     const year = Number(foodDiaryDay.split('-')[0]);
     const month = Number(foodDiaryDay.split('-')[1]) - 1; // Adjust for 0-indexed months
